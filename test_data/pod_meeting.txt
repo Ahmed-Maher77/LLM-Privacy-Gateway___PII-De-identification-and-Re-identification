@@ -1,0 +1,887 @@
+Content Creation Pod Standup Meeting-20260924_103012UTC-Meeting Recording 
+
+September 24, 2026, 10:30AM 
+
+30m 37s 
+
+ 
+Ahmed Fouad   0:31 
+So. 
+
+ 
+Nehal Magdy   0:31 
+The Ghonemi. 
+And... 
+To let them. 
+
+ 
+Ahmed Sayed   0:50 
+Like. 
+
+ 
+Ahmed Fouad   0:53 
+Abdulrahman. 
+
+ 
+Nehal Magdy   0:54 
+I don't know. 
+
+ 
+Ahmed Fouad   0:57 
+The Kamal. 
+
+ 
+Nehal Magdy   0:58 
+Mhm. 
+
+ 
+Ahmed Fouad   1:01 
+And this is the best way in that. 
+
+ 
+Ahmed Sayed   1:02 
+Michael, Michael Mustafa. 
+
+ 
+Ahmed Maher   1:04 
+Sorry. 
+
+ 
+Ahmed Fouad   1:07 
+With it. 
+
+ 
+Ahmed Maher   1:08 
+I have the left, Cortana. 
+
+ 
+Ahmed Fouad   1:10 
+What's the Sayed I get then? 
+
+ 
+Ahmed Maher   1:12 
+And that's all the work. 
+Rama. 
+
+ 
+Ahmed Fouad   1:18 
+Isn't it there? 
+
+ 
+Sherif Kamal   1:20 
+Is it? 
+
+ 
+Ahmed Fouad   1:22 
+Oh. 
+So, even this like me, I can... 
+
+ 
+Sherif Kamal   1:29 
+And. 
+
+ 
+Ahmed Maher   1:33 
+I have to look later. 
+On to that. 
+Nice. 
+
+ 
+Nehal Magdy   1:45 
+Yeah. 
+
+ 
+Ahmed Sayed   1:53 
+As she said, Sherif Sherif Sarah Halas Brent Sri. 
+
+ 
+Ahmed Fouad   1:53 
+Street. 
+
+ 
+Sherif Kamal   1:58 
+Sadak. 
+
+ 
+Ahmed Fouad   1:58 
+Okay. 
+
+ 
+Ahmed Sayed   2:00 
+So, that is print screen. 
+
+ 
+Nehal Magdy   2:00 
+Mhm. 
+
+ 
+Sherif Kamal   2:02 
+Ohh, Omar. 
+
+ 
+Ahmed Sayed   2:05 
+Okay. 
+
+ 
+Ahmed Fouad   2:05 
+Lady, see, I will. 
+Yeah. 
+
+ 
+Ahmed Sayed   2:13 
+Okay. 
+I still hang out with him for clips. 
+
+ 
+Ahmed Fouad   2:20 
+No documentation without the project. 
+In the big picture, I need that solution here. 
+So, I'll see, I'll see. 
+Hello, miss you. 
+Yes, still there. 
+
+ 
+Ahmed Sayed   3:07 
+So, welcome for the Ahmed, the status updates. 
+
+ 
+Hager Aly   3:21 
+Oh, I know. 
+
+ 
+Ahmed Fouad   3:22 
+And... 
+
+ 
+Ahmed Sayed   3:24 
+And the time infomed. 
+
+ 
+Hager Aly   3:24 
+Type, and I'm, and I'm, and I'm gonna have, and. 
+And then the ADLC design. 
+Ill. 
+Design application controls application controls. 
+
+ 
+Ahmed Fouad   4:08 
+Mhm. 
+Help my kid. 
+
+ 
+Hager Aly   4:28 
+Okay. 
+
+ 
+Ahmed Fouad   4:36 
+Ish. Sherif. 
+
+ 
+Sherif Kamal   4:40 
+OK, and I'm very lost. Hey, analyze the inputs. We. 
+I'll analyze any leak, will have spent three for. I'm talking with you, Ahmed. 
+
+ 
+Ahmed Sayed   5:10 
+La la la. 
+
+ 
+Ahmed Fouad   5:13 
+And they want my gas. 
+Oh, hi, guys. 
+
+ 
+Sherif Kamal   5:22 
+No, we are for the tool. 
+
+ 
+Ahmed Fouad   5:24 
+Yeah, also. 
+We. 
+
+ 
+Sherif Kamal   5:40 
+The second we are OK. 
+
+ 
+Ahmed Sayed   5:43 
+Samir. 
+
+ 
+Ahmed Fouad   5:44 
+Top Shoft Outlook Tal Integrant. 
+
+ 
+Sherif Kamal   5:47 
+Lala Maher head show Salimbir. 
+
+ 
+Ahmed Fouad   5:49 
+Okay. 
+
+ 
+Sherif Kamal   5:50 
+I will start in order of it. 
+
+ 
+Ahmed Fouad   5:52 
+Yes, I am. 
+
+ 
+Sherif Kamal   6:03 
+Okay. 
+I was Ahmed and I think, yeah, we can meet Mike discuss Mike. 
+
+ 
+Ahmed Sayed   6:16 
+Nish. 
+And she wish, are you up? 
+And I'm safe at Ahmed again. 
+
+ 
+Ahmed Fouad   6:29 
+No, but the Hagar is not. 
+
+ 
+Ahmed Sayed   6:31 
+Okay. 
+Times. 
+
+ 
+Nehal Magdy   6:37 
+Next week. 
+
+ 
+Ahmed Sayed   6:57 
+Kol. 
+Chickpea has our next. 
+
+ 
+Nehal Magdy   7:03 
+What was the name, John? 
+
+ 
+Ahmed Sayed   7:05 
+Inshallah. 
+Bye. 
+
+ 
+Ahmed Fouad   7:11 
+We had a meeting. 
+Uhh. 
+And, in question, and then, and then, reduction, but sensitive information, and the user, and make sure the sensitive information, the image exposed. 
+So, we mentioned contacts names. 
+The that stakeholders extracted data, even tokenize it, maybe exposure content types. 
+And restore tokenize the tokens and restore her actual names, articles and keep it hidden. 
+Conversation, full control content processing time conversation. 
+Mile LLM. 
+I will go real time for for Michanel Hanan tokenization. Hany Hanan tokenization. 
+In real time, data exposed on the spot. 
+This the. 
+But, meanwhile, I updated the knowledge base will will architecture document built for sale, but that'll the title like that, like that was enough subtile flow, composition of the update tool generation reduction. 
+For the best conversation, the initial design in transcripting. 
+Some. 
+Uh, local, uh, speech to text. 
+Tool and supported the browser with a Chrome. Okay. Bidirectional. 
+Broken, yeah. 
+Yes. 
+Like, uh, Hagar, or how about, and then? 
+
+ 
+Hager Aly   11:00 
+And I will handle for courtesy. 
+In the attached document. 
+The name I love it. 
+
+ 
+Ahmed Fouad   11:25 
+The description, description of the processing guide. 
+She doesn't have that as attachment. 
+
+ 
+Hager Aly   11:30 
+For discussion for discussion processing, I mean, hello, link layer that the market market down for tokens. 
+That. 
+Not that. 
+Today, I forgot that I'm in Mark, the one missing in HTML designed with Ahmed Sayed, so I get it up JavaScript to Hagar. 
+We should see. 
+When we need to double ADLC. 
+The man when number is in Noha, my, my lawyers for rebuild that can feature. Kamal Mohamed Ahmed Maher. 
+
+ 
+Ahmed Fouad   13:04 
+Hany. 
+I want to check, and then pick up that, and Ahmed, I think we discussed the application maintain the any updates. 
+
+ 
+Hager Aly   13:23 
+And it just... 
+
+ 
+Ahmed Fouad   13:39 
+Ohh, I sent the books. 
+That's in the box, compared how enter with the final snapshot, but that it contain a for the direct hot to comment and it's happy repository data with hot to folder Mayan with instructions of that agent and then the check in in folder. 
+
+ 
+Hager Aly   13:48 
+Okay. 
+
+ 
+Ahmed Fouad   14:08 
+Yeah, any mapping in the user story in the screen was booted with the Ahmed. 
+
+ 
+Hager Aly   14:16 
+Local and local and local and my branch local Mahmoud Ahmed in a little how did for folder Randy if necessary if enough still project. I had to. I didn't design style. 
+
+ 
+Ahmed Fouad   14:30 
+Ohh. 
+Well, uh, but we are of here, and he is both do in in the screen and he wanted the film, and he'll mock up. 
+
+ 
+Hager Aly   14:41 
+The lower that. 
+
+ 
+Ahmed Fouad   15:02 
+In general, instructions mapping. 
+
+ 
+Hager Aly   15:10 
+I had. 
+
+ 
+Ahmed Fouad   15:15 
+Maher, I love you. 
+
+ 
+Sherif Kamal   15:15 
+Hey Cortana. 
+
+ 
+Ahmed Fouad   15:25 
+We didn't decide. 
+And and activity, acceptance criteria, business driven, either implemented wise, break it down. 
+
+ 
+Sherif Kamal   15:52 
+But, but, in the whole UI designed the Taha. 
+
+ 
+Hager Aly   15:58 
+acceptance criteria. Mahmoud Ahmed, acceptance criteria. 
+
+ 
+Sherif Kamal   16:09 
+Agent screen. 
+
+ 
+Hager Aly   16:12 
+Reference not enough for Noha. 
+
+ 
+Sherif Kamal   16:29 
+And I and I was the. 
+
+ 
+Hager Aly   16:30 
+Yeah, hi. 
+
+ 
+Ahmed Sayed   16:31 
+Okay, okay. 
+URL user story description. 
+
+ 
+Hager Aly   16:42 
+Alia. 
+
+ 
+Sherif Kamal   16:42 
+Big Jalapoon. 
+
+ 
+Ahmed Sayed   16:44 
+Hotel URL and HTML user tools. 
+
+ 
+Hager Aly   16:46 
+You are any local as like, oh. 
+Oh. 
+
+ 
+Ahmed Fouad   16:52 
+Mhm. 
+I will, will, will be section Yani in the, will hash killer tool any section for the beach. 
+
+ 
+Ahmed Sayed   16:54 
+Ignore also. 
+
+ 
+Hager Aly   16:56 
+Huh? 
+
+ 
+Ahmed Fouad   17:04 
+Ohh. 
+
+ 
+Ahmed Sayed   17:04 
+When I when I put a lot better capsule and your component is up. 
+description type. 
+
+ 
+Ahmed Fouad   17:16 
+So, so, ohh, so, screenshot HTML. 
+
+ 
+Hager Aly   17:30 
+The screenshot. 
+
+ 
+Ahmed Fouad   17:39 
+Hmm, and also the Nabeeh. 
+Oh, yeah, has already my resources attached to reference external resource included in the screenshot, Mike. 
+
+ 
+Hager Aly   17:50 
+Tom Hosny. 
+Control lower accordion. Contract. implementation fill application. 
+
+ 
+Ahmed Fouad   18:09 
+Firm. 
+Mm. 
+
+ 
+Hager Aly   18:30 
+Control, which, according to if any grid the this line, it a lot of. 
+
+ 
+Ahmed Fouad   18:47 
+Name. 
+
+ 
+Hager Aly   19:03 
+And now I can hit the. 
+Hello, gonna don't go on that. 
+
+ 
+Ahmed Fouad   19:13 
+Mitch, oh, you mean? 
+
+ 
+Hager Aly   19:14 
+How will the screen get me to look on the field in Ewida? 
+But not awful. 
+
+ 
+Ahmed Fouad   19:29 
+It will get to screenshot our user story, comment Ali will mention please adjust the UI screenshot screenshot file and we. 
+
+ 
+Hager Aly   19:36 
+Mm. 
+We found. 
+
+ 
+Ahmed Fouad   19:57 
+Reboot. 
+
+ 
+Sherif Kamal   19:58 
+Adel. 
+
+ 
+Ahmed Fouad   20:00 
+Oh, no. 
+Yeah, we can create like a repository like GitHub. 
+
+ 
+Hager Aly   20:03 
+Ohh. 
+
+ 
+Ahmed Fouad   20:16 
+Aly. 
+from New Zealand. 
+Mish. 
+
+ 
+Sherif Kamal   20:31 
+Model local. Best design in homage builder to design in a shorter enough in a local model. 
+Uh, Kirsaryani. 
+I'm A composer, Vadushal Ali. 
+
+ 
+Ahmed Fouad   20:56 
+If. 
+
+ 
+Hager Aly   20:59 
+Uh, assumption. 
+
+ 
+Sherif Kamal   21:04 
+That's all I mean, I had to design in. 
+
+ 
+Hager Aly   21:06 
+I know how to design, how to do controls, and you can free controls this yet. 
+Yeah, if he, if he, if he feel that, if he feel that, if he feel that you are for help from me, like in home, I mean look and feel Mosad application, get, oh, handle it hit that that security and controls in. 
+
+ 
+Sherif Kamal   21:13 
+Hmm, I'll delete that a little bit more. 
+I. 
+Doctor from the Indian. 
+No. 
+Actually. 
+
+ 
+Hager Aly   21:34 
+In the controls, on the last road, there has a with a design that Ahmed Sayed. 
+
+ 
+Sherif Kamal   21:46 
+Ohh, like the good news, yeah, the good news in Noha, la front end. 
+
+ 
+Hager Aly   21:47 
+Uhh... 
+Ohh, ohh, that, ohh, okay. 
+Oh, like in how I could. 
+
+ 
+Sherif Kamal   21:56 
+Mm. 
+
+ 
+Ahmed Fouad   22:16 
+And seating could that be easy? 
+
+ 
+Hager Aly   22:16 
+Mam shot. 
+
+ 
+Ahmed Fouad   22:21 
+Oh. 
+
+ 
+Sherif Kamal   22:24 
+The errors, even even in local, even even in local development, and then they have a common and and even local. 
+
+ 
+Hager Aly   22:24 
+For the... 
+
+ 
+Ahmed Fouad   22:27 
+Hmm. 
+
+ 
+Hager Aly   22:34 
+A common man often the local. 
+
+ 
+Sherif Kamal   22:38 
+No, no. 
+Yeah, you. 
+
+ 
+Hager Aly   22:51 
+Ohh. 
+Well, hello. 
+
+ 
+Sherif Kamal   22:55 
+From stuff. 
+
+ 
+Hager Aly   23:07 
+But they need to. 
+
+ 
+Ahmed Fouad   23:11 
+Hello, hello, Abdelazim. 
+
+ 
+Hager Aly   23:16 
+The. 
+
+ 
+Ahmed Fouad   23:18 
+Bish. 
+Sorry, the very good news, Flynn, for first iteration, I think. 
+
+ 
+Hager Aly   23:26 
+And I the. 
+Selection. 
+
+ 
+Ahmed Fouad   23:44 
+Ohh, okay, fill, fill, requesting. 
+
+ 
+Hager Aly   23:50 
+Oh, from the. 
+
+ 
+Ahmed Fouad   23:57 
+America. 
+
+ 
+Hager Aly   24:12 
+Ahmed. 
+
+ 
+Ahmed Fouad   24:17 
+Permissions will get on. 
+
+ 
+Ahmed Sayed   24:18 
+Hello, Fathy. 
+What? 
+Yes. 
+
+ 
+Hager Aly   24:35 
+The I will have a few. 
+
+ 
+Ahmed Sayed   24:53 
+Ravi. 
+Hello. 
+
+ 
+Hager Aly   25:04 
+Okay. 
+Ohh. 
+Uh... 
+And and and and. 
+
+ 
+Ahmed Fouad   25:32 
+So, yeah, we started with soil. I am going to change. So, you know, application, and we generate instructions with surgical change. 
+
+ 
+Hager Aly   25:32 
+Hollis? 
+Oh. 
+
+ 
+Sherif Kamal   25:50 
+I will be our long number ahead, Denny's, I'll I'll integration with our article request to my enter ID. 
+
+ 
+Hager Aly   25:51 
+Okay, for love. 
+
+ 
+Ahmed Fouad   25:51 
+****. 
+
+ 
+Hager Aly   26:08 
+Mm. 
+
+ 
+Sherif Kamal   26:09 
+The Ziada. 
+
+ 
+Ahmed Fouad   26:09 
+Development will review. 
+
+ 
+Sherif Kamal   26:15 
+Hey, you are you about to do it? 
+Possible. 
+Also, your phone. 
+
+ 
+Hager Aly   26:24 
+Okay. 
+
+ 
+Ahmed Fouad   26:25 
+Official overhead, by the way, send the box to the send the box to the percent. 
+
+ 
+Hager Aly   26:25 
+Business. 
+My sense, okay. 
+OK, so. 
+
+ 
+Ahmed Fouad   27:08 
+That's a task. 
+
+ 
+Hager Aly   27:09 
+The is it is in the brief? I'm not supposed to in the brief. 
+
+ 
+Ahmed Fouad   27:13 
+Can I date files? 
+
+ 
+Hager Aly   27:13 
+Would you confirm your comfort? 
+
+ 
+Ahmed Fouad   27:17 
+And the size, uh, calling back an upset volume. 
+
+ 
+Hager Aly   27:18 
+Le files. 
+
+ 
+Ahmed Fouad   27:21 
+Ahmed, Lord. 
+
+ 
+Hager Aly   27:23 
+Oh? 
+Mr. Composer. 
+
+ 
+Sherif Kamal   27:26 
+But so cancel the Loria Hagar. 
+
+ 
+Ahmed Fouad   27:26 
+Button. 
+
+ 
+Hager Aly   27:39 
+Ohh. 
+
+ 
+Sherif Kamal   27:49 
+It has a saying. 
+
+ 
+Ahmed Fouad   27:52 
+Or, composer, and the composer 2.5, sir. 
+
+ 
+Sherif Kamal   27:59 
+No, I didn't get that, but not any. 
+
+ 
+Hager Aly   27:59 
+Mm. 
+
+ 
+Ahmed Fouad   28:00 
+Point 5, the ohh, yeah, any ohh, in fact, it's got swire or let's see anyone, but you in fact it's got medium. 
+
+ 
+Hager Aly   28:06 
+My, I, I, I, I mean. 
+
+ 
+Sherif Kamal   28:22 
+Yeah, and as they look in the Dafo, Dafa. 
+
+ 
+Hager Aly   28:30 
+Development development. 
+
+ 
+Sherif Kamal   28:39 
+Totally, Animal. Okay. 
+
+ 
+Hager Aly   28:40 
+Ohh. 
+Fouad. 
+On the song before it. 
+
+ 
+Ahmed Fouad   28:57 
+Well, I have to do it till any integrate with my group build. 
+
+ 
+Sherif Kamal   28:58 
+It did. 
+
+ 
+Ahmed Fouad   29:04 
+For group, the group build the. 
+
+ 
+Hager Aly   29:07 
+Look, 
+
+ 
+Ahmed Fouad   29:10 
+Four point 4.6 and 4.7. 
+But how the ****? 
+
+ 
+Sherif Kamal   29:24 
+And he he Hagar is a little model of the model L. 
+
+ 
+Hager Aly   29:24 
+Hey, wonderful. 
+Noaman. 
+
+ 
+Sherif Kamal   29:32 
+L oh. 
+Right, I can pricing here. 
+
+ 
+Ahmed Fouad   29:46 
+When, when, when, when? 
+Oh. 
+
+ 
+Hager Aly   29:59 
+I have investigate. 
+
+ 
+Ahmed Fouad   30:04 
+Oh, the name. 
+Amien. 
+
+ 
+Hager Aly   30:15 
+That's good. 
+
+ 
+Ahmed Sayed   30:18 
+Play, play. 
+The book. 
+Go, Omnia. 
+
+ 
+Ahmed Fouad   30:26 
+Sorry, bazi, mish. 
+
+ 
+Ahmed Sayed   30:28 
+Fart. 
+
+ 
+Hager Aly   30:29 
+Okay, thank you. Have fun off. 
+
+ 
+Ahmed Sayed   30:31 
+Cancel that. 
+
+ 
+Ahmed Fouad   30:32 
+So, I get a lot more setting. 
+
+ 
+stopped transcription 
