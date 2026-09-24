@@ -32,7 +32,7 @@ flowchart LR
 Clone the repository and install its dependencies with `uv`:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification
 cd llm-privacy-gateway-pii-deidentification-and-reidentification
 uv sync
 ```
