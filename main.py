@@ -2,16 +2,23 @@ from reduct_and_restore_PII import PIIMiddleware
 from langchain_ollama import ChatOllama
 import time
 from dotenv import load_dotenv
+from pathlib import Path
+
+
+
 
 
 
 load_dotenv()
+file_path = Path("test_data/sme_meeting_transcript.txt")
 
-request = """
-Create a proposal for Ahmed from Microsoft.
-The project will be managed by Sarah Johnson.
-Contact Ahmed at ahmed@example.com.
-"""
+meeting_transcript = file_path.read_text(encoding="utf-8")
+
+# request = """
+# Create a proposal for Ahmed from Microsoft.
+# The project will be managed by Sarah Johnson.
+# Contact Ahmed at ahmed@example.com.
+# """
 
 
 # Initialize the LLM and the PII middleware
@@ -57,5 +64,5 @@ def secure_llm_call(user_input: str):
 
     return final_response
 
-
-secure_llm_call(request)
+secure_llm_call(meeting_transcript)
+# secure_llm_call(request)

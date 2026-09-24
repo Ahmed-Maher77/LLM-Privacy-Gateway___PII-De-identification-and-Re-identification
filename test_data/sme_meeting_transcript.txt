@@ -1,0 +1,509 @@
+**Meeting: SME Digital Transformation Project — Discovery & Presales**
+
+**Date:** September 22, 2026
+**Duration:** 48 minutes
+**Participants:**
+
+* Ahmed Hassan — Presales Solution Architect
+* Sarah Mitchell — Client Product Manager
+* Michael Brown — Client CTO
+* Omar Khaled — Client Operations Manager
+* Emily Wilson — Business Analyst
+* Daniel Clark — Integrant Project Manager
+
+---
+
+**09:00 — Ahmed Hassan:**
+
+Good morning everyone. Thanks for joining. Before we start, I'd like to confirm that we're discussing the new customer operations platform for **BrightPath Logistics**.
+
+Sarah, could you give us a brief overview of the current situation and what you're expecting from the new system?
+
+**09:01 — Sarah Mitchell:**
+
+Sure. BrightPath Logistics currently operates across three offices: London, Manchester, and Dubai. We have around 420 employees, but only about 180 of them actively use our current operations system.
+
+The main problem is that our current platform is almost ten years old. It was originally developed by a company called **NorthStar Systems**, and we've been maintaining it internally.
+
+The system is hosted on our private infrastructure in the **Dubai Internet City data center**.
+
+**09:02 — Michael Brown:**
+
+And there are actually two systems involved.
+
+The main system is called **FleetCore**, which handles fleet management and delivery operations. The second one is **CustomerDesk**, which our customer support team uses.
+
+The two systems don't communicate very well.
+
+**09:03 — Ahmed Hassan:**
+
+Understood. What kind of integration do you currently have between them?
+
+**09:03 — Michael Brown:**
+
+Mostly manual integration.
+
+We export CSV files from FleetCore every evening and upload them into CustomerDesk. We also have an old REST API, but it's unreliable.
+
+The API endpoint is:
+
+`https://api.fleetcore.brightpath-example.com/v2`
+
+The integration is currently maintained by **James Anderson**, one of our senior developers.
+
+**09:04 — Emily Wilson:**
+
+There is another important issue. Customer information is duplicated across several systems.
+
+For example, a customer might exist in FleetCore, CustomerDesk, and our billing system under slightly different names.
+
+**09:05 — Omar Khaled:**
+
+Exactly.
+
+Last month we had a customer called **Green Valley Foods** whose account appeared under three different customer IDs.
+
+The operations team had to manually investigate the issue.
+
+**09:06 — Ahmed Hassan:**
+
+What would you like the new platform to do?
+
+**09:06 — Sarah Mitchell:**
+
+Our main goal is to create a unified operations platform.
+
+We want employees to be able to search for a customer, see their orders, view delivery status, communicate with the customer, and access billing information without switching between five different applications.
+
+**09:07 — Michael Brown:**
+
+From a technical perspective, we also want an API-first architecture.
+
+We're currently using **Microsoft Azure** for some workloads, although FleetCore is still hosted on-premises.
+
+We're considering moving more workloads to Azure, but our security team hasn't approved the final architecture yet.
+
+**09:08 — Daniel Clark:**
+
+Would you prefer a complete migration to Azure or a hybrid architecture?
+
+**09:08 — Michael Brown:**
+
+Hybrid initially.
+
+We cannot immediately move FleetCore because it contains historical customer and financial data.
+
+Our compliance team requires that some of that information remains inside our private environment.
+
+**09:09 — Emily Wilson:**
+
+There are also some regulatory requirements around customer information.
+
+We don't want employee or customer information being sent to external AI services without anonymization.
+
+**09:10 — Ahmed Hassan:**
+
+That's important.
+
+Are you expecting AI capabilities as part of the new platform?
+
+**09:10 — Sarah Mitchell:**
+
+Yes.
+
+One of the main reasons we're starting this project is to introduce an AI assistant for our operations team.
+
+For example, an employee could ask:
+
+"Show me all delayed deliveries for Green Valley Foods from last week."
+
+The assistant should retrieve the relevant information and summarize it.
+
+**09:11 — Michael Brown:**
+
+We also want the assistant to help customer support employees.
+
+For example:
+
+"Summarize the history of customer account BP-28491."
+
+The response should include recent orders, complaints, delivery problems, and important notes.
+
+**09:12 — Omar Khaled:**
+
+Ideally, the assistant should also recommend what the support agent should do next.
+
+**09:13 — Ahmed Hassan:**
+
+Would the AI assistant be allowed to modify customer information?
+
+**09:13 — Michael Brown:**
+
+Initially, no.
+
+Version one should be read-only.
+
+We don't want an AI model directly changing customer records.
+
+**09:14 — Ahmed Hassan:**
+
+That makes sense.
+
+What systems would the AI need to access?
+
+**09:14 — Emily Wilson:**
+
+At minimum:
+
+* FleetCore
+* CustomerDesk
+* BillingPro
+* Microsoft SharePoint
+* Our internal knowledge base
+
+There is also an internal application called **OpsHub**.
+
+**09:15 — Sarah Mitchell:**
+
+OpsHub contains operational procedures and internal documentation.
+
+Some of those documents include employee names, internal phone numbers, and escalation procedures.
+
+**09:16 — Daniel Clark:**
+
+Do you already have authentication and authorization?
+
+**09:16 — Michael Brown:**
+
+Yes.
+
+We use Microsoft Entra ID.
+
+Our employees authenticate using their corporate accounts.
+
+For example, my account is `michael.brown@brightpath-example.com`.
+
+Sarah's account is `sarah.mitchell@brightpath-example.com`.
+
+**09:17 — Sarah Mitchell:**
+
+And Omar's account is `omar.khaled@brightpath-example.com`.
+
+**09:18 — Ahmed Hassan:**
+
+What about external users?
+
+**09:18 — Michael Brown:**
+
+There will be no external access in the first release.
+
+Only employees will use the system.
+
+**09:19 — Emily Wilson:**
+
+However, the system will process customer contact information.
+
+For example, one of our customer records contains:
+
+Customer: Robert Taylor
+Email: `robert.taylor@example.org`
+Phone: `+44 7700 900123`
+Address: 18 King Street, Manchester, M2 4AA
+
+Obviously, this is sensitive information.
+
+**09:20 — Ahmed Hassan:**
+
+Understood.
+
+We should make sure the AI layer doesn't unnecessarily expose this information to the model.
+
+**09:21 — Michael Brown:**
+
+Exactly.
+
+That's one of our biggest concerns.
+
+If we use an external LLM provider, we need to make sure customer names, emails, phone numbers, internal system names, and employee information aren't unnecessarily sent to the model.
+
+**09:22 — Daniel Clark:**
+
+Do you have a preferred AI provider?
+
+**09:22 — Michael Brown:**
+
+Not yet.
+
+We're evaluating Azure OpenAI, Anthropic, and some self-hosted models.
+
+Our security team is currently reviewing the options.
+
+**09:23 — Ahmed Hassan:**
+
+What kind of response time are you expecting?
+
+**09:23 — Sarah Mitchell:**
+
+For normal questions, ideally less than five seconds.
+
+For complex reports, maybe ten to fifteen seconds is acceptable.
+
+**09:24 — Omar Khaled:**
+
+But the user interface should show progress.
+
+We don't want employees thinking the application is frozen.
+
+**09:25 — Emily Wilson:**
+
+We also need audit logs.
+
+If an employee asks the AI assistant about a customer, we need to know who asked, when they asked, and what systems were accessed.
+
+**09:26 — Michael Brown:**
+
+But be careful with the logs.
+
+We cannot simply store the complete customer information in application logs.
+
+The logs themselves could become a security problem.
+
+**09:27 — Ahmed Hassan:**
+
+That's a good point.
+
+We could separate technical tracing information from sensitive business data and apply masking or pseudonymization to the logs.
+
+**09:28 — Daniel Clark:**
+
+Let's talk about estimated users.
+
+**09:28 — Sarah Mitchell:**
+
+Around 150 users initially.
+
+If the pilot succeeds, we could reach 400 users.
+
+**09:29 — Ahmed Hassan:**
+
+And what's the expected project timeline?
+
+**09:29 — Sarah Mitchell:**
+
+We'd like the first production version within four months.
+
+The pilot should ideally be available after eight weeks.
+
+**09:30 — Daniel Clark:**
+
+Do you already have a development team?
+
+**09:30 — Michael Brown:**
+
+We have six developers, two QA engineers, one DevOps engineer, and one product manager.
+
+However, they're already working on other projects.
+
+We expect the implementation partner to provide additional development resources.
+
+**09:31 — Daniel Clark:**
+
+Do you have a budget range?
+
+**09:31 — Sarah Mitchell:**
+
+We're targeting approximately **$180,000 to $250,000** for the initial implementation.
+
+The annual operating budget should ideally remain below **$80,000**.
+
+**09:32 — Michael Brown:**
+
+AI usage costs are a concern.
+
+If the system reaches 400 users and each user asks around 20 questions per day, the model costs could become significant.
+
+**09:33 — Ahmed Hassan:**
+
+We should therefore include token usage and infrastructure costs in the architecture and estimation.
+
+**09:34 — Emily Wilson:**
+
+We also need to consider data retention.
+
+Our legal team currently requires customer interaction records to be retained for seven years.
+
+**09:35 — Michael Brown:**
+
+But AI conversation history should not necessarily have the same retention period.
+
+We're still discussing that internally.
+
+**09:36 — Ahmed Hassan:**
+
+Understood.
+
+Would you like the AI assistant to remember previous conversations with an employee?
+
+**09:36 — Sarah Mitchell:**
+
+Potentially, but only within controlled limits.
+
+We don't want the assistant to remember everything indefinitely.
+
+**09:37 — Omar Khaled:**
+
+For example, if I ask about customer BP-28491 today and then ask about the same customer tomorrow, it would be useful if the assistant understood the previous discussion.
+
+But we need a clear retention policy.
+
+**09:38 — Michael Brown:**
+
+Another requirement is role-based access.
+
+A customer support employee should not see the same information as a finance employee.
+
+**09:39 — Ahmed Hassan:**
+
+So the AI assistant should respect the permissions of the logged-in employee.
+
+**09:39 — Michael Brown:**
+
+Correct.
+
+The AI must not become a way to bypass our existing authorization rules.
+
+**09:40 — Emily Wilson:**
+
+Exactly.
+
+For example, an employee shouldn't be able to ask:
+
+"Show me the salary of Sarah Mitchell."
+
+and receive the information simply because the AI has access to our HR system.
+
+**09:41 — Ahmed Hassan:**
+
+That should definitely be handled as an authorization rule outside the LLM.
+
+**09:42 — Daniel Clark:**
+
+What would you consider a successful pilot?
+
+**09:42 — Sarah Mitchell:**
+
+At least 70% of our support employees should actively use it.
+
+For common operational questions, we'd like at least 85% of responses to be considered useful.
+
+**09:43 — Michael Brown:**
+
+And hallucinations are a major concern.
+
+The assistant must not invent customer information.
+
+If it doesn't have enough information, it should clearly say that it doesn't know.
+
+**09:44 — Emily Wilson:**
+
+We also want every important answer to include the source of the information.
+
+For example:
+
+"According to FleetCore record BP-28491..."
+
+or
+
+"According to the OpsHub procedure..."
+
+**09:45 — Ahmed Hassan:**
+
+That suggests we should include source citations and evaluation mechanisms in the design.
+
+**09:46 — Daniel Clark:**
+
+Are there any additional integrations?
+
+**09:46 — Sarah Mitchell:**
+
+Yes.
+
+We use **Microsoft Teams** for internal communication.
+
+Eventually, we'd like employees to interact with the assistant directly from Teams.
+
+**09:47 — Michael Brown:**
+
+But that's probably phase two.
+
+For phase one, a web application is enough.
+
+**09:48 — Ahmed Hassan:**
+
+Okay. Let me summarize what I have.
+
+We're looking at a unified operations platform with:
+
+1. Integration with FleetCore, CustomerDesk, BillingPro, SharePoint, and OpsHub.
+2. A read-only AI assistant in phase one.
+3. Role-based access control.
+4. Customer and employee data protection.
+5. Hybrid cloud/on-premises architecture.
+6. Azure as a potential cloud platform.
+7. AI model provider still under evaluation.
+8. Auditability and traceability.
+9. Source citations for AI responses.
+10. Approximately 150 initial users and potentially 400 users.
+11. Eight-week pilot.
+12. Four-month production target.
+13. Initial budget of approximately $180,000–$250,000.
+
+Did I miss anything important?
+
+**09:49 — Sarah Mitchell:**
+
+One thing.
+
+We want the architecture to support additional AI agents in the future.
+
+For example, a Customer Support Agent, Operations Agent, Reporting Agent, and eventually a Finance Agent.
+
+**09:50 — Michael Brown:**
+
+Yes, but we don't want to build a complicated multi-agent architecture just for the sake of using agents.
+
+The architecture should remain maintainable.
+
+**09:51 — Ahmed Hassan:**
+
+Agreed.
+
+We'll treat the multi-agent approach as an architectural option rather than an assumption.
+
+We'll evaluate it based on the actual use cases.
+
+**09:52 — Daniel Clark:**
+
+Great.
+
+We'll take these requirements and prepare the initial proposal.
+
+We'll include the proposed architecture, team composition, implementation timeline, development and QA estimates, infrastructure costs, AI token costs, security considerations, and major risks.
+
+**09:53 — Sarah Mitchell:**
+
+Perfect.
+
+Please send the proposal to me and Michael.
+
+My email is `sarah.mitchell@brightpath-example.com`.
+
+Michael's is `michael.brown@brightpath-example.com`.
+
+**09:54 — Ahmed Hassan:**
+
+We'll do that.
+
+Thanks everyone.
+
+**09:54 — Meeting ended.**
