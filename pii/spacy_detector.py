@@ -8,6 +8,8 @@ a miss here means real PII reaches the LLM, so recall is the metric that counts.
 
 from __future__ import annotations
 
+import threading
+
 import warnings
 
 from .chunking import iter_windows
@@ -47,13 +49,19 @@ class SpacyDetector:
         self.window_chars = window_chars
         self.overlap_chars = overlap_chars
         self._nlp = None
+        self._load_lock = threading.Lock()
 
     @property
     def nlp(self):
+        """Double-checked lazy load; see GlinerDetector.model for why."""
         if self._nlp is None:
-            import spacy
+            with self._load_lock:
+                if self._nlp is None:
+                    import spacy
 
-            self._nlp = spacy.load(self.model_name, disable=["lemmatizer", "textcat"])
+                    self._nlp = spacy.load(
+                        self.model_name, disable=["lemmatizer", "textcat"]
+                    )
         return self._nlp
 
     @classmethod

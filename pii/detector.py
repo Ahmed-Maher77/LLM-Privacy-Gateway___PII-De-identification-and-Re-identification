@@ -11,6 +11,8 @@ a one-line change rather than a fine-tune.
 
 from __future__ import annotations
 
+import threading
+
 from .chunking import iter_windows
 from .roster import COMMON_WORDS, _normalize
 from .spans import Span
@@ -88,14 +90,26 @@ class GlinerDetector:
         self.overlap_chars = overlap_chars
         self.batch_size = batch_size
         self._model = None
+        self._load_lock = threading.Lock()
 
     @property
     def model(self):
-        """Load the weights on first use so importing this module stays cheap."""
-        if self._model is None:
-            from gliner import GLiNER
+        """Load the weights on first use so importing this module stays cheap.
 
-            self._model = GLiNER.from_pretrained(self.model_name)
+        Double-checked under a lock. Unsynchronised, two threads sharing one
+        detector both enter ``from_pretrained``: the weights load twice, which
+        doubles resident memory, and both writers race on the same Hugging
+        Face cache files. An uncontended acquire costs nothing next to a
+        forward pass. This does not make ``analyze()`` thread-safe -- see the
+        Concurrency section of the README -- it only makes the load itself
+        survive being reached from two threads at once.
+        """
+        if self._model is None:
+            with self._load_lock:
+                if self._model is None:
+                    from gliner import GLiNER
+
+                    self._model = GLiNER.from_pretrained(self.model_name)
         return self._model
 
     def detect(self, text: str) -> list[Span]:

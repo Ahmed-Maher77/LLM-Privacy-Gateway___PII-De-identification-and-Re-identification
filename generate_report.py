@@ -23,6 +23,7 @@ from pii.reporting import (
     summarize_leaks,
     summarize_mapping,
     write_json,
+    write_text,
 )
 from pii.residual import explain, severity_counts
 
@@ -64,15 +65,26 @@ def generate_report(
 
     # Default out of test_data/: that directory is tracked, and two sanitized
     # side-files had already been committed from it.
+    #
+    # The write is deliberately below the status gate rather than here. On a
+    # failed verification "sanitized" text still contains whatever survived
+    # redaction, and writing it before the gate meant the report withheld that
+    # text while the side-file beside it had already published the same
+    # content at default permissions.
     sanitized_path = sanitized_out or DEFAULT_SANITIZED_DIR / f"{input_path.stem}.txt"
-    sanitized_path.parent.mkdir(parents=True, exist_ok=True)
-    sanitized_path.write_text(analysis.sanitized, encoding="utf-8")
 
     result = ""
     result_sanitized = ""
     llm_seconds = 0.0
     restoration_seconds = 0.0
     llm_skipped = None
+
+    sanitized_path.parent.mkdir(parents=True, exist_ok=True)
+    write_text(
+        sanitized_path,
+        analysis.sanitized,
+        contains_secrets=analysis.status != "clean",
+    )
 
     if skip_llm:
         llm_skipped = "--skip-llm"
