@@ -1,68 +1,29 @@
-from reduct_and_restore_PII import PIIMiddleware
-from langchain_ollama import ChatOllama
-import time
-from dotenv import load_dotenv
+"""Example end-to-end run.
+
+Kept as a convenience entry point. The real interface is the CLI:
+
+    uv run privacy-gateway run test_data/sme_meeting_transcript.txt
+
+Unlike the version this replaces, importing this module does not execute an
+LLM call as a side effect.
+"""
+
+from __future__ import annotations
+
+import sys
 from pathlib import Path
 
+from privacy_gateway.cli import main as cli_main
+
+DEFAULT_INPUT = Path("test_data/sme_meeting_transcript.txt")
 
 
+def main(argv: list[str] | None = None) -> int:
+    argv = argv if argv is not None else sys.argv[1:]
+    if not argv:
+        argv = ["run", str(DEFAULT_INPUT), "--print-answer"]
+    return cli_main(argv)
 
 
-
-load_dotenv()
-file_path = Path("test_data/sme_meeting_transcript.txt")
-
-meeting_transcript = file_path.read_text(encoding="utf-8")
-
-# request = """
-# Create a proposal for Ahmed from Microsoft.
-# The project will be managed by Sarah Johnson.
-# Contact Ahmed at ahmed@example.com.
-# """
-
-
-# Initialize the LLM and the PII middleware
-llm = ChatOllama(
-    model="gpt-oss:120b-cloud",
-    temperature=0
-)
-middleware = PIIMiddleware()
-
-
-def secure_llm_call(user_input: str):
-    # ============ 1. Detect + pseudonymize ============
-    start_anonymize = time.perf_counter()
-    
-    sanitized_input, mapping = middleware.anonymize(user_input)
-    
-    end_anonymize = time.perf_counter()
-    print(f"Anonymization took {end_anonymize - start_anonymize:.4f} seconds")
-
-    print("Sanitized Input:", sanitized_input)
-    print("Mapping:", mapping)
-
-    
-    # ============ 2. Send ONLY sanitized data to LLM ============
-    start_llm = time.perf_counter()
-    
-    response = llm.invoke(
-        sanitized_input
-    )
-    
-    end_llm = time.perf_counter()
-    print(f"LLM call took {end_llm - start_llm:.4f} seconds")
-
-    start_restore = time.perf_counter()
-
-    # ============ 3. Restore original values ============
-    final_response = middleware.restore(
-        response.content,
-        mapping
-    )
-    end_restore = time.perf_counter()
-    print(f"Restoration took {end_restore - start_restore:.4f} seconds")
-
-    return final_response
-
-secure_llm_call(meeting_transcript)
-# secure_llm_call(request)
+if __name__ == "__main__":
+    raise SystemExit(main())

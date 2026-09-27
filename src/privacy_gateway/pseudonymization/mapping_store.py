@@ -263,7 +263,12 @@ class MappingStore:
             "total": len(self._by_placeholder),
             "by_type": dict(sorted(by_type.items())),
             "occurrences": sum(len(e.occurrences) for e in self._by_placeholder.values()),
-            "ambiguous": sum(1 for e in self._by_placeholder.values() if e.alias_candidates),
+            # Ambiguous means the surface form could refer to more than one
+            # participant, e.g. a bare "Ahmed" where three people share it.
+            # A single-candidate speaker label is not ambiguous.
+            "ambiguous": sum(
+                1 for e in self._by_placeholder.values() if len(e.alias_candidates) > 1
+            ),
         }
 
     def __repr__(self) -> str:  # never include values
