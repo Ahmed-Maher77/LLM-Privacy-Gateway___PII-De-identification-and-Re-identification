@@ -1,0 +1,18 @@
+{
+  "must_redact": [],
+  "must_keep": [
+    "Apache Kafka",
+    "Redis cluster",
+    "450,000 QPS",
+    "P99 latency",
+    "AWS us-west-2",
+    "Protocol Buffers",
+    "gRPC",
+    "HTTP/2",
+    "Raft consensus",
+    "Apache Cassandra",
+    "eBPF kernel probes",
+    "Prometheus",
+    "TLS 1.3"
+  ]
+}

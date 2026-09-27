@@ -1,0 +1,21 @@
+SUPPORT TICKET: HD-2026-449102
+Status: Open | Priority: High | Channel: Web Portal
+Customer: Samantha Reynolds
+Email: samantha.reynolds88@gmail.com
+Phone: +1-541-555-0199
+Assigned Agent: Liam Gallagher (Tier 2 Support)
+
+INITIAL CUSTOMER MESSAGE:
+Hello support team,
+I ordered a pair of Sony WH-1000XM5 headphones under Order ID ORD-2026-99182. The tracking number TRACK-US-99120 showed delivered yesterday by FedEx Express, but nothing was at my door!
+My delivery address on file is:
+742 Evergreen Terrace, Springfield, OR 97477
+Special delivery instructions were: "leave behind porch gate".
+
+AGENT INTERNAL NOTES & DISPATCH:
+[14:15:20] Liam Gallagher: Contacted local depot dispatcher. Driver contact on file is +1-541-555-0144. The driver reported package was misrouted to alternate address requested via courier redirect:
+Flat 4B, 12 Kensington High Street, London W8 4PT
+Customer Samantha Reynolds confirms she travels frequently between Oregon and London.
+
+[14:22:05] Liam Gallagher: Reshipment authorized at no cost. Replacement order ORD-2026-99244 created with expedited signature requirement.
+Customer notified via email. Ticket status updated to Pending Customer Response.

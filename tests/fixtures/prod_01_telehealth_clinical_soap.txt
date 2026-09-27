@@ -1,0 +1,34 @@
+CLINICAL TELEHEALTH ENCOUNTER NOTE
+Encounter Date: 2026-03-14
+Provider: Dr. Aris Thorne, MD (NPI: 1982736450)
+Facility: Mercy Health Chicago, 450 Mercy Boulevard, Suite 300, Chicago, IL 60611
+Patient: Eleanor Vance
+DOB: 1978-04-12 | MRN: MRN-902184
+Contact: +1-312-555-0198 | eleanor.vance@chicago-patient.net
+
+[SUBJECTIVE]
+Dr. Aris Thorne: Good morning, Eleanor. How have your blood pressure readings been since we adjusted your medication?
+Eleanor Vance: Good morning Dr. Thorne. It's been hovering around 138/88 mmHg. I took my Lisinopril 10mg every morning without missing.
+Dr. Aris Thorne: Good. And are you still experiencing any morning dizziness?
+Eleanor Vance: No dizziness, but my fasting blood glucose has been between 135 and 142 mg/dL. I'm taking Metformin 500mg twice daily with meals.
+
+[OBJECTIVE]
+Vitals:
+- BP: 138/88 mmHg
+- Heart Rate: 74 bpm, regular rhythm
+- BMI: 28.4 kg/m2
+Recent Labs:
+- HbA1c: 7.2% (Target < 7.0%)
+- Fasting Serum Glucose: 138 mg/dL
+- Serum Creatinine: 0.9 mg/dL | eGFR: > 60 mL/min/1.73m2
+
+[ASSESSMENT]
+1. Essential Hypertension (I10) - Suboptimally controlled on Lisinopril 10mg.
+2. Type 2 Diabetes Mellitus without complication (E11.9) - Moderately controlled on Metformin 500mg BID.
+
+[PLAN]
+1. Increase Lisinopril to 20mg once daily in the morning.
+2. Continue Metformin 500mg twice daily with breakfast and dinner.
+3. Eleanor Vance to log home BP readings twice daily for 14 days.
+4. Repeat comprehensive metabolic panel and HbA1c in 3 months.
+5. Follow-up video consultation scheduled for 2026-06-15 with Dr. Aris Thorne.

@@ -1,0 +1,35 @@
+# INCIDENT WAR ROOM: INC-88219 (P1 - Checkout Database Pool Exhaustion)
+Date: 2026-05-18
+Incident Commander: Rashid Al-Khatib (Staff SRE)
+Participants:
+- Rashid Al-Khatib (Staff SRE, rashid.khatib@infra-ops.io)
+- Chloe Dubois (Lead DBA)
+- Kevin Zhang (Platform Eng)
+
+[11:02:14] Rashid Al-Khatib: Alert fired on Datadog: Checkout service latency P99 > 8500ms, HTTP 504 Gateway Timeout on /api/v2/orders.
+[11:03:00] Kevin Zhang: Pods in production are restarting. Let me pull the current pod status:
+```bash
+kubectl get pods -n production -l app=checkout-service
+```
+Three pods are in CrashLoopBackOff with OOMKilled.
+
+[11:04:12] Chloe Dubois: The database primary at 10.142.0.45 is hitting 100% connection capacity. Max connections is 500, active is 498.
+[11:04:45] Chloe Dubois: We had a rogue background migration script holding locks. Here is the connection URI the legacy job was using:
+postgresql://app_writer:K9#mQ8$vL2!xZ@10.142.0.45:5432/orders_prod
+Please terminate that connection from the gateway proxy at 192.168.10.88.
+
+[11:05:30] Rashid Al-Khatib: Terminating backend pid 19482. Also checking the ingress controller on public IP 203.0.113.195 with interface MAC 08:00:27:B4:9C:12 on eth0.
+[11:06:10] Kevin Zhang: We also need to refresh the vault auth token. The temporary bearer token is:
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIn0.sflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+[11:07:05] Chloe Dubois: Diagnostics JSON from pg_stat_activity:
+JSON
+{
+  "host": "db-primary.prod.internal",
+  "port": 5432,
+  "pool_size": 500,
+  "active_connections": 124,
+  "status": "healthy"
+}
+
+[11:08:20] Rashid Al-Khatib: Pool capacity restored. P99 latency dropped back to 42ms. Incident resolved.

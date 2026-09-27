@@ -1,0 +1,29 @@
+{
+  "must_redact": [
+    "Ananya Sen",
+    "Liam Gallagher",
+    "22 Belsize Park Road, London NW3 4DX",
+    "+44 7911 123456",
+    "l.gallagher84@fastmail.co.uk",
+    "Sen"
+  ],
+  "must_keep": [
+    "Subject-42",
+    "IRB-2025-HUM-088",
+    "Principal Investigator",
+    "London School of Economics",
+    "qualitative study",
+    "ride-sharing platforms"
+  ],
+  "same_entity": [
+    [
+      "Dr. Ananya Sen",
+      "Ananya Sen",
+      "Dr. Sen",
+      "Sen"
+    ],
+    [
+      "Liam Gallagher"
+    ]
+  ]
+}

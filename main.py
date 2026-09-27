@@ -1,68 +1,68 @@
-from reduct_and_restore_PII import PIIMiddleware
-from langchain_ollama import ChatOllama
+"""End-to-end example: anonymize a transcript, call the LLM, restore the PII."""
+
+from __future__ import annotations
+
+import sys
 import time
-from dotenv import load_dotenv
 from pathlib import Path
 
+from dotenv import load_dotenv
+from langchain_ollama import ChatOllama
 
-
-
-
+from pii import PIIMiddleware
+from pii.errors import EXIT_OK, PIIError
+from pii.residual import explain
 
 load_dotenv()
-file_path = Path("test_data/sme_meeting_transcript.txt")
 
-meeting_transcript = file_path.read_text(encoding="utf-8")
+INPUT_FILE = Path("test_data/sme_meeting_transcript.txt")
+MODEL = "gpt-oss:120b-cloud"
 
-# request = """
-# Create a proposal for Ahmed from Microsoft.
-# The project will be managed by Sarah Johnson.
-# Contact Ahmed at ahmed@example.com.
-# """
+llm = ChatOllama(model=MODEL, temperature=0)
 
-
-# Initialize the LLM and the PII middleware
-llm = ChatOllama(
-    model="gpt-oss:120b-cloud",
-    temperature=0
-)
+# on_leak="raise" is the default: analyze() refuses to return a result that
+# still contains PII, so the llm.invoke() below is unreachable on a failure.
+# Enforcement lives in one place rather than in every caller.
 middleware = PIIMiddleware()
 
 
-def secure_llm_call(user_input: str):
-    # ============ 1. Detect + pseudonymize ============
-    start_anonymize = time.perf_counter()
-    
-    sanitized_input, mapping = middleware.anonymize(user_input)
-    
-    end_anonymize = time.perf_counter()
-    print(f"Anonymization took {end_anonymize - start_anonymize:.4f} seconds")
+def secure_llm_call(user_input: str) -> str:
+    # ============ 1. Detect + pseudonymize + verify ============
+    start = time.perf_counter()
+    result = middleware.analyze(user_input)
+    print(f"Anonymization took {time.perf_counter() - start:.2f} seconds")
 
-    print("Sanitized Input:", sanitized_input)
-    print("Mapping:", mapping)
+    print(f"Profile: {result.profile}")
+    print(f"Speakers detected: {', '.join(result.roster) or 'none'}")
+    print(f"Entities replaced: {len(result.mapping)}")
+    if result.escapes:
+        print(f"Neutralized placeholder literals in input: {len(result.escapes)}")
+    print(f"Verification: {result.status}")
+    if result.residual:
+        print(explain(result.residual))
 
-    
-    # ============ 2. Send ONLY sanitized data to LLM ============
-    start_llm = time.perf_counter()
-    
-    response = llm.invoke(
-        sanitized_input
-    )
-    
-    end_llm = time.perf_counter()
-    print(f"LLM call took {end_llm - start_llm:.4f} seconds")
-
-    start_restore = time.perf_counter()
+    # ============ 2. Send ONLY sanitized data to the LLM ============
+    start = time.perf_counter()
+    response = llm.invoke(result.sanitized)
+    print(f"LLM call took {time.perf_counter() - start:.2f} seconds")
 
     # ============ 3. Restore original values ============
-    final_response = middleware.restore(
-        response.content,
-        mapping
-    )
-    end_restore = time.perf_counter()
-    print(f"Restoration took {end_restore - start_restore:.4f} seconds")
+    start = time.perf_counter()
+    # restore_for cannot be called without the escape table, unlike restore().
+    final_response = middleware.restore_for(response.content, result)
+    print(f"Restoration took {time.perf_counter() - start:.4f} seconds")
 
     return final_response
 
-secure_llm_call(meeting_transcript)
-# secure_llm_call(request)
+
+def main() -> int:
+    try:
+        print(secure_llm_call(INPUT_FILE.read_text(encoding="utf-8")))
+    except PIIError as exc:
+        print(f"Refusing to continue: {exc}", file=sys.stderr)
+        return exc.exit_code
+    return EXIT_OK
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

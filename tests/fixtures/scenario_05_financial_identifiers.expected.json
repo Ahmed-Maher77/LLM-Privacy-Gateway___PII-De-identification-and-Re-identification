@@ -1,0 +1,25 @@
+{
+  "must_redact": [
+    "Olivia Wilson",
+    "4532-0192-8834-5610",
+    "482",
+    "09/29",
+    "GB29NWBK60161331926819",
+    "NWBKGB2L",
+    "122000049",
+    "9876543210",
+    "123-45-6789"
+  ],
+  "must_keep": [
+    "Payment verification call",
+    "Customer:",
+    "Card number:",
+    "CVV:",
+    "Expiry:",
+    "IBAN:",
+    "SWIFT:",
+    "Routing number:",
+    "Account number:",
+    "SSN:"
+  ]
+}

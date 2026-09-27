@@ -1,0 +1,34 @@
+{
+  "must_redact": [
+    "Catherine O'Connor",
+    "Arthur Vance",
+    "Dominic Moreau",
+    "EMP-9402",
+    "88 Beacon Ridge Blvd, Seattle, WA 98101",
+    "dmoreau.private@fastmail.com",
+    "+1-206-555-0177",
+    "Claire Moreau"
+  ],
+  "must_keep": [
+    "Vice President of People Operations",
+    "General Counsel",
+    "Senior Vice President of Engineering",
+    "Exceeds Expectations",
+    "base salary",
+    "USD",
+    "45,000 unvested RSUs",
+    "COBRA continuation subsidy",
+    "ACTION ITEMS"
+  ],
+  "same_entity": [
+    [
+      "Catherine O'Connor"
+    ],
+    [
+      "Arthur Vance"
+    ],
+    [
+      "Dominic Moreau"
+    ]
+  ]
+}

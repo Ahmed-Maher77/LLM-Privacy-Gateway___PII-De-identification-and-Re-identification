@@ -1,0 +1,16 @@
+{
+  "must_redact": [
+    "postgresql://admin_user:P@ssw0rd2026!@10.0.4.15:5432/production_db",
+    "sk-live-EXAMPLE-1234567890",
+    "James Anderson",
+    "10.0.4.15"
+  ],
+  "must_keep": [
+    "Deployment notes",
+    "DATABASE_URL=",
+    "API_KEY=",
+    "SERVICE_OWNER=",
+    "Microsoft Azure",
+    "the private network at"
+  ]
+}

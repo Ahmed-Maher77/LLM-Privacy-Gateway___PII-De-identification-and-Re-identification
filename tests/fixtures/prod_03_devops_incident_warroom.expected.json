@@ -1,0 +1,39 @@
+{
+  "must_redact": [
+    "Rashid Al-Khatib",
+    "rashid.khatib@infra-ops.io",
+    "Chloe Dubois",
+    "Kevin Zhang",
+    "10.142.0.45",
+    "postgresql://app_writer:K9#mQ8$vL2!xZ@10.142.0.45:5432/orders_prod",
+    "192.168.10.88",
+    "203.0.113.195",
+    "08:00:27:B4:9C:12",
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIn0.sflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  ],
+  "must_keep": [
+    "Staff SRE",
+    "Lead DBA",
+    "Platform Eng",
+    "Datadog",
+    "kubectl",
+    "CrashLoopBackOff",
+    "OOMKilled",
+    "HTTP 504",
+    "\"pool_size\"",
+    "\"active_connections\"",
+    "\"status\"",
+    "P99 latency"
+  ],
+  "same_entity": [
+    [
+      "Rashid Al-Khatib"
+    ],
+    [
+      "Chloe Dubois"
+    ],
+    [
+      "Kevin Zhang"
+    ]
+  ]
+}

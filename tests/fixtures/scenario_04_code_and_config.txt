@@ -1,0 +1,7 @@
+Deployment notes:
+
+DATABASE_URL=postgresql://admin_user:P@ssw0rd2026!@10.0.4.15:5432/production_db
+API_KEY="sk-live-EXAMPLE-1234567890"
+SERVICE_OWNER="James Anderson"
+
+The service runs in Microsoft Azure and connects to the private network at 10.0.4.15.

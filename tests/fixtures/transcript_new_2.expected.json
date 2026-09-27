@@ -1,0 +1,37 @@
+{
+  "must_redact": [
+    "JAMES O'CONNOR",
+    "James O'Connor",
+    "AMARA NWOSU",
+    "Amara Nwosu",
+    "DR. YUKI TANAKA-O'BRIEN",
+    "Yuki Tanaka-O'Brien",
+    "O'Brien",
+    "O'Connor",
+    "Priya Sharma",
+    "Rebecca Lindstrom",
+    "PIR-2024-0088"
+  ],
+  "must_keep": [
+    "AES-256",
+    "CVE-2024-21762",
+    "Russia",
+    "Lazarus",
+    "Meridian Health",
+    "Deloitte Cyber",
+    "CrowdStrike",
+    "Fortinet FortiGate",
+    "Privacy Act 1988"
+  ],
+  "same_entity": [
+    [
+      "JAMES O'CONNOR",
+      "James O'Connor"
+    ],
+    [
+      "AMARA NWOSU",
+      "Amara Nwosu"
+    ]
+  ],
+  "notes": "'North Korean' is deliberately redacted. NORP fails closed: it is released only when it modifies a noun that cannot be a person. Adding 'group' to that release list would also release 'ethnic group' and 'religious group', which are about people, so the nationality attached to a threat actor stays masked. Over-redaction here is the accepted cost of not printing Article 9 data."
+}

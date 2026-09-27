@@ -1,0 +1,45 @@
+# Organisation-specific PII patterns.
+#
+# Copy to `pii_patterns.toml` (gitignored) or point $PII_PATTERNS_CONFIG at it.
+# Loaded by stdlib tomllib -- no extra dependency.
+#
+# This file is TRUSTED OPERATOR CONFIG, not untrusted input. It runs no code,
+# but Python's `re` has no timeout, so a pathological regex can hang the
+# process. Review changes the way you would review a firewall rule.
+
+version = 1
+
+[settings]
+# Matches scoring below this are discarded. Lower favours recall.
+min_score = 0.50
+# true keeps ONLY the patterns below, dropping every built-in rule.
+replace_builtins = false
+
+[[patterns]]
+label = "BADGE_ID"
+# Single quotes keep backslashes literal: TOML basic strings would eat them.
+regex = '(?<![\w-])BDG-\d{5}(?![\w-])'
+group = 0            # 0 = whole match; 1 = redact the captured value only
+score = 0.90
+priority = 62        # settles overlaps against other labels
+description = "Site access badge number"
+# The loader asserts these at startup, which turns a silent typo that makes
+# the rule match nothing into a hard failure.
+examples = ["BDG-40291"]
+counter_examples = ["BDG-40", "TEMPBDG-40291"]
+
+[[patterns]]
+label = "PATIENT_ID"
+# Keyword-anchored: group 1 is redacted, so "Patient ID" stays readable while
+# the number does not. This is the shape that fixes "CVV was masked, 482 was not".
+regex = '(?<![A-Za-z])(?i:patient(?:\s*id)?)(?![A-Za-z])[^\d\n]{0,16}?(\d{6,10})(?!\d)'
+group = 1
+score = 0.95
+examples = ["Patient ID 4820193"]
+
+[exclusions]
+# Extends the built-in stoplist that keeps RFC-2616 and ISO-8601 from being
+# read as internal identifiers.
+id_prefixes = ["ACME", "PROJ"]
+# Disable a built-in rule entirely, by label.
+labels = []

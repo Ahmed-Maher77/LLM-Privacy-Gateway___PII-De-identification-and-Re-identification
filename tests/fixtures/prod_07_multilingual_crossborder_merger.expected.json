@@ -1,0 +1,38 @@
+{
+  "must_redact": [
+    "Tariq Al-Mansoor",
+    "Hélène de Montmirail",
+    "Matthias Brandt",
+    "+971 4 312 9000",
+    "14 Rue de la Paix, 75002 Paris, France",
+    "FR82123456789",
+    "DE987654321",
+    "+49 30 22730000",
+    "CH9300762011623852957",
+    "UBSWCHZH80A",
+    "Tariq"
+  ],
+  "must_keep": [
+    "Managing Partner",
+    "General Counsel",
+    "Lead Auditor",
+    "EBITDA multiples",
+    "VAT",
+    "IBAN",
+    "SWIFT code",
+    "statutory audit certificate"
+  ],
+  "same_entity": [
+    [
+      "Tariq Al-Mansoor",
+      "Tariq"
+    ],
+    [
+      "Hélène de Montmirail"
+    ],
+    [
+      "Dr. Matthias Brandt",
+      "Matthias Brandt"
+    ]
+  ]
+}

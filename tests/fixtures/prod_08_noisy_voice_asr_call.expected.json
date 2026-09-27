@@ -1,0 +1,26 @@
+{
+  "must_redact": [
+    "David Cooper",
+    "Natalie Brooks",
+    "POL-881920",
+    "124 North Oak Street, Denver, CO 80202",
+    "+1-303-555-0184",
+    "natalie.brooks@outlook.com",
+    "Natalie"
+  ],
+  "must_keep": [
+    "insurance claims",
+    "fender bender",
+    "comprehensive coverage",
+    "deductible of five hundred dollars"
+  ],
+  "same_entity": [
+    [
+      "Natalie Brooks",
+      "Natalie"
+    ],
+    [
+      "David Cooper"
+    ]
+  ]
+}

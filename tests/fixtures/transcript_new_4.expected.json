@@ -1,0 +1,40 @@
+{
+  "must_redact": [
+    "ROHAN MEHTA",
+    "Rohan Mehta",
+    "ANJALI DESHMUKH",
+    "Anjali Deshmukh",
+    "KENJI WATANABE",
+    "Kenji Watanabe",
+    "Nandini",
+    "Bhattacharya",
+    "BHRTINBB",
+    "RBI/2023/CYB/0847",
+    "rohan.mehta@bharatcb.co.in",
+    "+91-98200-45173",
+    "CD-2024-0233"
+  ],
+  "must_keep": [
+    "Finacle",
+    "AES-128",
+    "AES-256",
+    "RBI",
+    "UPI",
+    "KYC",
+    "Infosys",
+    "ISO 20022",
+    "HDFC Bank",
+    "247 branches",
+    "July 9, 2024"
+  ],
+  "same_entity": [
+    [
+      "ROHAN MEHTA",
+      "Rohan Mehta"
+    ],
+    [
+      "ANJALI DESHMUKH",
+      "Anjali Deshmukh"
+    ]
+  ]
+}

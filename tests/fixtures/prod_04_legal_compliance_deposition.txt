@@ -1,0 +1,26 @@
+IN THE UNITED STATES DISTRICT COURT FOR THE SOUTHERN DISTRICT OF NEW YORK
+Case No. 24-CV-08912 (LTS)
+
+DEPOSITION OF HARRISON BLAKE
+Date: July 19, 2026
+Court Reporter: Brenda Higgins, RPR
+
+Appearances:
+Victoria Sterling, Esq. - Sterling & Mercer LLP (For the Plaintiff)
+Arthur Vance, Esq. - Vance Legal Partners (For the Witness)
+
+The witness, Harrison Blake, being first duly sworn, testified as follows:
+
+Examination by Ms. Sterling:
+001: Q. Good morning, Mr. Blake. Would you state your full name and current residential address for the record?
+002: A. My name is Harrison Blake. I reside at 78 Fleet Street, London EC4Y 1HY, United Kingdom.
+003: Q. And what is your official UK passport number for identification?
+004: A. It is P98234109.
+005: Q. Thank you. Directing your attention to Exhibit 14, did you hold signature authority over Cayman escrow account CYM-889102?
+006: Arthur Vance: Objection to form.
+007: Harrison Blake: Yes, in my former capacity as Chief Financial Officer, I was an authorized signatory.
+008: Q. And was that account linked to the domestic entity with Federal Employer Identification Number TAX-8891024?
+009: A. Yes, that is correct.
+010: Q. Did you send the wire instructions using your email h.blake@blake-advisory.co.uk?
+011: A. Yes, on or about May 4th.
+012: Ms. Sterling: Let the record reflect witness identified the signature on Exhibit 14. We will take a ten-minute recess.

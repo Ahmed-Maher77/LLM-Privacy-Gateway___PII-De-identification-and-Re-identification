@@ -1,0 +1,42 @@
+{
+  "must_redact": [
+    "Marcus Vance",
+    "Jonathan Sterling",
+    "142 Elmwood Ave, Boston, MA 02116",
+    "491-20-8472",
+    "09284719284",
+    "021000021",
+    "4532-0192-8834-5610",
+    "891",
+    "11/28",
+    "GB29NWBK60161331926819",
+    "NWBKGB2L",
+    "j.sterling@sterling-advisors.com",
+    "Marcus",
+    "Sterling"
+  ],
+  "must_keep": [
+    "Fraud Operations Specialist",
+    "wire transfer",
+    "USD",
+    "CVV",
+    "expiry",
+    "SSN",
+    "routing number",
+    "account number",
+    "IBAN",
+    "SWIFT",
+    "OFAC",
+    "AML"
+  ],
+  "same_entity": [
+    [
+      "Marcus Vance",
+      "Marcus"
+    ],
+    [
+      "Jonathan Sterling",
+      "Sterling"
+    ]
+  ]
+}

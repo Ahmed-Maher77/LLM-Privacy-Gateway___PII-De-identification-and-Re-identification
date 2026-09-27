@@ -1,0 +1,22 @@
+{
+  "must_redact": [
+    "Ahmed Hassan",
+    "Sarah Mitchell",
+    "Michael Brown",
+    "sarah.mitchell@example.com"
+  ],
+  "must_keep": [
+    "09:00",
+    "09:02",
+    "09:04",
+    "09:06",
+    "Good morning",
+    "will lead the review",
+    "follow up tomorrow"
+  ],
+  "same_entity": [
+    [
+      "Ahmed Hassan"
+    ]
+  ]
+}

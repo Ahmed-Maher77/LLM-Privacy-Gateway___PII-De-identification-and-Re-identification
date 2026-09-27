@@ -1,0 +1,33 @@
+{
+  "must_redact": [
+    "Eleanor Vance",
+    "Aris Thorne",
+    "MRN-902184",
+    "450 Mercy Boulevard, Suite 300, Chicago, IL 60611",
+    "+1-312-555-0198",
+    "eleanor.vance@chicago-patient.net",
+    "Eleanor"
+  ],
+  "must_keep": [
+    "Lisinopril 10mg",
+    "Metformin 500mg",
+    "138/88 mmHg",
+    "HbA1c: 7.2%",
+    "Essential Hypertension",
+    "Type 2 Diabetes Mellitus",
+    "SUBJECTIVE",
+    "OBJECTIVE",
+    "ASSESSMENT",
+    "PLAN"
+  ],
+  "same_entity": [
+    [
+      "Dr. Aris Thorne",
+      "Aris Thorne"
+    ],
+    [
+      "Eleanor Vance",
+      "Eleanor"
+    ]
+  ]
+}

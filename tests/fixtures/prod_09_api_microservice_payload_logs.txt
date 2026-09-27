@@ -1,0 +1,17 @@
+2026-09-27T10:15:30.124Z [INFO] api-gateway: Incoming request POST /v1/checkout/orders
+2026-09-27T10:15:30.125Z [DEBUG] api-gateway: Request payload dumped for debugging:
+JSON
+{
+  "order_id": "ORD-2026-8819",
+  "customer_name": "Farhan Qureshi",
+  "email": "farhan.qureshi@techcorp.ae",
+  "phone": "+971-50-555-1234",
+  "shipping_address": "Villa 14, Al Safa 2, Dubai, United Arab Emirates",
+  "ip_address": "198.51.100.42",
+  "client_mac": "A4:83:E7:2C:19:B0",
+  "card_number": "4532-0192-8834-5610",
+  "currency": "AED",
+  "amount": 1499.00,
+  "status": "authorized"
+}
+2026-09-27T10:15:30.250Z [INFO] payment-service: Transaction authorized successfully. Response code HTTP 201 Created.

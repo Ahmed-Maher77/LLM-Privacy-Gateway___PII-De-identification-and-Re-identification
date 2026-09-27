@@ -1,0 +1,38 @@
+{
+  "must_redact": [
+    "Omar Farooq",
+    "Elena Rostova",
+    "Hannah Schmidt",
+    "Sophia Maria Rodriguez-Nielsen",
+    "+44 20 7946 0912",
+    "+49 30 1234567",
+    "sophia.rodriguez@aegis-health.eu",
+    "s.rodriguez85@protonmail.com",
+    "10 Downing Street",
+    "SW1A 2AA",
+    "PAG98230149",
+    "ES-B87654321",
+    "DBEKDEFFXXX",
+    "5412-7512-3412-8890",
+    "891",
+    "PHI-88209-X12",
+    "eyJhbGciOiJIUzI1NiIs",
+    "ssw0rd2026",
+    "admin_user",
+    "172.16.254.1",
+    "3A:80:41:FC:02:9A",
+    "456-78-9012"
+  ],
+  "must_keep": [
+    "PCI-DSS",
+    "SWIFT/BIC",
+    "VAT",
+    "Master Card",
+    "Microsoft Teams",
+    "-X POST",
+    "-H \"Content-Type: application/json\"",
+    "\"db_connection\"",
+    "\"client_ip\"",
+    "\"patient_ssn\""
+  ]
+}

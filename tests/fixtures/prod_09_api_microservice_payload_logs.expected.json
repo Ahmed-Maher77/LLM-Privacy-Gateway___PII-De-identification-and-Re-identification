@@ -1,0 +1,31 @@
+{
+  "must_redact": [
+    "Farhan Qureshi",
+    "farhan.qureshi@techcorp.ae",
+    "+971-50-555-1234",
+    "Villa 14, Al Safa 2, Dubai, United Arab Emirates",
+    "198.51.100.42",
+    "A4:83:E7:2C:19:B0",
+    "4532-0192-8834-5610"
+  ],
+  "must_keep": [
+    "\"order_id\"",
+    "\"customer_name\"",
+    "\"email\"",
+    "\"phone\"",
+    "\"shipping_address\"",
+    "\"ip_address\"",
+    "\"client_mac\"",
+    "\"card_number\"",
+    "\"currency\"",
+    "\"amount\"",
+    "\"status\"",
+    "POST /v1/checkout/orders",
+    "HTTP 201 Created"
+  ],
+  "same_entity": [
+    [
+      "Farhan Qureshi"
+    ]
+  ]
+}

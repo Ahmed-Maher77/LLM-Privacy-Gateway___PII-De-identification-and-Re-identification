@@ -1,0 +1,11 @@
+Payment verification call
+
+Customer: Olivia Wilson
+Card number: 4532-0192-8834-5610
+CVV: 482
+Expiry: 09/29
+IBAN: GB29NWBK60161331926819
+SWIFT: NWBKGB2L
+Routing number: 122000049
+Account number: 9876543210
+SSN: 123-45-6789

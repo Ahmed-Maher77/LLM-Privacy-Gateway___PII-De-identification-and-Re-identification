@@ -1,0 +1,18 @@
+{
+  "must_redact": [
+    "Ahmed Farid",
+    "Rania Fahmy",
+    "Hossam Badri",
+    "ahmed.farid@example.com",
+    "POD-4421"
+  ],
+  "must_keep": [
+    "0 minutes 31 seconds",
+    "27 minutes 49 seconds",
+    "So, um,",
+    "project",
+    "maybe starts Monday",
+    "The delivery is in",
+    "Check ticket"
+  ]
+}

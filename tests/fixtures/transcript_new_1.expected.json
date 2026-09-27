@@ -1,0 +1,34 @@
+{
+  "must_redact": [
+    "KWAME MENSAH",
+    "Kwame Mensah",
+    "OLIVIA HARTWELL",
+    "Olivia Hartwell",
+    "HIROSHI TANAKA",
+    "Hiroshi Tanaka",
+    "k.mensah@adyen.com",
+    "m.kowalski@adyen.com",
+    "INT-2024-0417",
+    "Pieter van Dijk"
+  ],
+  "must_keep": [
+    "European",
+    "Adyen",
+    "Stripe",
+    "Brighton Systems",
+    "Germany, France, and Spain",
+    "Amsterdam and Dublin",
+    "Frankfurt",
+    "Bangalore"
+  ],
+  "same_entity": [
+    [
+      "KWAME MENSAH",
+      "Kwame Mensah"
+    ],
+    [
+      "OLIVIA HARTWELL",
+      "Olivia Hartwell"
+    ]
+  ]
+}

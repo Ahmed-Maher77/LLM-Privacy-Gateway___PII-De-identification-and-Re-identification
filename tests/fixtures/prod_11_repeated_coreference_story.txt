@@ -1,0 +1,16 @@
+POST-MORTEM RETROSPECTIVE: INCIDENT RETRO-089
+Date: 2026-06-25
+Chair: Dr. Seraphina Chen (Principal Architect)
+
+ATTENDEES:
+- Dr. Seraphina Chen (Principal Architect, schen@acme.corp)
+- Marcus Vance (Director of SRE, marcus.vance@acme.corp)
+- Tariq Al-Mansoor (Senior Infrastructure Engineer, t.almansoor@acme.corp)
+
+[15:00:10] Dr. Seraphina Chen: Let us begin. Marcus Vance, could you walk us through the initial trigger?
+[15:00:45] Marcus Vance: Thanks Seraphina. At 14:10 UTC, our cluster lost quorum consensus. Tariq Al-Mansoor noticed the network partition first.
+[15:01:20] Tariq Al-Mansoor: That's right. When Marcus alerted the channel, I checked the failover mechanism. The replica was not promoting cleanly.
+[15:01:55] Dr. Seraphina Chen: Did you contact the database vendor, Tariq?
+[15:02:15] Tariq Al-Mansoor: Yes, I forwarded the diagnostics to their support team.
+[15:02:40] Marcus Vance: Mr. Vance will ensure the runbooks are updated by Friday. Please send all follow-up questions directly to marcus.vance@acme.corp.
+[15:03:10] Dr. Seraphina Chen: Excellent. Dr. Seraphina Chen will sign off on the final architecture review once Marcus as well as Tariq submit the remediation ticket.

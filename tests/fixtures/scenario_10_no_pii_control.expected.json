@@ -1,0 +1,12 @@
+{
+  "must_redact": [],
+  "must_keep": [
+    "System health report",
+    "The batch completed successfully",
+    "Three workers processed 420 records",
+    "48 minutes",
+    "No warnings were reported",
+    "the queue is empty",
+    "tomorrow at 09:00"
+  ]
+}

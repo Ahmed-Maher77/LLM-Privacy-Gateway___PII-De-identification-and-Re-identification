@@ -1,0 +1,202 @@
+=====================================================================
+INTERVIEW TRANSCRIPT
+=====================================================================
+Interview Title:    Whistleblower Interview — Environmental Compliance
+Interview ID:       WB-2024-0119
+Date:              June 14, 2024
+Time:              09:00 – 11:30 CST
+Location:          Chicago, Illinois, United States
+Interviewer:       Margaret "Maggie" O'Sullivan, Esq.
+                   (Special Counsel, SEC Whistleblower Office)
+Co-Interviewer:    Robert Chen Jr. (Senior Investigator, EPA)
+Witness:           John Smith
+                   (Former Environmental Health & Safety Manager,
+                   Halcyon Petrochemical Corp.)
+Note:              Witness testified under pseudonym per
+                   whistleblower protection agreement.
+=====================================================================
+
+[09:00:15] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Good morning. I'm Maggie O'Sullivan, and this is my colleague
+Robert Chen. Please state your name for the record.
+
+[09:00:30] JOHN SMITH:
+---------------------------------------------------------------------
+My legal name is John Smith, but that's a pseudonym. My real
+name is on file with your office. I was the EHS Manager at
+Halcyon Petrochemical in Gary, Indiana, from 2019 to 2024.
+
+[09:01:00] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Mr. Smith, can you describe your role at Halcyon?
+
+[09:01:15] JOHN SMITH:
+---------------------------------------------------------------------
+I was responsible for environmental compliance across three
+facilities: the Gary refinery, the Whiting terminal, and a
+storage depot in East Chicago. I reported to the VP of
+Operations, Sarah Goldberg, and she reported to the CEO,
+William "Bill" Harrington III.
+
+[09:02:00] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Let's go to the events of March 12, 2023. What happened?
+
+[09:02:20] JOHN SMITH:
+---------------------------------------------------------------------
+There was a chemical release at the Gary refinery. Approximately
+14,000 gallons of benzene leaked into a drainage channel that
+feeds into the Grand Calumet River. The leak was detected by
+a sensor at 02:47 AM, but the alarm system failed. It wasn't
+discovered until 6:30 AM when a night-shift operator, Miguel
+Hernández, noticed the smell.
+
+[09:03:15] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Why did the alarm fail?
+
+[09:03:22] JOHN SMITH:
+---------------------------------------------------------------------
+Because it had been disabled. I have documentation showing
+that Sarah Goldberg authorized disabling the alarm system
+in February 2023 to prevent "nuisance alarms" during a
+maintenance overhaul. She sent an email to me and to Tomás
+García, the plant manager.
+
+[09:04:00] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Do you have that email?
+
+[09:04:08] JOHN SMITH:
+---------------------------------------------------------------------
+I do. It's in the packet I gave to your office last month.
+The email was sent from s.goldberg@halcyonpetro.com on
+February 8, 2023, at 4:15 PM.
+
+[09:04:45] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Who else knew about the disabled alarm?
+
+[09:04:55] JOHN SMITH:
+---------------------------------------------------------------------
+At least a dozen people. There was a meeting on February 10th
+at the Gary facility. Attendees included Sarah Goldberg,
+Tomás García, myself, a safety consultant named Dr. Elizabeth
+Fitzgerald, and several shift supervisors. The minutes were
+recorded by a junior EHS coordinator, Ahmed Al-Mansouri.
+
+[09:05:50] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+What happened after the March 12 release?
+
+[09:06:00] JOHN SMITH:
+---------------------------------------------------------------------
+The company downplayed it. The official report to the Indiana
+Department of Environmental Management claimed only 800 gallons
+were released. Sarah Goldberg told me to revise my incident
+report. When I refused, she had HR — a woman named Patricia
+O'Brien — issue me a written warning for "insubordination."
+
+[09:06:55] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Did you report the discrepancy to anyone outside the company?
+
+[09:07:05] JOHN SMITH:
+---------------------------------------------------------------------
+I contacted the EPA Region 5 office in Chicago on April 3rd.
+I spoke with a compliance officer named David Kim. He took my
+initial statement but said he needed to escalate it. Two weeks
+later, I received a call from someone claiming to be from the
+EPA — but I now believe it was a private investigator hired by
+Halcyon. The caller ID showed "Kessler & Associates."
+
+[09:08:10] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Kessler & Associates — do you know that firm?
+
+[09:08:18] JOHN SMITH:
+---------------------------------------------------------------------
+I do now. They're a Chicago-based firm that specializes in
+corporate counter-intelligence. Their CEO is a former FBI agent
+named Frank Kessler. I believe Halcyon's general counsel,
+Meredith Vance, hired them. Ms. Vance works out of the
+New York office, at 200 Park Avenue.
+
+[09:09:15] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+How were you retaliated against?
+
+[09:09:25] JOHN SMITH:
+---------------------------------------------------------------------
+It started subtly. I was excluded from meetings. My budget was
+cut. Then in October 2023, I was placed on administrative leave
+for "performance issues." In December, I was terminated. My
+termination letter was signed by Sarah Goldberg and cc'd to
+Meredith Vance and to the CHRO, a man named Kenneth Adeyemi.
+
+[09:10:20] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Were you offered a severance package?
+
+[09:10:28] JOHN SMITH:
+---------------------------------------------------------------------
+Yes. $250,000 in exchange for signing an NDA. I refused.
+My attorney, Rachel Zimmerman at Zimmerman & Patel LLP,
+advised me not to sign.
+
+[09:11:00] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Let's talk about other incidents. Was the March 2023 release
+isolated?
+
+[09:11:12] JOHN SMITH:
+---------------------------------------------------------------------
+No. There were at least three other unreported releases. One
+at Whiting in July 2022, one at East Chicago in November 2022,
+and another at Gary in January 2023. All were small — under
+500 gallons each — but all should have been reported under
+the Clean Water Act and EPCRA.
+
+[09:12:00] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Did the company have an environmental management system in
+place?
+
+[09:12:10] JOHN SMITH:
+---------------------------------------------------------------------
+On paper, yes. It was certified to ISO 14001. But the audits
+were conducted by a firm called EcoVerify Consulting, and I
+believe their lead auditor, Dr. James Okafor, was pressured
+to soften his findings. I have notes from a call with him
+in September 2022 where he expressed discomfort.
+
+[09:13:00] ROBERT CHEN JR.:
+---------------------------------------------------------------------
+Where is Dr. Okafor now?
+
+[09:13:05] JOHN SMITH:
+---------------------------------------------------------------------
+He left EcoVerify in early 2023. I believe he relocated to
+Toronto. I don't have current contact information.
+
+[09:13:35] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+One final question. Are you aware of any other witnesses
+who would corroborate your account?
+
+[09:13:50] JOHN SMITH:
+---------------------------------------------------------------------
+Yes. Miguel Hernández, the night-shift operator. Tomás García,
+the plant manager. And a former lab technician named Priya
+Deshpande. She was fired in August 2023 after she refused
+to alter lab results. She now works at a university in
+Ann Arbor, Michigan.
+
+[09:14:35] MARGARET O'SULLIVAN:
+---------------------------------------------------------------------
+Thank you, Mr. Smith. We'll be in touch. This interview is
+concluded. Recording stopped at 11:30 CST.
+
+[09:14:45] END OF TRANSCRIPT
+=====================================================================

@@ -1,0 +1,23 @@
+TECHNICAL ARCHITECTURE REVIEW: DISTRIBUTED EVENT BUS SCALING
+Document Version: 3.4.0
+Status: Approved
+
+OVERVIEW:
+This architecture document outlines the migration of the core real-time telemetry pipeline to Apache Kafka and Redis cluster caching.
+The target workload requires handling 450,000 QPS with sustained P99 latency below 15ms and P99.9 latency below 35ms.
+
+KEY ARCHITECTURAL DECISIONS:
+1. Message Ingestion & Streaming:
+   - Deploy Apache Kafka clusters across three availability zones in AWS us-west-2.
+   - Configure topic partition replication factor to 3 with min.insync.replicas set to 2.
+   - Standardize payload serialization on Protocol Buffers over gRPC and HTTP/2.
+
+2. Caching & State Management:
+   - Utilize a distributed Redis cluster with master-replica failover via Raft consensus.
+   - Memory eviction policy set to volatile-lru with maximum heap allocation of 64GB per node.
+   - Fallback persistent storage anchored on Apache Cassandra with SSTable compaction.
+
+3. Observability & Network Tracing:
+   - Deploy eBPF kernel probes for zero-overhead socket lifecycle monitoring on Linux kernels 6.1+.
+   - Metrics scrape interval set to 10 seconds via Prometheus with Alertmanager notification routing.
+   - Encrypt all inter-pod traffic with TLS 1.3 mutual authentication (mTLS).

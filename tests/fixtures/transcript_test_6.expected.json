@@ -1,0 +1,41 @@
+{
+  "must_redact": [
+    "Karen M. Whitfield",
+    "Daniel Osei",
+    "Angela Park-Reyes",
+    "Marcus Delgado",
+    "Rebecca Lindstrom",
+    "Stavros Georgiou",
+    "Whitfield",
+    "Osei",
+    "Park-Reyes",
+    "Whitfield & Barnes",
+    "CITIUS33",
+    "2024-AML-0876"
+  ],
+  "must_keep": [
+    "OFAC",
+    "KPMG",
+    "Bank Secrecy Act",
+    "Gmail",
+    "FinCEN",
+    "Actimize",
+    "Court Reporter:",
+    "Consent obtained",
+    "USA PATRIOT Act"
+  ],
+  "same_entity": [
+    [
+      "Karen M. Whitfield",
+      "Whitfield"
+    ],
+    [
+      "Daniel Osei",
+      "Osei"
+    ],
+    [
+      "Angela Park-Reyes",
+      "Park-Reyes"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "must_redact": [
+    "Helena Lindqvist",
+    "Samuel Adeyemi",
+    "Mei-Ling Chen",
+    "Javier Ortega",
+    "Fatima Al-Rashid",
+    "Rajiv Menon",
+    "Adeyemi",
+    "Lindqvist",
+    "CAB-2024-0031"
+  ],
+  "must_keep": [
+    "Oncology",
+    "PhD",
+    "Owner:",
+    "2024-02-22",
+    "ICH",
+    "EMA",
+    "Biostatistics SME",
+    "Declaration of Helsinki",
+    "CLEOPATRA",
+    "English",
+    "Phase III"
+  ],
+  "same_entity": [
+    [
+      "Helena Lindqvist",
+      "Lindqvist"
+    ],
+    [
+      "Samuel Adeyemi",
+      "Adeyemi"
+    ]
+  ]
+}

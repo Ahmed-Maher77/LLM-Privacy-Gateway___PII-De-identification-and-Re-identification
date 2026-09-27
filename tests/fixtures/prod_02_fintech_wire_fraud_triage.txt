@@ -1,0 +1,17 @@
+CALL RECORD: FRAUD OPERATIONS TRIAGE
+Call ID: FLOG-2026-0812-9901
+Timestamp: 2026-08-12 16:42:10 UTC
+Agent: Marcus Vance (Fraud Operations Specialist)
+Customer: Jonathan Sterling
+Billing Address: 142 Elmwood Ave, Boston, MA 02116
+
+[16:42:15] Marcus Vance: Thank you for calling Premier Trust Bank Fraud Operations. My name is Marcus Vance. Am I speaking with Jonathan Sterling?
+[16:42:22] Jonathan Sterling: Yes, this is Jonathan Sterling. I just saw an alert on my phone for an outgoing wire transfer of $75,000 USD that I never authorized!
+[16:42:31] Marcus Vance: I understand how urgent this is, Mr. Sterling. Before I can freeze the outbound wire, I need to verify your identity. Could you please confirm the last four of your SSN and your primary account number?
+[16:42:43] Jonathan Sterling: My SSN is 491-20-8472, and the account number is 09284719284. My routing number is 021000021.
+[16:42:55] Marcus Vance: Thank you. And can you confirm the debit card associated with this account?
+[16:43:01] Jonathan Sterling: Yes, it is 4532-0192-8834-5610, CVV 891, expiry 11/28.
+[16:43:10] Marcus Vance: Thank you, verification passed. I see the wire pending in our clearing queue. The recipient IBAN listed is GB29NWBK60161331926819 with SWIFT NWBKGB2L. Did you initiate any transfer to this UK account?
+[16:43:24] Jonathan Sterling: Absolutely not. I have never heard of that bank or account.
+[16:43:29] Marcus Vance: Understood. I have initiated an immediate wire recall and placed an administrative hold on account 09284719284. We will submit this for OFAC and AML review and file a dispute report.
+[16:43:42] Jonathan Sterling: Thank you so much Marcus. Please email me the confirmation at j.sterling@sterling-advisors.com.

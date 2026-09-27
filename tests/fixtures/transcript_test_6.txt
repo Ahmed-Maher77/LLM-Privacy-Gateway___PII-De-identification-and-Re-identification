@@ -1,0 +1,319 @@
+=====================================================================
+CONFIDENTIAL — ATTORNEY WORK PRODUCT
+SUBJECT MATTER EXPERT INTERVIEW MEMORANDUM
+=====================================================================
+Matter No:         2024-AML-0876
+Client:            Astoria Capital Partners LLC
+Interview Type:    SME Witness Interview (Pre-Subpoena Prep)
+Subject:           Suspicious Activity Review — Q3 2023 Wire Transfers
+Date:              March 5, 2024
+Time:              13:00 – 15:45 PST
+Location:          Offices of Whitfield & Barnes LLP, San Francisco, CA
+Interviewer:       Karen M. Whitfield, Esq. (Partner, Whitfield & Barnes)
+Co-Interviewer:    Daniel Osei, CFE (Forensic Accountant, Kroll Associates)
+Witness:           Angela Park-Reyes (Former AML Compliance Officer,
+                   Astoria Capital Partners LLC)
+Court Reporter:    Transcript prepared from audio recording
+                   (Consent obtained; no stenographer present)
+=====================================================================
+
+PRIVILEGE NOTICE
+---------------------------------------------------------------------
+This memorandum is protected by attorney-client privilege and the
+work product doctrine. Do not distribute outside the legal team
+without express written consent from Karen M. Whitfield, Esq.
+=====================================================================
+
+---------------------------------------------------------------------
+[13:00:18] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Good afternoon, Ms. Park-Reyes. Thank you for coming in voluntarily.
+Before we begin, I want to remind you that this interview is
+protected under attorney-client privilege. Daniel Osei from Kroll
+Associates is here as a consulting forensic accountant. Everything
+you say today is confidential. Do you understand?
+
+---------------------------------------------------------------------
+[13:00:52] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Yes, I understand. I want to be clear from the start: I raised
+concerns internally about these transactions for six months before
+I resigned. Nobody listened.
+
+---------------------------------------------------------------------
+[13:01:20] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Ms. Park-Reyes, let's start with the timeline. When did you first
+notice something unusual in the wire transfer activity?
+
+---------------------------------------------------------------------
+[13:01:38] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+It was July 12, 2023. I was reviewing the daily SWIFT MT103
+confirmations, which is standard procedure. I noticed a $4.2
+million transfer from Astoria's operating account at First
+Meridian Bank — that's account ending in 7741 — to an entity
+called Verdant Holdings Ltd. in the Cayman Islands. The
+beneficiary bank was Cayman National Bank, account ending
+in 2298. I had never seen that counterparty before.
+
+---------------------------------------------------------------------
+[13:02:45] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+What was the stated purpose of that wire?
+
+---------------------------------------------------------------------
+[13:02:52] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+"Consulting services." No invoice number, no contract reference.
+That's a red flag under our own internal policy — anything over
+$100,000 requires supporting documentation. I flagged it in
+our case management system, Actimize, the next morning.
+
+---------------------------------------------------------------------
+[13:03:30] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Who did you escalate it to?
+
+---------------------------------------------------------------------
+[13:03:38] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+My direct supervisor, Marcus Delgado, the Chief Compliance
+Officer. He told me it was a "legitimate vendor payment" and
+to close the alert. I refused. He escalated it to the CFO,
+Rebecca Lindstrom. Two days later, I was told the matter had
+been "resolved at the executive level" and I should focus on
+other priorities.
+
+---------------------------------------------------------------------
+[13:04:45] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Did you document that conversation?
+
+---------------------------------------------------------------------
+[13:04:52] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+I did. I kept contemporaneous notes in a personal notebook, and
+I emailed myself a summary from my personal Gmail account to
+create a timestamp. I know that was against company policy, but
+I was worried.
+
+---------------------------------------------------------------------
+[13:05:22] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+We'll come back to those notes. Let's talk about the pattern.
+How many transactions are we talking about?
+
+---------------------------------------------------------------------
+[13:05:38] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Between July 12 and September 28, 2023, I identified 23
+outbound wires to Verdant Holdings. Total value was
+approximately $47.8 million. They all went through the same
+correspondent bank — Citibank New York, SWIFT code CITIUS33.
+Each wire was just under $5 million, which I believe was
+deliberate structuring to avoid enhanced due diligence
+thresholds.
+
+---------------------------------------------------------------------
+[13:07:02] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Were there any other counterparties involved?
+
+---------------------------------------------------------------------
+[13:07:10] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Yes. Beginning in August, I started seeing transfers to two
+other entities: Northgate Advisory SA in Geneva, and a
+Delaware-registered shell called Blue Harbor Consulting Inc.
+I later learned that Blue Harbor's registered agent was the
+same law firm that handled Astoria's 2021 restructuring —
+Sterling & Vance LLP in Wilmington.
+
+---------------------------------------------------------------------
+[13:08:30] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Did you file a Suspicious Activity Report with FinCEN?
+
+---------------------------------------------------------------------
+[13:08:40] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+I prepared a draft SAR on August 3, 2023. I was instructed by
+Marcus Delgado not to file it. He said the firm's outside
+counsel — that would be your firm, Ms. Whitfield — had advised
+that the transactions were "within normal business parameters."
+I disagreed, but I was overruled.
+
+---------------------------------------------------------------------
+[13:09:45] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+I want to be careful here. I can't confirm or deny what advice
+was given, but I can tell you that no partner at this firm
+authorized any communication suggesting these transactions
+were legitimate. Do you have the draft SAR?
+
+---------------------------------------------------------------------
+[13:10:20] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+I have a copy. It's on an encrypted USB drive that I gave to
+my attorney, Patricia Nakamura at Nakamura & Holt. She has it
+in a safety deposit box at Wells Fargo on Montgomery Street.
+
+---------------------------------------------------------------------
+[13:11:00] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Let's shift to the individuals involved. Who at Astoria had
+signing authority on the operating account?
+
+---------------------------------------------------------------------
+[13:11:15] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Three people: Marcus Delgado, Rebecca Lindstrom, and a
+senior vice president named Geoffrey Tanaka. Tanaka left the
+firm abruptly in October 2023 — right after I resigned. I
+believe he relocated to Singapore.
+
+---------------------------------------------------------------------
+[13:12:20] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Did you ever meet Geoffrey Tanaka in person?
+
+---------------------------------------------------------------------
+[13:12:28] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Twice. Once at the 2022 holiday party at the St. Regis,
+and once at a board retreat in Napa. He was close with
+Rebecca Lindstrom. I always suspected they had a personal
+relationship outside of work, but I never had proof.
+
+---------------------------------------------------------------------
+[13:13:30] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Let's talk about the offshore structure. Did you ever see
+any documentation about Verdant Holdings?
+
+---------------------------------------------------------------------
+[13:13:42] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Only what was in the wire instructions. The beneficiary
+address was listed as "P.O. Box 31489, Grand Cayman,
+KY1-1206, Cayman Islands." The directors were listed as
+two nominees — a Cypriot national named Stavros
+Georgiou and a British Virgin Islands company called
+Meridian Trust Services Ltd. I ran a World-Check
+screening and found that Stavros Georgiou was also a
+director of a company that had been sanctioned by OFAC
+in 2019 — Palladium Energy Group.
+
+---------------------------------------------------------------------
+[13:15:20] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Did you report that OFAC nexus internally?
+
+---------------------------------------------------------------------
+[13:15:28] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+I did. I sent an email to Marcus Delgado and Rebecca
+Lindstrom on August 14, 2023, marked "URGENT — Potential
+OFAC Exposure." I never received a response. Three weeks
+later, I was placed on a performance improvement plan for
+"insufficient attention to detail."
+
+---------------------------------------------------------------------
+[13:16:30] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Did anyone else on the compliance team share your concerns?
+
+---------------------------------------------------------------------
+[13:16:40] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+One person. A junior analyst named Priya Deshpande. She
+helped me compile the transaction data. She was terminated
+in November 2023 for "restructuring reasons." I believe
+she was retaliated against.
+
+---------------------------------------------------------------------
+[13:17:35] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Let's discuss the regulatory framework. What obligations
+did Astoria have under the Bank Secrecy Act?
+
+---------------------------------------------------------------------
+[13:17:48] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+As a registered investment adviser with over $100 million
+in assets under management, we were required to maintain
+an AML program under the USA PATRIOT Act Section 326.
+We also had obligations under FinCEN's 2020 AML
+effectiveness rules. Our last independent test was
+conducted by KPMG in 2021, and it identified several
+deficiencies that were never remediated.
+
+---------------------------------------------------------------------
+[13:19:20] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+What deficiencies?
+
+---------------------------------------------------------------------
+[13:19:28] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Three major ones. First, we had no automated screening
+for correspondent banking relationships. Second, our
+transaction monitoring thresholds hadn't been updated
+since 2018. Third, we had no formal training program for
+the compliance team — which is ironic, because I was the
+one who was told I needed "more training."
+
+---------------------------------------------------------------------
+[13:20:45] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Ms. Park-Reyes, I want to thank you for your candor. I
+have one final question. If this matter proceeds to
+litigation or a regulatory enforcement action, are you
+willing to testify?
+
+---------------------------------------------------------------------
+[13:21:10] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+I am. I have nothing to hide. I did my job. The people
+who didn't do theirs are the ones who should be worried.
+
+---------------------------------------------------------------------
+[13:21:35] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+Thank you. Daniel, do you have any final questions?
+
+---------------------------------------------------------------------
+[13:21:42] DANIEL OSEI, CFE:
+---------------------------------------------------------------------
+Just one. Ms. Park-Reyes, do you still have access to
+your Astoria email account?
+
+---------------------------------------------------------------------
+[13:21:50] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+No. They disabled it the day I resigned. But I exported
+my entire mailbox to a PST file before I left, and I
+gave a copy to Patricia Nakamura. It contains
+approximately 14,000 emails, including all the
+escalations I sent.
+
+---------------------------------------------------------------------
+[13:22:30] KAREN M. WHITFIELD, ESQ.:
+---------------------------------------------------------------------
+That's very helpful. This concludes the interview.
+The recording will be transcribed and provided to
+you for review within 14 days. If you need to reach
+me, please contact my paralegal, Sandra Whitcombe,
+at the number on your copy of the engagement letter.
+
+---------------------------------------------------------------------
+[13:23:00] ANGELA PARK-REYES:
+---------------------------------------------------------------------
+Thank you, Ms. Whitfield. Thank you, Mr. Osei.
+
+---------------------------------------------------------------------
+[13:23:08] END OF INTERVIEW
+---------------------------------------------------------------------
+Recording stopped at 15:45 PST.
+=====================================================================

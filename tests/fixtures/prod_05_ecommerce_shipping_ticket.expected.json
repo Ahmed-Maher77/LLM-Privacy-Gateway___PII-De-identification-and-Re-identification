@@ -1,0 +1,28 @@
+{
+  "must_redact": [
+    "Samantha Reynolds",
+    "samantha.reynolds88@gmail.com",
+    "+1-541-555-0199",
+    "Liam Gallagher",
+    "742 Evergreen Terrace, Springfield, OR 97477",
+    "+1-541-555-0144",
+    "12 Kensington High Street, London W8 4PT"
+  ],
+  "must_keep": [
+    "Tier 2 Support",
+    "Sony WH-1000XM5 headphones",
+    "FedEx Express",
+    "leave behind porch gate",
+    "Reshipment authorized at no cost",
+    "Pending Customer Response",
+    "Priority: High"
+  ],
+  "same_entity": [
+    [
+      "Samantha Reynolds"
+    ],
+    [
+      "Liam Gallagher"
+    ]
+  ]
+}

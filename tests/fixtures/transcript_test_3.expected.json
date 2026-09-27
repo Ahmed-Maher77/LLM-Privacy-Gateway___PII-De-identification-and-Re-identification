@@ -1,0 +1,41 @@
+{
+  "must_redact": [
+    "Sarah Jenkins",
+    "Marcus Thorne",
+    "Sarah",
+    "Marcus"
+  ],
+  "must_keep": [
+    "SME",
+    "CASB",
+    "SIEM",
+    "DLP",
+    "MFA",
+    "GDPR",
+    "SOC2",
+    "Okta",
+    "OneDrive",
+    "Splunk",
+    "GitHub",
+    "Jira",
+    "Slack",
+    "Dropbox",
+    "AWS",
+    "Shadow IT",
+    "Inline",
+    "CFO",
+    "Security Team",
+    "Multi-Factor Authentication",
+    "Department of No"
+  ],
+  "same_entity": [
+    [
+      "Sarah Jenkins",
+      "Sarah"
+    ],
+    [
+      "Marcus Thorne",
+      "Marcus"
+    ]
+  ]
+}

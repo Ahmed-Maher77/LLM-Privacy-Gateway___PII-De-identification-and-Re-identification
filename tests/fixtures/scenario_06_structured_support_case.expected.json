@@ -1,0 +1,21 @@
+{
+  "must_redact": [
+    "Elena Rossi",
+    "elena.rossi@example.net",
+    "18 King Street",
+    "Daniel Clark",
+    "Emily Wilson",
+    "CASE-77821",
+    "Elena",
+    "Emily"
+  ],
+  "must_keep": [
+    "Case summary",
+    "Primary contact:",
+    "Address:",
+    "Conversation:",
+    "warehouse",
+    "delayed shipment",
+    "Next step: update ticket"
+  ]
+}

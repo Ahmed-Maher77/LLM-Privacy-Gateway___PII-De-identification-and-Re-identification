@@ -1,0 +1,17 @@
+{
+  "must_redact": [
+    "Nadia Hassan",
+    "nadia.hassan@example.com",
+    "CUST-2026-0042",
+    "00:1B:44:11:3A:B7",
+    "Omar Khaled"
+  ],
+  "must_keep": [
+    "\"customer_name\"",
+    "\"contact_email\"",
+    "\"account_id\"",
+    "\"mac_address\"",
+    "\"notes\"",
+    "Escalate to"
+  ]
+}

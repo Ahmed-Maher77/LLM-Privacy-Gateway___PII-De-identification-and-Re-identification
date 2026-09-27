@@ -1,0 +1,9 @@
+JSON
+{
+  "customer_name": "Nadia Hassan",
+  "contact_email": "nadia.hassan@example.com",
+  "office": "Dubai",
+  "account_id": "CUST-2026-0042",
+  "mac_address": "00:1B:44:11:3A:B7",
+  "notes": "Escalate to Omar Khaled"
+}

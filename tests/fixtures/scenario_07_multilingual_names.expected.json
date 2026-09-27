@@ -1,0 +1,20 @@
+{
+  "must_redact": [
+    "Ahmed Farid",
+    "Rania Fahmy",
+    "Lamia Aly",
+    "Michael Ibrahim",
+    "ahmed.farid@example.com",
+    "Sophie Martin",
+    "12 Rue Victor Hugo",
+    "75001"
+  ],
+  "must_keep": [
+    "Reunion internationale",
+    "a parle avec",
+    "travaille depuis",
+    "Contact:",
+    "Adresse:",
+    "The English summary was prepared by"
+  ]
+}

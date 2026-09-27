@@ -1,0 +1,30 @@
+{
+  "must_redact": [
+    "Harrison Blake",
+    "Brenda Higgins",
+    "Victoria Sterling",
+    "Arthur Vance",
+    "78 Fleet Street, London EC4Y 1HY",
+    "P98234109",
+    "CYM-889102",
+    "TAX-8891024",
+    "h.blake@blake-advisory.co.uk",
+    "Blake",
+    "Sterling",
+    "Vance"
+  ],
+  "must_keep": [
+    "DEPOSITION",
+    "Court Reporter",
+    "Chief Financial Officer",
+    "Objection to form",
+    "Exhibit",
+    "Examination by"
+  ],
+  "same_entity": [
+    [
+      "Harrison Blake",
+      "Blake"
+    ]
+  ]
+}

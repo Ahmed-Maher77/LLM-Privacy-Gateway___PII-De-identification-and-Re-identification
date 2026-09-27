@@ -1,0 +1,37 @@
+{
+  "must_redact": [
+    "JOHN SMITH",
+    "John Smith",
+    "ROBERT CHEN JR.",
+    "Robert Chen",
+    "MARGARET O'SULLIVAN",
+    "O'Sullivan",
+    "Elizabeth",
+    "Fitzgerald",
+    "Patricia",
+    "Deshpande",
+    "Harrington",
+    "s.goldberg@halcyonpetro.com",
+    "WB-2024-0119",
+    "200 Park Avenue"
+  ],
+  "must_keep": [
+    "ISO 14001",
+    "Clean Water Act",
+    "EPA",
+    "EPCRA",
+    "Halcyon Petrochemical",
+    "Grand Calumet River",
+    "14,000 gallons",
+    "June 14, 2024"
+  ],
+  "same_entity": [
+    [
+      "JOHN SMITH",
+      "John Smith"
+    ],
+    [
+      "MARGARET O'SULLIVAN"
+    ]
+  ]
+}

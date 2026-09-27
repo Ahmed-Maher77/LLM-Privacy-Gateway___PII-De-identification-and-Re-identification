@@ -1,0 +1,26 @@
+CONFIDENTIAL HR COMMITTEE RECORD: EXECUTIVE TRANSITION
+Date: 2026-04-10
+Attendees:
+- Catherine O'Connor, Vice President of People Operations
+- Arthur Vance, General Counsel
+- Dominic Moreau, Senior Vice President of Engineering (Employee ID: EMP-9402)
+
+SUMMARY OF DISCUSSION:
+The committee met to finalize the mutual separation terms for Dominic Moreau.
+Dominic Moreau has served as Senior Vice President of Engineering since June 2021, leading cloud infrastructure with an overall rating of "Exceeds Expectations".
+
+AGREED SEPARATION TERMS:
+1. Severance Pay: 12 months base salary equal to $350,000 USD paid in bi-weekly installments.
+2. Equity Acceleration: Immediate vesting of 45,000 unvested RSUs under the 2022 Long-Term Incentive Plan.
+3. Health Coverage: 12 months COBRA continuation subsidy.
+
+NOTIFICATIONS & PERSONAL RECORDS:
+- Primary Residential Address: 88 Beacon Ridge Blvd, Seattle, WA 98101
+- Personal Contact Email: dmoreau.private@fastmail.com
+- Mobile Phone: +1-206-555-0177
+- Designated Beneficiary: Claire Moreau (Spouse)
+
+ACTION ITEMS:
+- Catherine O'Connor to transmit final agreement via DocuSign to Dominic Moreau.
+- Arthur Vance to draft non-disparagement and trade secret covenants.
+- IT Security to revoke access tokens and badge credentials for EMP-9402 effective 2026-04-30 at 17:00 PST.

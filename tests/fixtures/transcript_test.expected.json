@@ -1,0 +1,51 @@
+{
+  "must_redact": [
+    "Sarah Jenkins",
+    "Michael Chang",
+    "David Miller",
+    "Marcus Aurelius Vance",
+    "742 Evergreen Terrace",
+    "97477",
+    "+1 (555) 019-2834",
+    "marcus.vance.88@gmail.com",
+    "987-65-4321",
+    "DL-8829401-X",
+    "122000049",
+    "88301928475",
+    "4532-0192-8834-5610",
+    "08/29",
+    "482",
+    "MEM-992014-A",
+    "192.168.1.105",
+    "00:1B:44:11:3A:B7",
+    "michael.chang@enterprise-corp.io",
+    "+1-312-555-0143",
+    "usr_991823",
+    "EMP-4029"
+  ],
+  "must_keep": [
+    "CVV",
+    "IP",
+    "MAC",
+    "JSON",
+    "API",
+    "Microsoft Teams",
+    "HR Operations Specialist",
+    "\"mac_address\"",
+    "\"user_id\"",
+    "\"auth_session\"",
+    "Social Security Number",
+    "routing number"
+  ],
+  "same_entity": [
+    [
+      "Sarah Jenkins"
+    ],
+    [
+      "Michael Chang"
+    ],
+    [
+      "David Miller"
+    ]
+  ]
+}

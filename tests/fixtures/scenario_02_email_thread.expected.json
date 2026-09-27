@@ -1,0 +1,17 @@
+{
+  "must_redact": [
+    "maria.garcia@example.com",
+    "david.lee@example.org",
+    "Robert Taylor",
+    "Maria Garcia",
+    "BP-28491",
+    "+44 7700 900123",
+    "David"
+  ],
+  "must_keep": [
+    "Subject: Account review",
+    "His office is in",
+    "if anything is unclear",
+    "Regards"
+  ]
+}

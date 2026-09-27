@@ -1,0 +1,39 @@
+{
+  "must_redact": [
+    "Seraphina Chen",
+    "schen@acme.corp",
+    "Marcus Vance",
+    "marcus.vance@acme.corp",
+    "Tariq Al-Mansoor",
+    "t.almansoor@acme.corp",
+    "Marcus",
+    "Seraphina",
+    "Tariq"
+  ],
+  "must_keep": [
+    "Principal Architect",
+    "Director of SRE",
+    "Senior Infrastructure Engineer",
+    "quorum consensus",
+    "network partition",
+    "failover mechanism",
+    "remediation ticket"
+  ],
+  "same_entity": [
+    [
+      "Dr. Seraphina Chen",
+      "Seraphina Chen",
+      "Seraphina",
+      "Dr. Chen"
+    ],
+    [
+      "Marcus Vance",
+      "Marcus",
+      "Mr. Vance"
+    ],
+    [
+      "Tariq Al-Mansoor",
+      "Tariq"
+    ]
+  ]
+}
