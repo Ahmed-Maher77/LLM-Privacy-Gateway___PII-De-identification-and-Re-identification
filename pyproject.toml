@@ -1,11 +1,9 @@
 [project]
-name = "de-identification-and-re-identification-implementation"
-version = "0.1.0"
-description = "Add your description here"
+name = "privacy-gateway"
+version = "0.2.0"
+description = "Sensitive-data detection, de-identification and re-identification gateway for LLM pipelines"
 readme = "README.md"
-authors = [
-    { name = "Ahmed Maher", email = "ahmedmaheraljwhry057@gmail.com" }
-]
+authors = [{ name = "Ahmed Maher", email = "ahmedmaheraljwhry057@gmail.com" }]
 requires-python = ">=3.12"
 dependencies = [
     "langchain-ollama>=1.1.0",
@@ -18,8 +16,60 @@ dependencies = [
 ]
 
 [project.scripts]
-de-identification-and-re-identification-implementation = "de_identification_and_re_identification_implementation:main"
+privacy-gateway = "privacy_gateway.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "pytest-timeout>=2.3",
+    "hypothesis>=6.112",
+    "psutil>=6.0",
+    "ruff>=0.7",
+]
+# Opt-in: large spaCy pipeline for Presidio. `uv sync --group models`
+models = [
+    "en-core-web-lg",
+]
+
+[tool.uv.sources]
+en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl" }
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "privacy_gateway"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config --import-mode=importlib --timeout=300 -m 'not requires_ollama'"
+markers = [
+    "slow: takes >1s; excluded from the inner dev loop",
+    "requires_models: needs en_core_web_lg and/or dslim/bert-base-NER on disk",
+    "requires_ollama: needs a reachable Ollama daemon (deselected by default)",
+    "requires_llm: needs the downstream cloud model (implies requires_ollama)",
+    "property: Hypothesis-driven property test",
+    "regression: pins a specific historical defect",
+    "security: adversarial-input test",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+    "ignore::FutureWarning",
+]
+
+[tool.coverage.run]
+source = ["src/privacy_gateway"]
+branch = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "B008"]

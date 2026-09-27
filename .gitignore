@@ -29,4 +29,10 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-src/
+# Generated run artifacts (may contain sensitive content)
+reports/
+artifacts/
+*__sanitized*.txt
+evaluation/.cache/
+evaluation/results/
+benchmarks/results/
