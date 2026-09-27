@@ -35,5 +35,237 @@
       "Tariq Al-Mansoor",
       "Tariq"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 74,
+      "end": 88,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 129,
+      "end": 143,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 166,
+      "end": 181,
+      "label": "EMAIL",
+      "text": "schen@acme.corp",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 185,
+      "end": 197,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 216,
+      "end": 238,
+      "label": "EMAIL",
+      "text": "marcus.vance@acme.corp",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 242,
+      "end": 258,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 292,
+      "end": 313,
+      "label": "EMAIL",
+      "text": "t.almansoor@acme.corp",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 331,
+      "end": 345,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 361,
+      "end": 373,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 433,
+      "end": 445,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 454,
+      "end": 463,
+      "label": "PERSON",
+      "text": "Seraphina",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 514,
+      "end": 530,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 579,
+      "end": 595,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 616,
+      "end": 622,
+      "label": "PERSON",
+      "text": "Marcus",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 732,
+      "end": 746,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 785,
+      "end": 790,
+      "label": "PERSON",
+      "text": "Tariq",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 803,
+      "end": 819,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 888,
+      "end": 900,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1008,
+      "end": 1030,
+      "label": "EMAIL",
+      "text": "marcus.vance@acme.corp",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1047,
+      "end": 1061,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1078,
+      "end": 1092,
+      "label": "PERSON",
+      "text": "Seraphina Chen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1145,
+      "end": 1151,
+      "label": "PERSON",
+      "text": "Marcus",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1163,
+      "end": 1168,
+      "label": "PERSON",
+      "text": "Tariq",
+      "entity": "e3",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 90,
+      "end": 109,
+      "text": "Principal Architect",
+      "reason": "must_keep"
+    },
+    {
+      "start": 199,
+      "end": 214,
+      "text": "Director of SRE",
+      "reason": "must_keep"
+    },
+    {
+      "start": 260,
+      "end": 290,
+      "text": "Senior Infrastructure Engineer",
+      "reason": "must_keep"
+    },
+    {
+      "start": 496,
+      "end": 512,
+      "text": "quorum consensus",
+      "reason": "must_keep"
+    },
+    {
+      "start": 543,
+      "end": 560,
+      "text": "network partition",
+      "reason": "must_keep"
+    },
+    {
+      "start": 658,
+      "end": 676,
+      "text": "failover mechanism",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1180,
+      "end": 1198,
+      "text": "remediation ticket",
+      "reason": "must_keep"
+    }
   ]
 }

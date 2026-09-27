@@ -17,5 +17,117 @@
     "warehouse",
     "delayed shipment",
     "Next step: update ticket"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 60,
+      "end": 71,
+      "label": "PII",
+      "text": "Elena Rossi",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 73,
+      "end": 96,
+      "label": "EMAIL",
+      "text": "elena.rossi@example.net",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 107,
+      "end": 121,
+      "label": "ADDRESS",
+      "text": "18 King Street",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 159,
+      "end": 171,
+      "label": "PII",
+      "text": "Daniel Clark",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 178,
+      "end": 190,
+      "label": "PII",
+      "text": "Emily Wilson",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 230,
+      "end": 235,
+      "label": "PII",
+      "text": "Emily",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 307,
+      "end": 317,
+      "label": "CUSTOM_ID",
+      "text": "CASE-77821",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 329,
+      "end": 334,
+      "label": "PII",
+      "text": "Elena",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 0,
+      "end": 12,
+      "text": "Case summary",
+      "reason": "must_keep"
+    },
+    {
+      "start": 43,
+      "end": 59,
+      "text": "Primary contact:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 98,
+      "end": 106,
+      "text": "Address:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 143,
+      "end": 156,
+      "text": "Conversation:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 269,
+      "end": 278,
+      "text": "warehouse",
+      "reason": "must_keep"
+    },
+    {
+      "start": 210,
+      "end": 226,
+      "text": "delayed shipment",
+      "reason": "must_keep"
+    },
+    {
+      "start": 282,
+      "end": 306,
+      "text": "Next step: update ticket",
+      "reason": "must_keep"
+    }
   ]
 }

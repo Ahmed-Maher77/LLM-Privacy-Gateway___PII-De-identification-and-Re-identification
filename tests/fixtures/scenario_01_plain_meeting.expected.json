@@ -18,5 +18,101 @@
     [
       "Ahmed Hassan"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 8,
+      "end": 20,
+      "label": "PII",
+      "text": "Ahmed Hassan",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 36,
+      "end": 50,
+      "label": "PII",
+      "text": "Sarah Mitchell",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 81,
+      "end": 95,
+      "label": "PII",
+      "text": "Sarah Mitchell",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 129,
+      "end": 155,
+      "label": "EMAIL",
+      "text": "sarah.mitchell@example.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 165,
+      "end": 178,
+      "label": "PII",
+      "text": "Michael Brown",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 236,
+      "end": 248,
+      "label": "PII",
+      "text": "Ahmed Hassan",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 0,
+      "end": 5,
+      "text": "09:00",
+      "reason": "must_keep"
+    },
+    {
+      "start": 73,
+      "end": 78,
+      "text": "09:02",
+      "reason": "must_keep"
+    },
+    {
+      "start": 157,
+      "end": 162,
+      "text": "09:04",
+      "reason": "must_keep"
+    },
+    {
+      "start": 228,
+      "end": 233,
+      "text": "09:06",
+      "reason": "must_keep"
+    },
+    {
+      "start": 22,
+      "end": 34,
+      "text": "Good morning",
+      "reason": "must_keep"
+    },
+    {
+      "start": 51,
+      "end": 71,
+      "text": "will lead the review",
+      "reason": "must_keep"
+    },
+    {
+      "start": 257,
+      "end": 275,
+      "text": "follow up tomorrow",
+      "reason": "must_keep"
+    }
   ]
 }

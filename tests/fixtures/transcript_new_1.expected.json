@@ -30,5 +30,267 @@
       "OLIVIA HARTWELL",
       "Olivia Hartwell"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 247,
+      "end": 260,
+      "label": "CUSTOM_ID",
+      "text": "INT-2024-0417",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 393,
+      "end": 408,
+      "label": "PERSON",
+      "text": "Olivia Hartwell",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 465,
+      "end": 477,
+      "label": "PERSON",
+      "text": "Kwame Mensah",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 526,
+      "end": 540,
+      "label": "PII",
+      "text": "Hiroshi Tanaka",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 660,
+      "end": 675,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 935,
+      "end": 947,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1140,
+      "end": 1154,
+      "label": "PII",
+      "text": "HIROSHI TANAKA",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1310,
+      "end": 1322,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1556,
+      "end": 1571,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1864,
+      "end": 1876,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2165,
+      "end": 2179,
+      "label": "PII",
+      "text": "HIROSHI TANAKA",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2357,
+      "end": 2369,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2717,
+      "end": 2732,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 2867,
+      "end": 2879,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3124,
+      "end": 3138,
+      "label": "PII",
+      "text": "HIROSHI TANAKA",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3307,
+      "end": 3319,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3562,
+      "end": 3577,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 3784,
+      "end": 3796,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4016,
+      "end": 4031,
+      "label": "PII",
+      "text": "Pieter van Dijk",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4045,
+      "end": 4059,
+      "label": "PII",
+      "text": "HIROSHI TANAKA",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4222,
+      "end": 4234,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4566,
+      "end": 4581,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 4762,
+      "end": 4780,
+      "label": "EMAIL",
+      "text": "k.mensah@adyen.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4794,
+      "end": 4806,
+      "label": "PERSON",
+      "text": "KWAME MENSAH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4949,
+      "end": 4969,
+      "label": "EMAIL",
+      "text": "m.kowalski@adyen.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4983,
+      "end": 4998,
+      "label": "PERSON",
+      "text": "OLIVIA HARTWELL",
+      "entity": "e2",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 906,
+      "end": 914,
+      "text": "European",
+      "reason": "must_keep"
+    },
+    {
+      "start": 500,
+      "end": 505,
+      "text": "Adyen",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1708,
+      "end": 1714,
+      "text": "Stripe",
+      "reason": "must_keep"
+    },
+    {
+      "start": 428,
+      "end": 444,
+      "text": "Brighton Systems",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1824,
+      "end": 1850,
+      "text": "Germany, France, and Spain",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2469,
+      "end": 2489,
+      "text": "Amsterdam and Dublin",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2334,
+      "end": 2343,
+      "text": "Frankfurt",
+      "reason": "must_keep"
+    },
+    {
+      "start": 3101,
+      "end": 3110,
+      "text": "Bangalore",
+      "reason": "must_keep"
+    }
   ]
 }

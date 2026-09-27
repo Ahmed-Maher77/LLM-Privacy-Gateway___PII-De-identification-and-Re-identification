@@ -34,5 +34,367 @@
     "\"db_connection\"",
     "\"client_ip\"",
     "\"patient_ssn\""
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 122,
+      "end": 133,
+      "label": "PII",
+      "text": "Omar Farooq",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 157,
+      "end": 170,
+      "label": "PII",
+      "text": "Elena Rostova",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 195,
+      "end": 209,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 232,
+      "end": 243,
+      "label": "PII",
+      "text": "Omar Farooq",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 431,
+      "end": 445,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 628,
+      "end": 658,
+      "label": "PII",
+      "text": "Sophia Maria Rodriguez-Nielsen",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 682,
+      "end": 695,
+      "label": "PII",
+      "text": "Elena Rostova",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 763,
+      "end": 777,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 800,
+      "end": 816,
+      "label": "PHONE",
+      "text": "+44 20 7946 0912",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 852,
+      "end": 866,
+      "label": "PHONE",
+      "text": "+49 30 1234567",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 890,
+      "end": 922,
+      "label": "EMAIL",
+      "text": "sophia.rodriguez@aegis-health.eu",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 958,
+      "end": 986,
+      "label": "EMAIL",
+      "text": "s.rodriguez85@protonmail.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1021,
+      "end": 1038,
+      "label": "ADDRESS",
+      "text": "10 Downing Street",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1060,
+      "end": 1068,
+      "label": "PII",
+      "text": "SW1A 2AA",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1075,
+      "end": 1086,
+      "label": "PII",
+      "text": "Omar Farooq",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1197,
+      "end": 1211,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1249,
+      "end": 1260,
+      "label": "PII",
+      "text": "PAG98230149",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1306,
+      "end": 1318,
+      "label": "EU_VAT",
+      "text": "ES-B87654321",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1445,
+      "end": 1456,
+      "label": "SWIFT_BIC",
+      "text": "DBEKDEFFXXX",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1459,
+      "end": 1472,
+      "label": "PII",
+      "text": "Elena Rostova",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1631,
+      "end": 1650,
+      "label": "CREDIT_CARD",
+      "text": "5412-7512-3412-8890",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1693,
+      "end": 1696,
+      "label": "PII",
+      "text": "891",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1731,
+      "end": 1745,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1889,
+      "end": 1902,
+      "label": "CUSTOM_ID",
+      "text": "PHI-88209-X12",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1931,
+      "end": 1944,
+      "label": "PII",
+      "text": "Elena Rostova",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2254,
+      "end": 2274,
+      "label": "PII",
+      "text": "eyJhbGciOiJIUzI1NiIs",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2388,
+      "end": 2398,
+      "label": "PII",
+      "text": "admin_user",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2401,
+      "end": 2411,
+      "label": "PII",
+      "text": "ssw0rd2026",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2462,
+      "end": 2474,
+      "label": "IP_ADDRESS",
+      "text": "172.16.254.1",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2497,
+      "end": 2514,
+      "label": "MAC_ADDRESS",
+      "text": "3A:80:41:FC:02:9A",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2537,
+      "end": 2548,
+      "label": "SSN",
+      "text": "456-78-9012",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2555,
+      "end": 2566,
+      "label": "PII",
+      "text": "Omar Farooq",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2673,
+      "end": 2685,
+      "label": "IP_ADDRESS",
+      "text": "172.16.254.1",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2699,
+      "end": 2716,
+      "label": "MAC_ADDRESS",
+      "text": "3A:80:41:FC:02:9A",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2736,
+      "end": 2747,
+      "label": "SSN",
+      "text": "456-78-9012",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2750,
+      "end": 2763,
+      "label": "PII",
+      "text": "Elena Rostova",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2942,
+      "end": 2956,
+      "label": "PII",
+      "text": "Hannah Schmidt",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 1834,
+      "end": 1841,
+      "text": "PCI-DSS",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1430,
+      "end": 1439,
+      "text": "SWIFT/BIC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1273,
+      "end": 1276,
+      "text": "VAT",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1572,
+      "end": 1583,
+      "text": "Master Card",
+      "reason": "must_keep"
+    },
+    {
+      "start": 94,
+      "end": 109,
+      "text": "Microsoft Teams",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2165,
+      "end": 2172,
+      "text": "-X POST",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2307,
+      "end": 2342,
+      "text": "-H \"Content-Type: application/json\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2357,
+      "end": 2372,
+      "text": "\"db_connection\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2448,
+      "end": 2459,
+      "text": "\"client_ip\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2521,
+      "end": 2534,
+      "text": "\"patient_ssn\"",
+      "reason": "must_keep"
+    }
   ]
 }

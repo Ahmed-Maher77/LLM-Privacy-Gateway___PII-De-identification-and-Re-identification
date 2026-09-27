@@ -22,5 +22,155 @@
     [
       "David Cooper"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 10,
+      "end": 22,
+      "label": "PII",
+      "text": "David Cooper",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 76,
+      "end": 88,
+      "label": "PII",
+      "text": "David Cooper",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 124,
+      "end": 138,
+      "label": "PERSON",
+      "text": "Natalie Brooks",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 191,
+      "end": 205,
+      "label": "PERSON",
+      "text": "Natalie Brooks",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 259,
+      "end": 271,
+      "label": "PII",
+      "text": "David Cooper",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 292,
+      "end": 299,
+      "label": "PERSON",
+      "text": "Natalie",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 368,
+      "end": 382,
+      "label": "PERSON",
+      "text": "Natalie Brooks",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 410,
+      "end": 420,
+      "label": "CUSTOM_ID",
+      "text": "POL-881920",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 439,
+      "end": 477,
+      "label": "ADDRESS",
+      "text": "124 North Oak Street, Denver, CO 80202",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 488,
+      "end": 500,
+      "label": "PII",
+      "text": "David Cooper",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 589,
+      "end": 603,
+      "label": "PERSON",
+      "text": "Natalie Brooks",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 622,
+      "end": 637,
+      "label": "PHONE",
+      "text": "+1-303-555-0184",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 654,
+      "end": 680,
+      "label": "EMAIL",
+      "text": "natalie.brooks@outlook.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 691,
+      "end": 703,
+      "label": "PII",
+      "text": "David Cooper",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 715,
+      "end": 722,
+      "label": "PERSON",
+      "text": "Natalie",
+      "entity": "e1",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 48,
+      "end": 64,
+      "text": "insurance claims",
+      "reason": "must_keep"
+    },
+    {
+      "start": 224,
+      "end": 237,
+      "text": "fender bender",
+      "reason": "must_keep"
+    },
+    {
+      "start": 734,
+      "end": 756,
+      "text": "comprehensive coverage",
+      "reason": "must_keep"
+    },
+    {
+      "start": 768,
+      "end": 802,
+      "text": "deductible of five hundred dollars",
+      "reason": "must_keep"
+    }
   ]
 }

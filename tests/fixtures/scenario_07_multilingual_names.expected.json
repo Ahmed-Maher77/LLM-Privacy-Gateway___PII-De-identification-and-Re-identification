@@ -16,5 +16,111 @@
     "Contact:",
     "Adresse:",
     "The English summary was prepared by"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 24,
+      "end": 35,
+      "label": "PII",
+      "text": "Ahmed Farid",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 49,
+      "end": 60,
+      "label": "PII",
+      "text": "Rania Fahmy",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 64,
+      "end": 73,
+      "label": "PII",
+      "text": "Lamia Aly",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 75,
+      "end": 90,
+      "label": "PII",
+      "text": "Michael Ibrahim",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 124,
+      "end": 147,
+      "label": "EMAIL",
+      "text": "ahmed.farid@example.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 157,
+      "end": 175,
+      "label": "ADDRESS",
+      "text": "12 Rue Victor Hugo",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 184,
+      "end": 189,
+      "label": "PII",
+      "text": "75001",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 227,
+      "end": 240,
+      "label": "PII",
+      "text": "Sophie Martin",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 0,
+      "end": 22,
+      "text": "Reunion internationale",
+      "reason": "must_keep"
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "text": "a parle avec",
+      "reason": "must_keep"
+    },
+    {
+      "start": 91,
+      "end": 107,
+      "text": "travaille depuis",
+      "reason": "must_keep"
+    },
+    {
+      "start": 115,
+      "end": 123,
+      "text": "Contact:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 148,
+      "end": 156,
+      "text": "Adresse:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 191,
+      "end": 226,
+      "text": "The English summary was prepared by",
+      "reason": "must_keep"
+    }
   ]
 }

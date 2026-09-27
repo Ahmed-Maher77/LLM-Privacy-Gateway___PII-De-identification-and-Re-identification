@@ -13,5 +13,91 @@
     "His office is in",
     "if anything is unclear",
     "Regards"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 6,
+      "end": 30,
+      "label": "EMAIL",
+      "text": "maria.garcia@example.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 35,
+      "end": 56,
+      "label": "EMAIL",
+      "text": "david.lee@example.org",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 85,
+      "end": 90,
+      "label": "PII",
+      "text": "David",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 104,
+      "end": 117,
+      "label": "PII",
+      "text": "Robert Taylor",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 136,
+      "end": 144,
+      "label": "CUSTOM_ID",
+      "text": "BP-28491",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 186,
+      "end": 201,
+      "label": "PHONE",
+      "text": "+44 7700 900123",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 236,
+      "end": 248,
+      "label": "PII",
+      "text": "Maria Garcia",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 57,
+      "end": 80,
+      "text": "Subject: Account review",
+      "reason": "must_keep"
+    },
+    {
+      "start": 146,
+      "end": 162,
+      "text": "His office is in",
+      "reason": "must_keep"
+    },
+    {
+      "start": 202,
+      "end": 224,
+      "text": "if anything is unclear",
+      "reason": "must_keep"
+    },
+    {
+      "start": 227,
+      "end": 234,
+      "text": "Regards",
+      "reason": "must_keep"
+    }
   ]
 }

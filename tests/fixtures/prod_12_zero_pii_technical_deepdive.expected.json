@@ -14,5 +14,88 @@
     "eBPF kernel probes",
     "Prometheus",
     "TLS 1.3"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [],
+  "gold_negatives": [
+    {
+      "start": 207,
+      "end": 219,
+      "text": "Apache Kafka",
+      "reason": "must_keep"
+    },
+    {
+      "start": 224,
+      "end": 237,
+      "text": "Redis cluster",
+      "reason": "must_keep"
+    },
+    {
+      "start": 285,
+      "end": 296,
+      "text": "450,000 QPS",
+      "reason": "must_keep"
+    },
+    {
+      "start": 312,
+      "end": 323,
+      "text": "P99 latency",
+      "reason": "must_keep"
+    },
+    {
+      "start": 498,
+      "end": 511,
+      "text": "AWS us-west-2",
+      "reason": "must_keep"
+    },
+    {
+      "start": 645,
+      "end": 661,
+      "text": "Protocol Buffers",
+      "reason": "must_keep"
+    },
+    {
+      "start": 667,
+      "end": 671,
+      "text": "gRPC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 676,
+      "end": 682,
+      "text": "HTTP/2",
+      "reason": "must_keep"
+    },
+    {
+      "start": 790,
+      "end": 804,
+      "text": "Raft consensus",
+      "reason": "must_keep"
+    },
+    {
+      "start": 946,
+      "end": 962,
+      "text": "Apache Cassandra",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1037,
+      "end": 1055,
+      "text": "eBPF kernel probes",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1176,
+      "end": 1186,
+      "text": "Prometheus",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1267,
+      "end": 1274,
+      "text": "TLS 1.3",
+      "reason": "must_keep"
+    }
   ]
 }

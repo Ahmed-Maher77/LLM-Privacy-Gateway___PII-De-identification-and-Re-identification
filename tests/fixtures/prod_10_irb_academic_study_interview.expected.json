@@ -25,5 +25,127 @@
     [
       "Liam Gallagher"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 144,
+      "end": 154,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 272,
+      "end": 282,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 484,
+      "end": 494,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 545,
+      "end": 555,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 800,
+      "end": 836,
+      "label": "ADDRESS",
+      "text": "22 Belsize Park Road, London NW3 4DX",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 850,
+      "end": 864,
+      "label": "PII",
+      "text": "Liam Gallagher",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 934,
+      "end": 944,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1044,
+      "end": 1059,
+      "label": "PHONE",
+      "text": "+44 7911 123456",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1073,
+      "end": 1101,
+      "label": "EMAIL",
+      "text": "l.gallagher84@fastmail.co.uk",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1138,
+      "end": 1148,
+      "label": "PERSON",
+      "text": "Ananya Sen",
+      "entity": "e1",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 206,
+      "end": 216,
+      "text": "Subject-42",
+      "reason": "must_keep"
+    },
+    {
+      "start": 59,
+      "end": 75,
+      "text": "IRB-2025-HUM-088",
+      "reason": "must_keep"
+    },
+    {
+      "start": 116,
+      "end": 138,
+      "text": "Principal Investigator",
+      "reason": "must_keep"
+    },
+    {
+      "start": 89,
+      "end": 115,
+      "text": "London School of Economics",
+      "reason": "must_keep"
+    },
+    {
+      "start": 522,
+      "end": 539,
+      "text": "qualitative study",
+      "reason": "must_keep"
+    },
+    {
+      "start": 624,
+      "end": 646,
+      "text": "ride-sharing platforms",
+      "reason": "must_keep"
+    }
   ]
 }

@@ -29,5 +29,175 @@
       "Eleanor Vance",
       "Eleanor"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 76,
+      "end": 87,
+      "label": "PERSON",
+      "text": "Aris Thorne",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 142,
+      "end": 191,
+      "label": "ADDRESS",
+      "text": "450 Mercy Boulevard, Suite 300, Chicago, IL 60611",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 201,
+      "end": 214,
+      "label": "PERSON",
+      "text": "Eleanor Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 238,
+      "end": 248,
+      "label": "CUSTOM_ID",
+      "text": "MRN-902184",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 258,
+      "end": 273,
+      "label": "PHONE",
+      "text": "+1-312-555-0198",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 276,
+      "end": 309,
+      "label": "EMAIL",
+      "text": "eleanor.vance@chicago-patient.net",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 328,
+      "end": 339,
+      "label": "PERSON",
+      "text": "Aris Thorne",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 355,
+      "end": 362,
+      "label": "PERSON",
+      "text": "Eleanor",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 442,
+      "end": 455,
+      "label": "PERSON",
+      "text": "Eleanor Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 582,
+      "end": 593,
+      "label": "PERSON",
+      "text": "Aris Thorne",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 655,
+      "end": 668,
+      "label": "PERSON",
+      "text": "Eleanor Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1362,
+      "end": 1375,
+      "label": "PERSON",
+      "text": "Eleanor Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1554,
+      "end": 1565,
+      "label": "PERSON",
+      "text": "Aris Thorne",
+      "entity": "e1",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 531,
+      "end": 546,
+      "text": "Lisinopril 10mg",
+      "reason": "must_keep"
+    },
+    {
+      "start": 760,
+      "end": 775,
+      "text": "Metformin 500mg",
+      "reason": "must_keep"
+    },
+    {
+      "start": 508,
+      "end": 519,
+      "text": "138/88 mmHg",
+      "reason": "must_keep"
+    },
+    {
+      "start": 909,
+      "end": 920,
+      "text": "HbA1c: 7.2%",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1046,
+      "end": 1068,
+      "text": "Essential Hypertension",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1124,
+      "end": 1148,
+      "text": "Type 2 Diabetes Mellitus",
+      "reason": "must_keep"
+    },
+    {
+      "start": 312,
+      "end": 322,
+      "text": "SUBJECTIVE",
+      "reason": "must_keep"
+    },
+    {
+      "start": 802,
+      "end": 811,
+      "text": "OBJECTIVE",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1031,
+      "end": 1041,
+      "text": "ASSESSMENT",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1228,
+      "end": 1232,
+      "text": "PLAN",
+      "reason": "must_keep"
+    }
   ]
 }

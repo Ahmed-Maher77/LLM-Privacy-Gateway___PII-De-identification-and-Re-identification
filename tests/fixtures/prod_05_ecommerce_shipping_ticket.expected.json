@@ -24,5 +24,133 @@
     [
       "Liam Gallagher"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 93,
+      "end": 110,
+      "label": "PII",
+      "text": "Samantha Reynolds",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 118,
+      "end": 147,
+      "label": "EMAIL",
+      "text": "samantha.reynolds88@gmail.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 155,
+      "end": 170,
+      "label": "PHONE",
+      "text": "+1-541-555-0199",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 187,
+      "end": 201,
+      "label": "PII",
+      "text": "Liam Gallagher",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 484,
+      "end": 528,
+      "label": "ADDRESS",
+      "text": "742 Evergreen Terrace, Springfield, OR 97477",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 637,
+      "end": 651,
+      "label": "PII",
+      "text": "Liam Gallagher",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 713,
+      "end": 728,
+      "label": "PHONE",
+      "text": "+1-541-555-0144",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 834,
+      "end": 874,
+      "label": "ADDRESS",
+      "text": "12 Kensington High Street, London W8 4PT",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 884,
+      "end": 901,
+      "label": "PII",
+      "text": "Samantha Reynolds",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 973,
+      "end": 987,
+      "label": "PII",
+      "text": "Liam Gallagher",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 203,
+      "end": 217,
+      "text": "Tier 2 Support",
+      "reason": "must_keep"
+    },
+    {
+      "start": 286,
+      "end": 312,
+      "text": "Sony WH-1000XM5 headphones",
+      "reason": "must_keep"
+    },
+    {
+      "start": 409,
+      "end": 422,
+      "text": "FedEx Express",
+      "reason": "must_keep"
+    },
+    {
+      "start": 566,
+      "end": 589,
+      "text": "leave behind porch gate",
+      "reason": "must_keep"
+    },
+    {
+      "start": 989,
+      "end": 1021,
+      "text": "Reshipment authorized at no cost",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1156,
+      "end": 1181,
+      "text": "Pending Customer Response",
+      "reason": "must_keep"
+    },
+    {
+      "start": 46,
+      "end": 60,
+      "text": "Priority: High",
+      "reason": "must_keep"
+    }
   ]
 }

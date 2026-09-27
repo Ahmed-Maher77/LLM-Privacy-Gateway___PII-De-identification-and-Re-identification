@@ -14,5 +14,93 @@
     "maybe starts Monday",
     "The delivery is in",
     "Check ticket"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 0,
+      "end": 11,
+      "label": "PII",
+      "text": "Ahmed Farid",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 83,
+      "end": 94,
+      "label": "PII",
+      "text": "Rania Fahmy",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 141,
+      "end": 164,
+      "label": "EMAIL",
+      "text": "ahmed.farid@example.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 167,
+      "end": 179,
+      "label": "PII",
+      "text": "Hossam Badri",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 263,
+      "end": 271,
+      "label": "CUSTOM_ID",
+      "text": "POD-4421",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 12,
+      "end": 32,
+      "text": "0 minutes 31 seconds",
+      "reason": "must_keep"
+    },
+    {
+      "start": 180,
+      "end": 201,
+      "text": "27 minutes 49 seconds",
+      "reason": "must_keep"
+    },
+    {
+      "start": 33,
+      "end": 40,
+      "text": "So, um,",
+      "reason": "must_keep"
+    },
+    {
+      "start": 53,
+      "end": 60,
+      "text": "project",
+      "reason": "must_keep"
+    },
+    {
+      "start": 61,
+      "end": 80,
+      "text": "maybe starts Monday",
+      "reason": "must_keep"
+    },
+    {
+      "start": 202,
+      "end": 220,
+      "text": "The delivery is in",
+      "reason": "must_keep"
+    },
+    {
+      "start": 250,
+      "end": 262,
+      "text": "Check ticket",
+      "reason": "must_keep"
+    }
   ]
 }

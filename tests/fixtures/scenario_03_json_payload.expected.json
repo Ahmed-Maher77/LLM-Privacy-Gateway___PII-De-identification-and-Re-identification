@@ -13,5 +13,87 @@
     "\"mac_address\"",
     "\"notes\"",
     "Escalate to"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 27,
+      "end": 39,
+      "label": "PII",
+      "text": "Nadia Hassan",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 62,
+      "end": 86,
+      "label": "EMAIL",
+      "text": "nadia.hassan@example.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 127,
+      "end": 141,
+      "label": "CUSTOM_ID",
+      "text": "CUST-2026-0042",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 162,
+      "end": 179,
+      "label": "MAC_ADDRESS",
+      "text": "00:1B:44:11:3A:B7",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 206,
+      "end": 217,
+      "label": "PII",
+      "text": "Omar Khaled",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 9,
+      "end": 24,
+      "text": "\"customer_name\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 44,
+      "end": 59,
+      "text": "\"contact_email\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 112,
+      "end": 124,
+      "text": "\"account_id\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 146,
+      "end": 159,
+      "text": "\"mac_address\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 184,
+      "end": 191,
+      "text": "\"notes\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 194,
+      "end": 205,
+      "text": "Escalate to",
+      "reason": "must_keep"
+    }
   ]
 }

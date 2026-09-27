@@ -30,5 +30,177 @@
     [
       "Dominic Moreau"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 85,
+      "end": 103,
+      "label": "PII",
+      "text": "Catherine O'Connor",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 143,
+      "end": 155,
+      "label": "PII",
+      "text": "Arthur Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 175,
+      "end": 189,
+      "label": "PII",
+      "text": "Dominic Moreau",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 242,
+      "end": 250,
+      "label": "CUSTOM_ID",
+      "text": "EMP-9402",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 338,
+      "end": 352,
+      "label": "PII",
+      "text": "Dominic Moreau",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 354,
+      "end": 368,
+      "label": "PII",
+      "text": "Dominic Moreau",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 867,
+      "end": 906,
+      "label": "ADDRESS",
+      "text": "88 Beacon Ridge Blvd, Seattle, WA 98101",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 933,
+      "end": 961,
+      "label": "EMAIL",
+      "text": "dmoreau.private@fastmail.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 978,
+      "end": 993,
+      "label": "PHONE",
+      "text": "+1-206-555-0177",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1020,
+      "end": 1033,
+      "label": "PII",
+      "text": "Claire Moreau",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1060,
+      "end": 1078,
+      "label": "PII",
+      "text": "Catherine O'Connor",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1123,
+      "end": 1137,
+      "label": "PII",
+      "text": "Dominic Moreau",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1141,
+      "end": 1153,
+      "label": "PII",
+      "text": "Arthur Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1273,
+      "end": 1281,
+      "label": "CUSTOM_ID",
+      "text": "EMP-9402",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 105,
+      "end": 140,
+      "text": "Vice President of People Operations",
+      "reason": "must_keep"
+    },
+    {
+      "start": 157,
+      "end": 172,
+      "text": "General Counsel",
+      "reason": "must_keep"
+    },
+    {
+      "start": 191,
+      "end": 227,
+      "text": "Senior Vice President of Engineering",
+      "reason": "must_keep"
+    },
+    {
+      "start": 493,
+      "end": 513,
+      "text": "Exceeds Expectations",
+      "reason": "must_keep"
+    },
+    {
+      "start": 570,
+      "end": 581,
+      "text": "base salary",
+      "reason": "must_keep"
+    },
+    {
+      "start": 600,
+      "end": 603,
+      "text": "USD",
+      "reason": "must_keep"
+    },
+    {
+      "start": 681,
+      "end": 701,
+      "text": "45,000 unvested RSUs",
+      "reason": "must_keep"
+    },
+    {
+      "start": 773,
+      "end": 799,
+      "text": "COBRA continuation subsidy",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1044,
+      "end": 1056,
+      "text": "ACTION ITEMS",
+      "reason": "must_keep"
+    }
   ]
 }

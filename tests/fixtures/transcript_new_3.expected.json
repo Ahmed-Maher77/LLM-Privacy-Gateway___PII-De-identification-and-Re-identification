@@ -33,5 +33,419 @@
     [
       "MARGARET O'SULLIVAN"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 252,
+      "end": 264,
+      "label": "CUSTOM_ID",
+      "text": "WB-2024-0119",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 424,
+      "end": 434,
+      "label": "PII",
+      "text": "O'Sullivan",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 523,
+      "end": 534,
+      "label": "PII",
+      "text": "Robert Chen",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 585,
+      "end": 595,
+      "label": "PERSON",
+      "text": "John Smith",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 904,
+      "end": 923,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1020,
+      "end": 1030,
+      "label": "PII",
+      "text": "O'Sullivan",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1057,
+      "end": 1068,
+      "label": "PII",
+      "text": "Robert Chen",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1121,
+      "end": 1131,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1220,
+      "end": 1230,
+      "label": "PERSON",
+      "text": "John Smith",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1394,
+      "end": 1409,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1543,
+      "end": 1553,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1871,
+      "end": 1881,
+      "label": "PII",
+      "text": "Harrington",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1899,
+      "end": 1918,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2059,
+      "end": 2069,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2493,
+      "end": 2508,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2616,
+      "end": 2626,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2968,
+      "end": 2987,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3095,
+      "end": 3105,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3260,
+      "end": 3287,
+      "label": "EMAIL",
+      "text": "s.goldberg@halcyonpetro.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3333,
+      "end": 3348,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3472,
+      "end": 3482,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3725,
+      "end": 3734,
+      "label": "PII",
+      "text": "Elizabeth",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3735,
+      "end": 3745,
+      "label": "PII",
+      "text": "Fitzgerald",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3864,
+      "end": 3883,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4009,
+      "end": 4019,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4328,
+      "end": 4336,
+      "label": "PII",
+      "text": "Patricia",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4409,
+      "end": 4424,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4570,
+      "end": 4580,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 5029,
+      "end": 5048,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5178,
+      "end": 5188,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 5516,
+      "end": 5531,
+      "label": "ADDRESS",
+      "text": "200 Park Avenue",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5545,
+      "end": 5560,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5677,
+      "end": 5687,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 6079,
+      "end": 6098,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6220,
+      "end": 6230,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 6451,
+      "end": 6466,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6621,
+      "end": 6631,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 6989,
+      "end": 7008,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7158,
+      "end": 7168,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 7540,
+      "end": 7555,
+      "label": "PII",
+      "text": "ROBERT CHEN JR.",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7664,
+      "end": 7674,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 7868,
+      "end": 7887,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8064,
+      "end": 8074,
+      "label": "PERSON",
+      "text": "JOHN SMITH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 8268,
+      "end": 8277,
+      "label": "PII",
+      "text": "Deshpande",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8414,
+      "end": 8433,
+      "label": "PII",
+      "text": "MARGARET O'SULLIVAN",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 7275,
+      "end": 7284,
+      "text": "ISO 14001",
+      "reason": "must_keep"
+    },
+    {
+      "start": 6950,
+      "end": 6965,
+      "text": "Clean Water Act",
+      "reason": "must_keep"
+    },
+    {
+      "start": 561,
+      "end": 564,
+      "text": "EPA",
+      "reason": "must_keep"
+    },
+    {
+      "start": 6970,
+      "end": 6975,
+      "text": "EPCRA",
+      "reason": "must_keep"
+    },
+    {
+      "start": 681,
+      "end": 702,
+      "text": "Halcyon Petrochemical",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2283,
+      "end": 2302,
+      "text": "Grand Calumet River",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2206,
+      "end": 2220,
+      "text": "14,000 gallons",
+      "reason": "must_keep"
+    },
+    {
+      "start": 284,
+      "end": 297,
+      "text": "June 14, 2024",
+      "reason": "must_keep"
+    }
   ]
 }

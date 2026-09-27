@@ -47,5 +47,355 @@
     [
       "David Miller"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 121,
+      "end": 134,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 158,
+      "end": 171,
+      "label": "PII",
+      "text": "Michael Chang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 198,
+      "end": 210,
+      "label": "PII",
+      "text": "David Miller",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 239,
+      "end": 252,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 432,
+      "end": 444,
+      "label": "PII",
+      "text": "David Miller",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 529,
+      "end": 550,
+      "label": "PII",
+      "text": "Marcus Aurelius Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 610,
+      "end": 631,
+      "label": "ADDRESS",
+      "text": "742 Evergreen Terrace",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 649,
+      "end": 654,
+      "label": "PII",
+      "text": "97477",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 690,
+      "end": 707,
+      "label": "PHONE",
+      "text": "+1 (555) 019-2834",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 724,
+      "end": 749,
+      "label": "EMAIL",
+      "text": "marcus.vance.88@gmail.com",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 752,
+      "end": 765,
+      "label": "PII",
+      "text": "Michael Chang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 925,
+      "end": 937,
+      "label": "PII",
+      "text": "David Miller",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 987,
+      "end": 998,
+      "label": "SSN",
+      "text": "987-65-4321",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1031,
+      "end": 1043,
+      "label": "CUSTOM_ID",
+      "text": "DL-8829401-X",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1147,
+      "end": 1156,
+      "label": "PII",
+      "text": "122000049",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1173,
+      "end": 1184,
+      "label": "PII",
+      "text": "88301928475",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1187,
+      "end": 1200,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1304,
+      "end": 1317,
+      "label": "PII",
+      "text": "Michael Chang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1398,
+      "end": 1417,
+      "label": "CREDIT_CARD",
+      "text": "4532-0192-8834-5610",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1427,
+      "end": 1432,
+      "label": "PII",
+      "text": "08/29",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1449,
+      "end": 1452,
+      "label": "PII",
+      "text": "482",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1495,
+      "end": 1508,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1635,
+      "end": 1647,
+      "label": "PII",
+      "text": "David Miller",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1674,
+      "end": 1686,
+      "label": "CUSTOM_ID",
+      "text": "MEM-992014-A",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1801,
+      "end": 1814,
+      "label": "PII",
+      "text": "Michael Chang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2051,
+      "end": 2061,
+      "label": "CUSTOM_ID",
+      "text": "usr_991823",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2084,
+      "end": 2092,
+      "label": "CUSTOM_ID",
+      "text": "EMP-4029",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2134,
+      "end": 2147,
+      "label": "IP_ADDRESS",
+      "text": "192.168.1.105",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2170,
+      "end": 2187,
+      "label": "MAC_ADDRESS",
+      "text": "00:1B:44:11:3A:B7",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2212,
+      "end": 2244,
+      "label": "EMAIL",
+      "text": "michael.chang@enterprise-corp.io",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2252,
+      "end": 2265,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2518,
+      "end": 2531,
+      "label": "PII",
+      "text": "Michael Chang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2689,
+      "end": 2704,
+      "label": "PHONE",
+      "text": "+1-312-555-0143",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2707,
+      "end": 2720,
+      "label": "PII",
+      "text": "Sarah Jenkins",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 1442,
+      "end": 1445,
+      "text": "CVV",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2324,
+      "end": 2326,
+      "text": "IP",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2338,
+      "end": 2341,
+      "text": "MAC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1910,
+      "end": 1914,
+      "text": "JSON",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1894,
+      "end": 1897,
+      "text": "API",
+      "reason": "must_keep"
+    },
+    {
+      "start": 93,
+      "end": 108,
+      "text": "Microsoft Teams",
+      "reason": "must_keep"
+    },
+    {
+      "start": 212,
+      "end": 236,
+      "text": "HR Operations Specialist",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2154,
+      "end": 2167,
+      "text": "\"mac_address\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2039,
+      "end": 2048,
+      "text": "\"user_id\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2097,
+      "end": 2111,
+      "text": "\"auth_session\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 796,
+      "end": 818,
+      "text": "Social Security Number",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1132,
+      "end": 1146,
+      "text": "routing number",
+      "reason": "must_keep"
+    }
   ]
 }

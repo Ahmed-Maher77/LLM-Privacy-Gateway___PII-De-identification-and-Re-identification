@@ -36,5 +36,389 @@
       "ANJALI DESHMUKH",
       "Anjali Deshmukh"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 254,
+      "end": 266,
+      "label": "CUSTOM_ID",
+      "text": "CD-2024-0233",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 401,
+      "end": 416,
+      "label": "PERSON",
+      "text": "Anjali Deshmukh",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 477,
+      "end": 488,
+      "label": "PERSON",
+      "text": "Rohan Mehta",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 560,
+      "end": 574,
+      "label": "PII",
+      "text": "Kenji Watanabe",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 701,
+      "end": 716,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 987,
+      "end": 998,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1345,
+      "end": 1359,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1509,
+      "end": 1520,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1910,
+      "end": 1925,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2043,
+      "end": 2054,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 2477,
+      "end": 2491,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2620,
+      "end": 2631,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 3001,
+      "end": 3018,
+      "label": "CUSTOM_ID",
+      "text": "RBI/2023/CYB/0847",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3032,
+      "end": 3047,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3162,
+      "end": 3173,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 3586,
+      "end": 3600,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3739,
+      "end": 3750,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 4095,
+      "end": 4110,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4237,
+      "end": 4248,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 4574,
+      "end": 4588,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4740,
+      "end": 4751,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 5159,
+      "end": 5174,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 5292,
+      "end": 5303,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 5702,
+      "end": 5716,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5865,
+      "end": 5876,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 6229,
+      "end": 6237,
+      "label": "PII",
+      "text": "BHRTINBB",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6251,
+      "end": 6266,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 6396,
+      "end": 6407,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 6708,
+      "end": 6715,
+      "label": "PII",
+      "text": "Nandini",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6716,
+      "end": 6728,
+      "label": "PII",
+      "text": "Bhattacharya",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6964,
+      "end": 6978,
+      "label": "PII",
+      "text": "KENJI WATANABE",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7091,
+      "end": 7102,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 7491,
+      "end": 7506,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 7641,
+      "end": 7652,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 7980,
+      "end": 7995,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 8171,
+      "end": 8182,
+      "label": "PERSON",
+      "text": "ROHAN MEHTA",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 8287,
+      "end": 8313,
+      "label": "EMAIL",
+      "text": "rohan.mehta@bharatcb.co.in",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8333,
+      "end": 8348,
+      "label": "PHONE",
+      "text": "+91-98200-45173",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8413,
+      "end": 8428,
+      "label": "PERSON",
+      "text": "ANJALI DESHMUKH",
+      "entity": "e1",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 1283,
+      "end": 1290,
+      "text": "Finacle",
+      "reason": "must_keep"
+    },
+    {
+      "start": 5623,
+      "end": 5630,
+      "text": "AES-128",
+      "reason": "must_keep"
+    },
+    {
+      "start": 5642,
+      "end": 5649,
+      "text": "AES-256",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2147,
+      "end": 2150,
+      "text": "RBI",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2346,
+      "end": 2349,
+      "text": "UPI",
+      "reason": "must_keep"
+    },
+    {
+      "start": 3917,
+      "end": 3920,
+      "text": "KYC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1740,
+      "end": 1747,
+      "text": "Infosys",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2207,
+      "end": 2216,
+      "text": "ISO 20022",
+      "reason": "must_keep"
+    },
+    {
+      "start": 6880,
+      "end": 6889,
+      "text": "HDFC Bank",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1143,
+      "end": 1155,
+      "text": "247 branches",
+      "reason": "must_keep"
+    },
+    {
+      "start": 286,
+      "end": 298,
+      "text": "July 9, 2024",
+      "reason": "must_keep"
+    }
   ]
 }

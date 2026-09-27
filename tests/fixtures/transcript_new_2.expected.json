@@ -33,5 +33,401 @@
       "Amara Nwosu"
     ]
   ],
-  "notes": "'North Korean' is deliberately redacted. NORP fails closed: it is released only when it modifies a noun that cannot be a person. Adding 'group' to that release list would also release 'ethnic group' and 'religious group', which are about people, so the nationality attached to a threat actor stays masked. Over-redaction here is the accepted cost of not printing Article 9 data."
+  "notes": "'North Korean' is deliberately redacted. NORP fails closed: it is released only when it modifies a noun that cannot be a person. Adding 'group' to that release list would also release 'ethnic group' and 'religious group', which are about people, so the nationality attached to a threat actor stays masked. Over-redaction here is the accepted cost of not printing Article 9 data.",
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 255,
+      "end": 268,
+      "label": "CUSTOM_ID",
+      "text": "PIR-2024-0088",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 395,
+      "end": 409,
+      "label": "PERSON",
+      "text": "James O'Connor",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 516,
+      "end": 535,
+      "label": "PII",
+      "text": "Yuki Tanaka-O'Brien",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 632,
+      "end": 643,
+      "label": "PERSON",
+      "text": "Amara Nwosu",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 761,
+      "end": 775,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1193,
+      "end": 1216,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1490,
+      "end": 1501,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1584,
+      "end": 1591,
+      "label": "PII",
+      "text": "O'Brien",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1676,
+      "end": 1699,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2138,
+      "end": 2152,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 2377,
+      "end": 2400,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 2661,
+      "end": 2672,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 2838,
+      "end": 2861,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3167,
+      "end": 3181,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 3301,
+      "end": 3324,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3518,
+      "end": 3530,
+      "label": "PII",
+      "text": "Priya Sharma",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 3601,
+      "end": 3612,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 3755,
+      "end": 3778,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4006,
+      "end": 4020,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 4137,
+      "end": 4160,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4477,
+      "end": 4488,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4633,
+      "end": 4656,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5047,
+      "end": 5061,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 5173,
+      "end": 5196,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5417,
+      "end": 5428,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 5610,
+      "end": 5633,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6024,
+      "end": 6038,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 6144,
+      "end": 6167,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6375,
+      "end": 6392,
+      "label": "PII",
+      "text": "Rebecca Lindstrom",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6516,
+      "end": 6527,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 6678,
+      "end": 6701,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6954,
+      "end": 6968,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 7139,
+      "end": 7162,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7541,
+      "end": 7552,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 7669,
+      "end": 7692,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7976,
+      "end": 7990,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 8109,
+      "end": 8132,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8483,
+      "end": 8494,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 8648,
+      "end": 8671,
+      "label": "PII",
+      "text": "DR. YUKI TANAKA-O'BRIEN",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 9106,
+      "end": 9120,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 9249,
+      "end": 9260,
+      "label": "PERSON",
+      "text": "AMARA NWOSU",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 9389,
+      "end": 9403,
+      "label": "PERSON",
+      "text": "JAMES O'CONNOR",
+      "entity": "e2",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 3407,
+      "end": 3414,
+      "text": "AES-256",
+      "reason": "must_keep"
+    },
+    {
+      "start": 5875,
+      "end": 5889,
+      "text": "CVE-2024-21762",
+      "reason": "must_keep"
+    },
+    {
+      "start": 4919,
+      "end": 4925,
+      "text": "Russia",
+      "reason": "must_keep"
+    },
+    {
+      "start": 5002,
+      "end": 5009,
+      "text": "Lazarus",
+      "reason": "must_keep"
+    },
+    {
+      "start": 219,
+      "end": 234,
+      "text": "Meridian Health",
+      "reason": "must_keep"
+    },
+    {
+      "start": 663,
+      "end": 677,
+      "text": "Deloitte Cyber",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2958,
+      "end": 2969,
+      "text": "CrowdStrike",
+      "reason": "must_keep"
+    },
+    {
+      "start": 5797,
+      "end": 5815,
+      "text": "Fortinet FortiGate",
+      "reason": "must_keep"
+    },
+    {
+      "start": 7294,
+      "end": 7310,
+      "text": "Privacy Act 1988",
+      "reason": "must_keep"
+    }
+  ]
 }

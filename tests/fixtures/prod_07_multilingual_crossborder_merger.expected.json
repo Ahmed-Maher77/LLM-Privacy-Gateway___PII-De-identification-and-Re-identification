@@ -34,5 +34,195 @@
       "Dr. Matthias Brandt",
       "Matthias Brandt"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 145,
+      "end": 161,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 206,
+      "end": 226,
+      "label": "PII",
+      "text": "Hélène de Montmirail",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 276,
+      "end": 291,
+      "label": "PERSON",
+      "text": "Matthias Brandt",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 356,
+      "end": 372,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 526,
+      "end": 541,
+      "label": "PHONE",
+      "text": "+971 4 312 9000",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 554,
+      "end": 574,
+      "label": "PII",
+      "text": "Hélène de Montmirail",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 582,
+      "end": 587,
+      "label": "PERSON",
+      "text": "Tariq",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 654,
+      "end": 692,
+      "label": "PII",
+      "text": "14 Rue de la Paix, 75002 Paris, France",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 730,
+      "end": 743,
+      "label": "IBAN",
+      "text": "FR82123456789",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 760,
+      "end": 775,
+      "label": "PERSON",
+      "text": "Matthias Brandt",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 883,
+      "end": 894,
+      "label": "EU_VAT",
+      "text": "DE987654321",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 945,
+      "end": 960,
+      "label": "PHONE",
+      "text": "+49 30 22730000",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 973,
+      "end": 989,
+      "label": "PERSON",
+      "text": "Tariq Al-Mansoor",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1115,
+      "end": 1136,
+      "label": "IBAN",
+      "text": "CH9300762011623852957",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1152,
+      "end": 1163,
+      "label": "SWIFT_BIC",
+      "text": "UBSWCHZH80A",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1176,
+      "end": 1196,
+      "label": "PII",
+      "text": "Hélène de Montmirail",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1376,
+      "end": 1391,
+      "label": "PERSON",
+      "text": "Matthias Brandt",
+      "entity": "e1",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 163,
+      "end": 179,
+      "text": "Managing Partner",
+      "reason": "must_keep"
+    },
+    {
+      "start": 228,
+      "end": 243,
+      "text": "General Counsel",
+      "reason": "must_keep"
+    },
+    {
+      "start": 293,
+      "end": 305,
+      "text": "Lead Auditor",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1295,
+      "end": 1311,
+      "text": "EBITDA multiples",
+      "reason": "must_keep"
+    },
+    {
+      "start": 708,
+      "end": 711,
+      "text": "VAT",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1110,
+      "end": 1114,
+      "text": "IBAN",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1141,
+      "end": 1151,
+      "text": "SWIFT code",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1411,
+      "end": 1438,
+      "text": "statutory audit certificate",
+      "reason": "must_keep"
+    }
   ]
 }

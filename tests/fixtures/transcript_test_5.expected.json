@@ -32,5 +32,165 @@
       "Samuel Adeyemi",
       "Adeyemi"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 206,
+      "end": 219,
+      "label": "CUSTOM_ID",
+      "text": "CAB-2024-0031",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 499,
+      "end": 515,
+      "label": "PERSON",
+      "text": "Helena Lindqvist",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 568,
+      "end": 579,
+      "label": "PII",
+      "text": "Rajiv Menon",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 782,
+      "end": 798,
+      "label": "PERSON",
+      "text": "Helena Lindqvist",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 899,
+      "end": 913,
+      "label": "PERSON",
+      "text": "Samuel Adeyemi",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1023,
+      "end": 1036,
+      "label": "PII",
+      "text": "Mei-Ling Chen",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1127,
+      "end": 1140,
+      "label": "PII",
+      "text": "Javier Ortega",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1237,
+      "end": 1253,
+      "label": "PII",
+      "text": "Fatima Al-Rashid",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1916,
+      "end": 1923,
+      "label": "PERSON",
+      "text": "Adeyemi",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 7438,
+      "end": 7445,
+      "label": "PERSON",
+      "text": "Adeyemi",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 8057,
+      "end": 8066,
+      "label": "PERSON",
+      "text": "Lindqvist",
+      "entity": "e2",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 329,
+      "end": 337,
+      "text": "Oncology",
+      "reason": "must_keep"
+    },
+    {
+      "start": 521,
+      "end": 524,
+      "text": "PhD",
+      "reason": "must_keep"
+    },
+    {
+      "start": 7427,
+      "end": 7433,
+      "text": "Owner:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 7453,
+      "end": 7463,
+      "text": "2024-02-22",
+      "reason": "must_keep"
+    },
+    {
+      "start": 4297,
+      "end": 4300,
+      "text": "ICH",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1226,
+      "end": 1229,
+      "text": "EMA",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1044,
+      "end": 1061,
+      "text": "Biostatistics SME",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2748,
+      "end": 2771,
+      "text": "Declaration of Helsinki",
+      "reason": "must_keep"
+    },
+    {
+      "start": 6636,
+      "end": 6645,
+      "text": "CLEOPATRA",
+      "reason": "must_keep"
+    },
+    {
+      "start": 2639,
+      "end": 2646,
+      "text": "English",
+      "reason": "must_keep"
+    },
+    {
+      "start": 293,
+      "end": 302,
+      "text": "Phase III",
+      "reason": "must_keep"
+    }
   ]
 }

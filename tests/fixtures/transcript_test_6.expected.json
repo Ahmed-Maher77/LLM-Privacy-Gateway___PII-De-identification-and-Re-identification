@@ -37,5 +37,257 @@
       "Angela Park-Reyes",
       "Park-Reyes"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 239,
+      "end": 252,
+      "label": "PII",
+      "text": "2024-AML-0876",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 533,
+      "end": 551,
+      "label": "ORG",
+      "text": "Whitfield & Barnes",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 594,
+      "end": 612,
+      "label": "PERSON",
+      "text": "Karen M. Whitfield",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 629,
+      "end": 647,
+      "label": "ORG",
+      "text": "Whitfield & Barnes",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 668,
+      "end": 679,
+      "label": "PERSON",
+      "text": "Daniel Osei",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 744,
+      "end": 761,
+      "label": "PERSON",
+      "text": "Angela Park-Reyes",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1291,
+      "end": 1309,
+      "label": "PERSON",
+      "text": "Karen M. Whitfield",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 1584,
+      "end": 1594,
+      "label": "PERSON",
+      "text": "Park-Reyes",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1737,
+      "end": 1748,
+      "label": "PERSON",
+      "text": "Daniel Osei",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 2381,
+      "end": 2391,
+      "label": "PERSON",
+      "text": "Park-Reyes",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 4104,
+      "end": 4118,
+      "label": "PII",
+      "text": "Marcus Delgado",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 4261,
+      "end": 4278,
+      "label": "PII",
+      "text": "Rebecca Lindstrom",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 5656,
+      "end": 5664,
+      "label": "PII",
+      "text": "CITIUS33",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 6973,
+      "end": 6987,
+      "label": "PII",
+      "text": "Marcus Delgado",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 7070,
+      "end": 7079,
+      "label": "PERSON",
+      "text": "Whitfield",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 8409,
+      "end": 8423,
+      "label": "PII",
+      "text": "Marcus Delgado",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 8425,
+      "end": 8442,
+      "label": "PII",
+      "text": "Rebecca Lindstrom",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 9109,
+      "end": 9126,
+      "label": "PII",
+      "text": "Rebecca Lindstrom",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 10001,
+      "end": 10017,
+      "label": "PII",
+      "text": "Stavros Georgiou",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 10536,
+      "end": 10550,
+      "label": "PII",
+      "text": "Marcus Delgado",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 13045,
+      "end": 13055,
+      "label": "PERSON",
+      "text": "Park-Reyes",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 13920,
+      "end": 13930,
+      "label": "PERSON",
+      "text": "Park-Reyes",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 15002,
+      "end": 15011,
+      "label": "PERSON",
+      "text": "Whitfield",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 15028,
+      "end": 15032,
+      "label": "PERSON",
+      "text": "Osei",
+      "entity": "e2",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 10079,
+      "end": 10083,
+      "text": "OFAC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 12103,
+      "end": 12107,
+      "text": "KPMG",
+      "reason": "must_keep"
+    },
+    {
+      "start": 11633,
+      "end": 11649,
+      "text": "Bank Secrecy Act",
+      "reason": "must_keep"
+    },
+    {
+      "start": 4886,
+      "end": 4891,
+      "text": "Gmail",
+      "reason": "must_keep"
+    },
+    {
+      "start": 6732,
+      "end": 6738,
+      "text": "FinCEN",
+      "reason": "must_keep"
+    },
+    {
+      "start": 3677,
+      "end": 3685,
+      "text": "Actimize",
+      "reason": "must_keep"
+    },
+    {
+      "start": 843,
+      "end": 858,
+      "text": "Court Reporter:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 923,
+      "end": 939,
+      "text": "Consent obtained",
+      "reason": "must_keep"
+    },
+    {
+      "start": 11962,
+      "end": 11977,
+      "text": "USA PATRIOT Act",
+      "reason": "must_keep"
+    }
   ]
 }

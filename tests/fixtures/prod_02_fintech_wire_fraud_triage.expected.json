@@ -38,5 +38,307 @@
       "Jonathan Sterling",
       "Sterling"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 108,
+      "end": 120,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 161,
+      "end": 178,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 196,
+      "end": 229,
+      "label": "ADDRESS",
+      "text": "142 Elmwood Ave, Boston, MA 02116",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 242,
+      "end": 254,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 326,
+      "end": 338,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 359,
+      "end": 376,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 389,
+      "end": 406,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 421,
+      "end": 438,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 553,
+      "end": 565,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 604,
+      "end": 612,
+      "label": "PERSON",
+      "text": "Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 780,
+      "end": 797,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 809,
+      "end": 820,
+      "label": "SSN",
+      "text": "491-20-8472",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 848,
+      "end": 859,
+      "label": "PII",
+      "text": "09284719284",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 882,
+      "end": 891,
+      "label": "PII",
+      "text": "021000021",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 904,
+      "end": 916,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1005,
+      "end": 1022,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1035,
+      "end": 1054,
+      "label": "CREDIT_CARD",
+      "text": "4532-0192-8834-5610",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1060,
+      "end": 1063,
+      "label": "PII",
+      "text": "891",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1072,
+      "end": 1077,
+      "label": "PII",
+      "text": "11/28",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1090,
+      "end": 1102,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1211,
+      "end": 1233,
+      "label": "IBAN",
+      "text": "GB29NWBK60161331926819",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1245,
+      "end": 1253,
+      "label": "PII",
+      "text": "NWBKGB2L",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1316,
+      "end": 1333,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1406,
+      "end": 1418,
+      "label": "PERSON",
+      "text": "Marcus Vance",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1519,
+      "end": 1530,
+      "label": "PII",
+      "text": "09284719284",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1614,
+      "end": 1631,
+      "label": "PERSON",
+      "text": "Jonathan Sterling",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1651,
+      "end": 1657,
+      "label": "PERSON",
+      "text": "Marcus",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 1695,
+      "end": 1727,
+      "label": "EMAIL",
+      "text": "j.sterling@sterling-advisors.com",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 122,
+      "end": 149,
+      "text": "Fraud Operations Specialist",
+      "reason": "must_keep"
+    },
+    {
+      "start": 488,
+      "end": 501,
+      "text": "wire transfer",
+      "reason": "must_keep"
+    },
+    {
+      "start": 513,
+      "end": 516,
+      "text": "USD",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1056,
+      "end": 1059,
+      "text": "CVV",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1065,
+      "end": 1071,
+      "text": "expiry",
+      "reason": "must_keep"
+    },
+    {
+      "start": 732,
+      "end": 735,
+      "text": "SSN",
+      "reason": "must_keep"
+    },
+    {
+      "start": 864,
+      "end": 878,
+      "text": "routing number",
+      "reason": "must_keep"
+    },
+    {
+      "start": 753,
+      "end": 767,
+      "text": "account number",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1196,
+      "end": 1200,
+      "text": "IBAN",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1239,
+      "end": 1244,
+      "text": "SWIFT",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1556,
+      "end": 1560,
+      "text": "OFAC",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1565,
+      "end": 1568,
+      "text": "AML",
+      "reason": "must_keep"
+    }
   ]
 }

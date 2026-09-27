@@ -27,5 +27,145 @@
     [
       "Farhan Qureshi"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 229,
+      "end": 243,
+      "label": "PII",
+      "text": "Farhan Qureshi",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 258,
+      "end": 284,
+      "label": "EMAIL",
+      "text": "farhan.qureshi@techcorp.ae",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 299,
+      "end": 315,
+      "label": "PHONE",
+      "text": "+971-50-555-1234",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 341,
+      "end": 389,
+      "label": "PII",
+      "text": "Villa 14, Al Safa 2, Dubai, United Arab Emirates",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 409,
+      "end": 422,
+      "label": "IP_ADDRESS",
+      "text": "198.51.100.42",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 442,
+      "end": 459,
+      "label": "MAC_ADDRESS",
+      "text": "A4:83:E7:2C:19:B0",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 480,
+      "end": 499,
+      "label": "CREDIT_CARD",
+      "text": "4532-0192-8834-5610",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 180,
+      "end": 190,
+      "text": "\"order_id\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 211,
+      "end": 226,
+      "text": "\"customer_name\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 248,
+      "end": 255,
+      "text": "\"email\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 289,
+      "end": 296,
+      "text": "\"phone\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 320,
+      "end": 338,
+      "text": "\"shipping_address\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 394,
+      "end": 406,
+      "text": "\"ip_address\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 427,
+      "end": 439,
+      "text": "\"client_mac\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 464,
+      "end": 477,
+      "text": "\"card_number\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 504,
+      "end": 514,
+      "text": "\"currency\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 525,
+      "end": 533,
+      "text": "\"amount\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 546,
+      "end": 554,
+      "text": "\"status\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 62,
+      "end": 86,
+      "text": "POST /v1/checkout/orders",
+      "reason": "must_keep"
+    },
+    {
+      "start": 671,
+      "end": 687,
+      "text": "HTTP 201 Created",
+      "reason": "must_keep"
+    }
   ]
 }

@@ -21,5 +21,143 @@
     "Routing number:",
     "Account number:",
     "SSN:"
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 37,
+      "end": 50,
+      "label": "PII",
+      "text": "Olivia Wilson",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 64,
+      "end": 83,
+      "label": "CREDIT_CARD",
+      "text": "4532-0192-8834-5610",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 89,
+      "end": 92,
+      "label": "PII",
+      "text": "482",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 101,
+      "end": 106,
+      "label": "PII",
+      "text": "09/29",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 113,
+      "end": 135,
+      "label": "IBAN",
+      "text": "GB29NWBK60161331926819",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 143,
+      "end": 151,
+      "label": "PII",
+      "text": "NWBKGB2L",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 168,
+      "end": 177,
+      "label": "PII",
+      "text": "122000049",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 194,
+      "end": 204,
+      "label": "PII",
+      "text": "9876543210",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 210,
+      "end": 221,
+      "label": "SSN",
+      "text": "123-45-6789",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 0,
+      "end": 25,
+      "text": "Payment verification call",
+      "reason": "must_keep"
+    },
+    {
+      "start": 27,
+      "end": 36,
+      "text": "Customer:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 51,
+      "end": 63,
+      "text": "Card number:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 84,
+      "end": 88,
+      "text": "CVV:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 93,
+      "end": 100,
+      "text": "Expiry:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 107,
+      "end": 112,
+      "text": "IBAN:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 136,
+      "end": 142,
+      "text": "SWIFT:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 152,
+      "end": 167,
+      "text": "Routing number:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 178,
+      "end": 193,
+      "text": "Account number:",
+      "reason": "must_keep"
+    },
+    {
+      "start": 205,
+      "end": 209,
+      "text": "SSN:",
+      "reason": "must_keep"
+    }
   ]
 }

@@ -35,5 +35,235 @@
     [
       "Kevin Zhang"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 109,
+      "end": 125,
+      "label": "PII",
+      "text": "Rashid Al-Khatib",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 154,
+      "end": 170,
+      "label": "PII",
+      "text": "Rashid Al-Khatib",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 183,
+      "end": 209,
+      "label": "EMAIL",
+      "text": "rashid.khatib@infra-ops.io",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 213,
+      "end": 225,
+      "label": "PII",
+      "text": "Chloe Dubois",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 239,
+      "end": 250,
+      "label": "PII",
+      "text": "Kevin Zhang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 278,
+      "end": 294,
+      "label": "PII",
+      "text": "Rashid Al-Khatib",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 414,
+      "end": 425,
+      "label": "PII",
+      "text": "Kevin Zhang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 628,
+      "end": 640,
+      "label": "PII",
+      "text": "Chloe Dubois",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 666,
+      "end": 677,
+      "label": "IP_ADDRESS",
+      "text": "10.142.0.45",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 765,
+      "end": 777,
+      "label": "PII",
+      "text": "Chloe Dubois",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 890,
+      "end": 956,
+      "label": "CONNECTION_STRING",
+      "text": "postgresql://app_writer:K9#mQ8$vL2!xZ@10.142.0.45:5432/orders_prod",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1016,
+      "end": 1029,
+      "label": "IP_ADDRESS",
+      "text": "192.168.10.88",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1043,
+      "end": 1059,
+      "label": "PII",
+      "text": "Rashid Al-Khatib",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1142,
+      "end": 1155,
+      "label": "IP_ADDRESS",
+      "text": "203.0.113.195",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1175,
+      "end": 1192,
+      "label": "MAC_ADDRESS",
+      "text": "08:00:27:B4:9C:12",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1213,
+      "end": 1224,
+      "label": "PII",
+      "text": "Kevin Zhang",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1303,
+      "end": 1438,
+      "label": "PII",
+      "text": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIn0.sflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1451,
+      "end": 1463,
+      "label": "PII",
+      "text": "Chloe Dubois",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1651,
+      "end": 1667,
+      "label": "PII",
+      "text": "Rashid Al-Khatib",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 127,
+      "end": 136,
+      "text": "Staff SRE",
+      "reason": "must_keep"
+    },
+    {
+      "start": 227,
+      "end": 235,
+      "text": "Lead DBA",
+      "reason": "must_keep"
+    },
+    {
+      "start": 252,
+      "end": 264,
+      "text": "Platform Eng",
+      "reason": "must_keep"
+    },
+    {
+      "start": 311,
+      "end": 318,
+      "text": "Datadog",
+      "reason": "must_keep"
+    },
+    {
+      "start": 506,
+      "end": 513,
+      "text": "kubectl",
+      "reason": "must_keep"
+    },
+    {
+      "start": 583,
+      "end": 599,
+      "text": "CrashLoopBackOff",
+      "reason": "must_keep"
+    },
+    {
+      "start": 605,
+      "end": 614,
+      "text": "OOMKilled",
+      "reason": "must_keep"
+    },
+    {
+      "start": 359,
+      "end": 367,
+      "text": "HTTP 504",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1568,
+      "end": 1579,
+      "text": "\"pool_size\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1588,
+      "end": 1608,
+      "text": "\"active_connections\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1617,
+      "end": 1625,
+      "text": "\"status\"",
+      "reason": "must_keep"
+    },
+    {
+      "start": 1693,
+      "end": 1704,
+      "text": "P99 latency",
+      "reason": "must_keep"
+    }
   ]
 }

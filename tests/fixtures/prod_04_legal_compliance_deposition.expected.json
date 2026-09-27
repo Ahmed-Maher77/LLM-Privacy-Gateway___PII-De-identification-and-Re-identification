@@ -26,5 +26,183 @@
       "Harrison Blake",
       "Blake"
     ]
+  ],
+  "schema": 2,
+  "gold_complete": false,
+  "gold_spans": [
+    {
+      "start": 167,
+      "end": 181,
+      "label": "PII",
+      "text": "Brenda Higgins",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 201,
+      "end": 218,
+      "label": "PII",
+      "text": "Victoria Sterling",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 227,
+      "end": 235,
+      "label": "PII",
+      "text": "Sterling",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 269,
+      "end": 281,
+      "label": "PII",
+      "text": "Arthur Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 290,
+      "end": 295,
+      "label": "PII",
+      "text": "Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 343,
+      "end": 357,
+      "label": "PERSON",
+      "text": "Harrison Blake",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 425,
+      "end": 433,
+      "label": "PII",
+      "text": "Sterling",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 461,
+      "end": 466,
+      "label": "PERSON",
+      "text": "Blake",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 566,
+      "end": 580,
+      "label": "PERSON",
+      "text": "Harrison Blake",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 594,
+      "end": 626,
+      "label": "ADDRESS",
+      "text": "78 Fleet Street, London EC4Y 1HY",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 731,
+      "end": 740,
+      "label": "PII",
+      "text": "P98234109",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 861,
+      "end": 871,
+      "label": "CUSTOM_ID",
+      "text": "CYM-889102",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 878,
+      "end": 890,
+      "label": "PII",
+      "text": "Arthur Vance",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 916,
+      "end": 930,
+      "label": "PERSON",
+      "text": "Harrison Blake",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 1121,
+      "end": 1132,
+      "label": "CUSTOM_ID",
+      "text": "TAX-8891024",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1224,
+      "end": 1252,
+      "label": "EMAIL",
+      "text": "h.blake@blake-advisory.co.uk",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 1297,
+      "end": 1305,
+      "label": "PII",
+      "text": "Sterling",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 102,
+      "end": 112,
+      "text": "DEPOSITION",
+      "reason": "must_keep"
+    },
+    {
+      "start": 151,
+      "end": 165,
+      "text": "Court Reporter",
+      "reason": "must_keep"
+    },
+    {
+      "start": 962,
+      "end": 985,
+      "text": "Chief Financial Officer",
+      "reason": "must_keep"
+    },
+    {
+      "start": 892,
+      "end": 909,
+      "text": "Objection to form",
+      "reason": "must_keep"
+    },
+    {
+      "start": 789,
+      "end": 796,
+      "text": "Exhibit",
+      "reason": "must_keep"
+    },
+    {
+      "start": 406,
+      "end": 420,
+      "text": "Examination by",
+      "reason": "must_keep"
+    }
   ]
 }
