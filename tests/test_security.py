@@ -29,7 +29,12 @@ from pii.structure import analyze_structure, protect_spans
 from pii.titles import detect_titles
 from pii.vault import PseudonymVault, find_template_literals, restore, restore_pattern
 
-TRANSCRIPT = Path("test_data/transcript_test.txt")
+# The corpus lives in tests/fixtures/. These files used to be read from
+# test_data/, which held byte-identical duplicates; resolving from the test
+# file rather than the working directory also stops the suite depending on
+# being invoked from the repository root.
+FIXTURES = Path(__file__).resolve().parent / "fixtures"
+TRANSCRIPT = FIXTURES / "transcript_test.txt"
 
 # Every value that survived the audited run, plus the ones the brief listed.
 LEAKED_VALUES = (
@@ -477,7 +482,7 @@ class TestCurlTranscript:
 
     @pytest.fixture(scope="class")
     def result(self):
-        path = Path("test_data/transcript_test_2.txt")
+        path = (FIXTURES / "transcript_test_2.txt")
         return PIIMiddleware(on_leak="warn").analyze(path.read_text(encoding="utf-8"))
 
     @pytest.mark.parametrize(
@@ -580,7 +585,7 @@ class TestInterviewTranscript:
 
     @pytest.fixture(scope="class")
     def result(self):
-        path = Path("test_data/transcript_test_3.txt")
+        path = (FIXTURES / "transcript_test_3.txt")
         return PIIMiddleware(on_leak="warn").analyze(path.read_text(encoding="utf-8"))
 
     def test_only_the_two_real_people_are_redacted(self, result):
@@ -604,7 +609,7 @@ class TestInterviewTranscript:
             assert name not in result.sanitized
 
     def test_punctuation_is_not_damaged(self, result):
-        source = Path("test_data/transcript_test_3.txt").read_text(encoding="utf-8")
+        source = (FIXTURES / "transcript_test_3.txt").read_text(encoding="utf-8")
         assert result.sanitized.count('"') == source.count('"')
         assert result.sanitized.count("(") == source.count("(")
         assert 'not the "Department of No."' in result.sanitized
