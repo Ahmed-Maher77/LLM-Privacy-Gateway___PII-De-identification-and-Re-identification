@@ -120,7 +120,7 @@ which is why the domain layer exists and why the taxonomy includes
 |---|---|---|---|
 | **Registry** | 100 | Speaker labels parsed from the transcript. A *fact about the document*, not a guess | Not fatal — a plain document has no speaker lines |
 | **Regex** | 90 | Email, phone, URL, IP, card (Luhn-checked), IBAN, account ids | Always fatal; pure `re` cannot fail without a code defect |
-| **Domain** | 80 | Configurable lexicon: internal systems, customers, id formats | Fatal under fail-closed |
+| **Domain** | 80 | Configurable lexicon: internal systems, customers, id formats. Only finds what it is told about | Fatal under fail-closed |
 | **Presidio** | 60 | spaCy-backed NER plus validated recognisers | Fatal under fail-closed, with the remediation in the message |
 | **NER** | 40 | `dslim/bert-base-NER`. A *signal*, never the authority | Fatal under fail-closed |
 | **Qwen** | 30 | Local semantic understanding. **Off by default** | Never fatal unless `GATEWAY_QWEN_REQUIRED=true` |
@@ -297,6 +297,20 @@ uv run privacy-gateway run test_data/sme_meeting_transcript.txt \
 uv run privacy-gateway sanitize test_data/pod_meeting.txt --detectors regex,registry,domain
 ```
 
+> **The fast configuration is not a safe default for arbitrary documents.**
+> `regex,registry,domain` finds structured identifiers, transcript participants
+> and configured business terms — and nothing else. Running it over
+> `sme_meeting_transcript.txt` leaves `Robert Taylor` and `James Anderson` in
+> the text it sends, because neither person speaks in the meeting and neither is
+> in the lexicon. The full set finds both. Use the fast configuration when the
+> sensitive vocabulary is known in advance and enumerable; otherwise pay the
+> latency. This is pinned by test in `tests/regression/`.
+>
+> Note also what the pre-send leak gate can and cannot do: it catches
+> *detection succeeded but replacement failed*. It cannot catch *detection never
+> happened*, because a value nobody detected is not in the mapping to scan for.
+> No gate substitutes for detection coverage.
+
 Reports omit the sanitized text and the answer unless `--include-content` is
 passed, and the mapping unless `--include-mapping` is passed as well. The
 prototype embedded real names in every report it wrote.
@@ -413,18 +427,28 @@ Overhead mode is the default because the overhead is what the gateway is
 responsible for, and a benchmark that cannot run without a hosted service is a
 benchmark that mostly does not run.
 
-Measured, 16 logical cores, CPU only, n=30 after 2 warmups:
+Measured on this machine — 16 logical cores, CPU only, no CUDA — n=30 after 2
+warmups, on `pod_meeting.txt` (13,236 chars, 328 entities):
 
-| Configuration | Median (13 KB doc) | ms / 1000 chars | Model footprint |
-|---|---|---|---|
-| `regex,registry,domain` | **75 ms** | 5.7 | 1 MB |
-| `+ presidio,ner` | **~9.0 s** | ~684 | 1,456 MB |
+| Configuration | Median | p95 | stdev | ms / 1000 chars | Model footprint |
+|---|---|---|---|---|---|
+| `regex,registry,domain` | **75 ms** | 108 ms | 0.02 s | 5.7 | 1 MB |
+| `+ presidio,ner` | **8.95 s** | 15.80 s | 3.63 s | 676 | 2,636 MB |
 
-**That is the real trade-off, and it is steep**: roughly 120× the latency and
-1,400× the memory, for +0.28 recall and 17 fewer leaking documents. Which side
-of it a deployment wants is a decision the numbers inform rather than settle —
-on a short chat message the model layers are cheap, on a 14 KB transcript they
-dominate.
+`p99` is absent from both rows because n=30 cannot support it; the results file
+records that as a withheld value with its reason rather than omitting it
+silently.
+
+**The trade-off is steep**: roughly 120× the latency and 2,600× the memory, for
++0.28 recall and 17 fewer leaking documents. The model-backed configuration is
+also far less predictable — a p95 of 15.8 s against a 8.95 s median, on
+identical input, is CPU inference variance and would need pinning before any
+latency SLO.
+
+Which side a deployment wants is a decision these numbers inform rather than
+settle. On a short chat message the model layers are cheap; on a 14 KB
+transcript they dominate. See the warning in §11: the fast configuration's cost
+is measured in recall, not just milliseconds.
 
 `p99` is never emitted below n=100 and `p95` below n=20; the suppression is in
 the data, not in prose, because prose caveats do not survive being pasted into a

@@ -349,3 +349,59 @@ def test_dollar_amounts_are_preserved(sme):
 def test_dates_and_timestamps_are_preserved(sme):
     _, result = sme
     assert "September 22, 2026" in result.sanitized_input
+
+
+# ---------------------------------------------------------------------------
+# 3. what each configuration actually protects
+# ---------------------------------------------------------------------------
+#
+# Found by running the real pipeline end to end: the deterministic-only
+# configuration leaves two real names in the text it sends. Neither person
+# speaks in the meeting (so the participant registry never sees them) and
+# neither is in the domain lexicon, so only a model-backed layer can find them.
+#
+# This is not a defect -- it is the measured behaviour of a configuration that
+# trades recall for a 120x speed-up, and config D in the evaluation sweep says
+# the same thing (0.577 recall, leaking in 20 of 22 excerpts). It is pinned here
+# because choosing the fast configuration for a document containing
+# non-participant names is a privacy decision, and it should fail loudly if the
+# trade-off ever changes silently.
+#
+# It also marks the boundary of the pre-send leak gate: the gate catches
+# "detection succeeded but replacement failed". It cannot catch "detection never
+# happened", because an undetected value is not in the mapping to be scanned for.
+
+#: Mentioned in the SME transcript but never speaking, and absent from the
+#: shipped domain lexicon.
+NON_PARTICIPANT_NAMES = ["Robert Taylor", "James Anderson"]
+
+
+@pytest.mark.parametrize("name", NON_PARTICIPANT_NAMES)
+def test_deterministic_only_does_not_find_a_non_participant_name(sme, name):
+    _, result = sme  # regex + registry + domain
+    assert name not in {e.canonical for e in result.store.entries()}
+
+
+@pytest.mark.parametrize("name", NON_PARTICIPANT_NAMES)
+def test_deterministic_only_therefore_leaves_that_name_in_the_sanitized_text(sme, name):
+    _, result = sme
+    assert name in result.sanitized_input
+
+
+@pytest.mark.requires_models
+@pytest.mark.parametrize("name", NON_PARTICIPANT_NAMES)
+def test_the_full_detector_set_does_find_it(raw_transcript, name):
+    settings = Settings(
+        detectors=DetectorSettings(
+            enabled=("regex", "registry", "domain", "presidio", "ner"),
+            required=("regex", "registry"),
+        )
+    )
+    gateway = PrivacyGateway(settings, llm=EchoLLMClient())
+    result = gateway.run(
+        GatewayRequest(
+            text=raw_transcript("sme_meeting_transcript.txt"), conversation_id="c-full"
+        )
+    )
+    assert name not in result.sanitized_input
+    assert name in {e.canonical for e in result.store.entries()}

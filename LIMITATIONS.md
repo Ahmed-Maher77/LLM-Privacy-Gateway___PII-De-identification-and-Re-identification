@@ -62,9 +62,16 @@ plainly.
   send different prompts and receive different-length completions; completion
   length dominates model latency. The difference in model time between arms is
   not attributable to the gateway. Only `protected_overhead_seconds` is.
-- **Memory grows during a run** with the model-backed detectors enabled
-  (~1.2 GB across 30 iterations of two documents). This has not been
-  investigated and may be tokenizer or framework caching rather than a leak.
+- **Peak memory is high and its profile is unstable.** The model-backed
+  configuration has a 2.6 GB footprint after warmup. An earlier n=10 run
+  appeared to show ~1.2 GB of growth across iterations; the n=30 run shows RSS
+  *falling* by a similar amount instead, so that reading was a garbage-collection
+  artifact rather than a leak. Neither figure is a reliable steady-state number,
+  and peak RSS should be measured under the intended concurrency before sizing
+  anything.
+- **Model-backed latency is highly variable**: p95 of 15.8 s against a 8.95 s
+  median on identical input, stdev 3.6 s. That spread would need to be
+  understood before committing to a latency target.
 
 ## The gateway itself
 
@@ -78,6 +85,15 @@ plainly.
   resolved to one of them. The model therefore sees them as different people and
   may under-merge coreference in a summary. This is deliberate: guessing would
   make the gateway fabricate attributed statements in a meeting record.
+- **Detector coverage is a privacy decision, not a performance one.** The
+  deterministic-only configuration (`regex,registry,domain`) leaves
+  `Robert Taylor` and `James Anderson` in `sme_meeting_transcript.txt`: neither
+  speaks in the meeting, so the participant registry never sees them, and
+  neither is in the lexicon. The full set finds both. The 120x speed-up is real
+  and so is the recall it costs. Pinned by test.
+- **The pre-send leak gate is not a detector.** It catches a value that was
+  detected and then failed to be replaced. It cannot catch a value that was
+  never detected, because such a value is not in the mapping to be scanned for.
 - **Over-redaction on noisy ASR is expected.** `pod_meeting.txt` is a stream of
   first names and transliterations; with every layer enabled, much of it becomes
   placeholders and summary quality drops. That is correct privacy behaviour but
