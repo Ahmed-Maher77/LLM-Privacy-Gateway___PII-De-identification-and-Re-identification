@@ -499,6 +499,7 @@ tests/  unit/ integration/ security/ regression/
 | ✅ | No raw values in logs | Enforced by `__repr__`, not by discipline |
 | ✅ | Configuration as data | Policy, lexicon, allowlist, denylist all external |
 | ✅ | Measured, not asserted | Evaluation sweep and latency benchmark, with provenance |
+| ✅ | Validated on realistic documents | 20 synthetic documents across interview transcripts, support tickets, config files and financial forms, run end to end against the real downstream model. Found and fixed six classes of detection gap (see `LIMITATIONS.md` and the fix commit for detail); all now pinned by test |
 | ⚠️ | Evaluation labels | **AI-generated, not human-verified.** Review before relying on the figures |
 | ⚠️ | Qwen layer | Implemented and unit-tested; **never run against a real model** |
 | ⚠️ | Memory growth | ~1.2 GB across 30 runs with model layers; uninvestigated |
