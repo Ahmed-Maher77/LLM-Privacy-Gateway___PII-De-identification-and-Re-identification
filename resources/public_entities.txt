@@ -20,13 +20,16 @@ ORGANIZATION	Oracle
 ORGANIZATION	IBM
 ORGANIZATION	Salesforce
 
-# Products and services, frequently mistaken for people or organisations.
-# "Cortana" is here deliberately: the prototype detected it as a PERSON and
-# corrupted it into <PER_11>rtana.
-ORGANIZATION	Cortana
-ORGANIZATION	Siri
-ORGANIZATION	Alexa
-ORGANIZATION	Copilot
+# Assistant and product names that generic NER labels as PEOPLE, not just as
+# organisations. These are listed WITHOUT a type, so the exemption applies
+# whatever type a detector assigns -- a type-scoped entry would not match when
+# Presidio reports "Cortana" as a PERSON, which is exactly what it does. The
+# prototype detected Cortana as PER and corrupted it into <PER_11>rtana.
+Cortana
+Siri
+Alexa
+Copilot
+Watson
 ORGANIZATION	Microsoft Teams
 ORGANIZATION	Teams
 ORGANIZATION	SharePoint

@@ -214,3 +214,29 @@ def test_shipped_allowlist_still_protects_a_real_customer(repo_root):
     )
     decision = engine.decide(ent("BrightPath Logistics", "CUSTOMER"))
     assert decision.action is Action.PSEUDONYMIZE
+
+
+@pytest.mark.parametrize("assistant", ["Cortana", "Siri", "Alexa", "Copilot"])
+def test_assistant_names_are_exempt_whatever_type_a_detector_assigns(repo_root, assistant):
+    # Generic NER labels these as PEOPLE, not organisations. A type-scoped
+    # entry would not match, and the product name would be pseudonymized --
+    # which is how the prototype came to corrupt "Cortana" into <PER_11>rtana.
+    engine = PolicyEngine.from_paths(
+        repo_root / "config" / "policy.toml",
+        repo_root / "resources" / "public_entities.txt",
+        repo_root / "resources" / "denylist.txt",
+    )
+    for entity_type in ("PERSON", "ORGANIZATION", "LOCATION"):
+        assert engine.decide(ent(assistant, entity_type)).action is Action.ALLOW
+
+
+def test_a_type_scoped_entry_stays_scoped(repo_root):
+    # Microsoft is allowlisted as an organisation only, so a PERSON called
+    # Microsoft is still protected. Type-agnostic is opt-in, not the default.
+    engine = PolicyEngine.from_paths(
+        repo_root / "config" / "policy.toml",
+        repo_root / "resources" / "public_entities.txt",
+        repo_root / "resources" / "denylist.txt",
+    )
+    assert engine.decide(ent("Microsoft", "ORGANIZATION")).action is Action.ALLOW
+    assert engine.decide(ent("Microsoft", "PERSON")).action is Action.PSEUDONYMIZE
