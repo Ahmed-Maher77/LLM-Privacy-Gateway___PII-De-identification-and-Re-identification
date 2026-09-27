@@ -1,0 +1,351 @@
+"""Regression against the prototype's committed output.
+
+Two halves.
+
+The first half pins the *evidence*: the artifacts under fixtures/prototype_v0/
+must continue to demonstrate the defects, otherwise the second half is
+asserting against nothing. A regression suite whose fixture has quietly stopped
+reproducing the bug is worse than no suite at all.
+
+The second half runs the current pipeline over the same transcripts and asserts
+the defects are gone. It needs no model: the deterministic, domain and registry
+layers are enough to exercise every structural invariant, and detection quality
+is measured separately by the evaluation harness.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+
+import pytest
+
+from privacy_gateway.config import DetectorSettings, Settings
+from privacy_gateway.gateway import GatewayRequest, PrivacyGateway
+from privacy_gateway.llm.mock_client import EchoLLMClient
+from privacy_gateway.pseudonymization.applier import invert
+from tests._helpers.assertions import (
+    assert_no_invented_words,
+    assert_no_placeholder_adjacency,
+    placeholder_tokens,
+    vocabulary,
+)
+
+NARROW_NBSP = " "
+
+#: Placeholder-glued-to-remainder sites lifted verbatim from
+#: fixtures/prototype_v0/pod_meeting.v0_output.txt.
+PROTOTYPE_CORRUPTIONS = [
+    "<PER_2>ehal",
+    "<PER_13>rif",
+    "<PER_23>y",
+    "<PER_11>rtana",
+    "<PER_11>ntent",
+    "<PER_11>ntrol",
+    "<LOC_1>honemi",
+    "<PER_2>ice",
+    "<PER_20>as",
+    "<PER_21>ak",
+]
+
+#: Words that exist nowhere in the source transcript and were manufactured by
+#: replacing a sub-word span.
+PROTOTYPE_INVENTED_WORDS = [
+    "ehal", "rif", "honemi", "rtana", "ntrol", "ntent",
+    "nversation", "mposer", "ntract", "oaman", "abeeh", "oha",
+]
+
+#: Words the prototype destroyed that must survive intact.
+MUST_SURVIVE = [
+    "Nice", "Content", "Control", "Contract", "Conversation",
+    "Cortana", "Noha", "Shalaby", "Halas", "Next",
+]
+
+
+def pipeline(text: str, conversation_id: str):
+    """Deterministic layers only: no spaCy, no torch, no network."""
+    settings = Settings(
+        detectors=DetectorSettings(
+            enabled=("regex", "registry", "domain"), required=("regex", "registry")
+        )
+    )
+    gw = PrivacyGateway(settings, llm=EchoLLMClient())
+    return gw, gw.run(GatewayRequest(text=text, conversation_id=conversation_id))
+
+
+# ---------------------------------------------------------------------------
+# 1. the evidence itself
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def v0_pod_output(prototype_fixtures_dir):
+    return (prototype_fixtures_dir / "pod_meeting.v0_output.txt").read_text(encoding="utf-8")
+
+
+@pytest.fixture(scope="module")
+def v0_pod_run(prototype_fixtures_dir):
+    return json.loads((prototype_fixtures_dir / "pod_meeting.v0_run.json").read_text("utf-8"))
+
+
+@pytest.fixture(scope="module")
+def v0_sme_run(prototype_fixtures_dir):
+    return json.loads((prototype_fixtures_dir / "sme_meeting.v0_run.json").read_text("utf-8"))
+
+
+@pytest.fixture(scope="module")
+def v0_sme_output(prototype_fixtures_dir):
+    return (prototype_fixtures_dir / "sme_meeting.v0_output.txt").read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("corruption", PROTOTYPE_CORRUPTIONS)
+def test_the_fixture_still_demonstrates_the_corruption(v0_pod_output, corruption):
+    assert corruption in v0_pod_output
+
+
+def test_the_fixture_has_many_corrupted_sites(v0_pod_output):
+    pattern = re.compile(r"<[A-Z]+_\d+>\w")
+    assert len(pattern.findall(v0_pod_output)) > 100
+
+
+def test_the_fixture_invented_words_absent_from_the_source(v0_pod_output, raw_transcript):
+    masked = re.sub(r"<[A-Z]+_\d+>", " ", v0_pod_output)
+    invented = vocabulary(masked) - vocabulary(raw_transcript("pod_meeting.txt"))
+    assert len(invented) >= 20
+
+
+def test_the_fixture_shows_the_narrow_nbsp_mangling(v0_pod_run):
+    assert v0_pod_run["result"].count(NARROW_NBSP) > 50
+
+
+def test_the_fixture_shows_restoration_was_a_total_no_op(v0_pod_run):
+    # Not a partial failure: zero placeholders survived intact, so restore()
+    # matched nothing at all.
+    assert re.findall(r"<PER_\d+>", v0_pod_run["result"]) == []
+
+
+def test_the_fixture_shows_a_placeholder_range_enumeration(v0_pod_run):
+    assert re.search(r"PER[\s ]\d+[‑-]\d+", v0_pod_run["result"])
+
+
+def test_the_fixture_shows_hallucinated_placeholders(v0_sme_run, v0_sme_output):
+    in_output = set(re.findall(r"<(\w+_\d+)>", v0_sme_run["result"]))
+    in_input = set(re.findall(r"<(\w+_\d+)>", v0_sme_output))
+    assert {"PER_10", "PER_11", "PER_12"} <= (in_output - in_input)
+
+
+def test_the_fixture_leaked_the_phone_and_account_id(v0_sme_output):
+    assert "+44 7700 900123" in v0_sme_output
+    assert "BP-28491" in v0_sme_output
+
+
+# ---------------------------------------------------------------------------
+# 2. the current pipeline on the same documents
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def pod(raw_transcript):
+    return pipeline(raw_transcript("pod_meeting.txt"), "c-pod")
+
+
+@pytest.fixture(scope="module")
+def sme(raw_transcript):
+    return pipeline(raw_transcript("sme_meeting_transcript.txt"), "c-sme")
+
+
+@pytest.fixture(params=["pod", "sme"])
+def both(request, pod, sme):
+    return {"pod": pod, "sme": sme}[request.param]
+
+
+# -- structural invariants ---------------------------------------------------
+
+def test_pseudonymization_is_lossless(both):
+    _, result = both
+    assert invert(result.sanitized_input, result.sanitize.sanitization.applied) == (
+        result.sanitize.normalized.text
+    )
+
+
+def test_no_invented_words(both):
+    _, result = both
+    assert_no_invented_words(result.sanitized_input, result.sanitize.normalized.text)
+
+
+def test_no_placeholder_is_adjacent_to_a_word_character(both):
+    _, result = both
+    assert_no_placeholder_adjacency(result.sanitized_input)
+
+
+def test_every_placeholder_in_the_text_is_a_mapping_key(both):
+    _, result = both
+    assert placeholder_tokens(result.sanitized_input) <= result.store.placeholders()
+
+
+def test_every_mapping_key_appears_in_the_text(both):
+    _, result = both
+    assert result.store.placeholders() <= placeholder_tokens(result.sanitized_input)
+
+
+def test_line_count_is_unchanged(both):
+    _, result = both
+    assert result.sanitized_input.count("\n") == result.sanitize.normalized.text.count("\n")
+
+
+def test_the_run_is_reproducible(both):
+    _, result = both
+    settings = Settings(
+        detectors=DetectorSettings(
+            enabled=("regex", "registry", "domain"), required=("regex", "registry")
+        )
+    )
+    again = PrivacyGateway(settings, llm=EchoLLMClient()).run(
+        GatewayRequest(
+            text=result.sanitize.normalized.original,
+            conversation_id=result.store.conversation_id,
+        )
+    )
+    assert again.sanitized_input == result.sanitized_input
+
+
+# -- the specific defects ----------------------------------------------------
+
+@pytest.mark.parametrize("corruption", PROTOTYPE_CORRUPTIONS)
+def test_prototype_corruption_sites_are_absent(pod, corruption):
+    _, result = pod
+    assert corruption not in result.sanitized_input
+
+
+@pytest.mark.parametrize("word", PROTOTYPE_INVENTED_WORDS)
+def test_prototype_invented_words_are_absent(pod, word):
+    # Compared as whole words: "ntrol" must not appear on its own, though
+    # "control" legitimately contains those letters.
+    _, result = pod
+    masked = re.sub(r"<[A-Z][A-Z0-9]*_\d+>", " ", result.sanitized_input)
+    assert word not in vocabulary(masked)
+
+
+@pytest.mark.parametrize("word", MUST_SURVIVE)
+def test_ordinary_words_survive(pod, word):
+    _, result = pod
+    assert word in vocabulary(result.sanitized_input)
+
+
+def test_the_retired_placeholder_prefixes_are_gone(pod):
+    # PER, LOC and MISC came from the NER model's raw label set. PERSON and
+    # LOCATION replace the first two; MISC carries no privacy meaning and is
+    # dropped entirely. ORG is deliberately NOT in this list -- it is still a
+    # valid prefix, so the padding test below is what distinguishes the two
+    # generations of placeholder.
+    _, result = pod
+    for prefix in ("<PER_", "<LOC_", "<MISC_"):
+        assert prefix not in result.sanitized_input
+
+
+def test_every_placeholder_uses_the_padded_grammar(both):
+    # The prototype emitted <PER_1>; the current format is <PERSON_001>.
+    # Padding is what makes a placeholder incapable of matching as a prefix of
+    # a longer one.
+    _, result = both
+    loose = re.findall(r"<[A-Z][A-Z0-9]*_\d+>", result.sanitized_input)
+    strict = re.findall(r"<[A-Z][A-Z0-9]*_\d{3,}>", result.sanitized_input)
+    assert loose == strict
+    assert strict
+
+
+# -- participants ------------------------------------------------------------
+
+POD_SPEAKERS = [
+    "Ahmed Farid", "Ahmed Maher", "Ahmed Hamed",
+    "Lamia Aly", "Rania Fahmy", "Hossam Badri",
+]
+
+
+@pytest.mark.parametrize("speaker", POD_SPEAKERS)
+def test_every_pod_speaker_is_protected(pod, speaker):
+    _, result = pod
+    assert speaker in {e.canonical for e in result.store.entries()}
+
+
+@pytest.mark.parametrize("speaker", POD_SPEAKERS)
+def test_no_pod_speaker_survives_in_the_sanitized_text(pod, speaker):
+    _, result = pod
+    assert speaker not in result.sanitized_input
+
+
+def test_every_speaker_header_line_is_fully_replaced(pod):
+    _, result = pod
+    header = re.compile(r"^\s*<PERSON_\d+>\s+\d+:\d{2}\s*$", re.MULTILINE)
+    # pod_meeting.txt has 194 speaker lines.
+    assert len(header.findall(result.sanitized_input)) >= 190
+
+
+def test_the_ambiguous_bare_ahmed_is_protected_without_being_attributed(pod):
+    # Three different Ahmeds speak, so a bare "Ahmed" cannot be resolved. It
+    # gets its own placeholder and restores to exactly "Ahmed".
+    _, result = pod
+    ahmed = [e for e in result.store.entries() if e.canonical == "Ahmed"]
+    assert len(ahmed) == 1
+    assert len(ahmed[0].alias_candidates) == 3
+
+
+# -- the SME false negatives -------------------------------------------------
+
+SME_LEAKED_BY_PROTOTYPE = [
+    "+44 7700 900123",
+    "BP-28491",
+    "https://api.fleetcore.brightpath-example.com/v2",
+    "sarah.mitchell@brightpath-example.com",
+    "michael.brown@brightpath-example.com",
+    "omar.khaled@brightpath-example.com",
+    "robert.taylor@example.org",
+]
+
+
+@pytest.mark.parametrize("value", SME_LEAKED_BY_PROTOTYPE)
+def test_sme_values_the_prototype_leaked_are_now_protected(sme, value):
+    _, result = sme
+    assert value not in result.sanitized_input
+    assert value in {e.canonical for e in result.store.entries()}
+
+
+@pytest.mark.parametrize(
+    "system", ["FleetCore", "CustomerDesk", "BillingPro", "OpsHub"]
+)
+def test_internal_systems_are_protected(sme, system):
+    _, result = sme
+    assert system in {e.canonical for e in result.store.entries()}
+
+
+@pytest.mark.parametrize("customer", ["BrightPath Logistics", "Green Valley Foods"])
+def test_customers_are_protected(sme, customer):
+    _, result = sme
+    assert customer in {e.canonical for e in result.store.entries()}
+
+
+# -- over-redaction guards ---------------------------------------------------
+
+def test_vocabulary_retention_stays_high(both):
+    # Over-redaction is the failure mode in the other direction: a summary in
+    # which every noun is a placeholder is useless.
+    _, result = both
+    masked = re.sub(r"<[A-Z][A-Z0-9]*_\d+>", " ", result.sanitized_input)
+    retained = len(vocabulary(masked)) / len(vocabulary(result.sanitize.normalized.text))
+    assert retained >= 0.90
+
+
+def test_public_product_names_are_not_protected(sme):
+    _, result = sme
+    values = {e.canonical for e in result.store.entries()}
+    for public in ("Microsoft", "SharePoint", "Teams", "Azure"):
+        assert public not in values
+
+
+def test_dollar_amounts_are_preserved(sme):
+    _, result = sme
+    assert "$80,000" in result.sanitized_input
+    assert "$180,000" in result.sanitized_input
+
+
+def test_dates_and_timestamps_are_preserved(sme):
+    _, result = sme
+    assert "September 22, 2026" in result.sanitized_input

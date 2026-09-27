@@ -32,6 +32,7 @@ ever alters the output.
 from __future__ import annotations
 
 import re
+from bisect import bisect_left
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -97,7 +98,18 @@ class DriftScanner:
 
     def scan(self, text: str) -> tuple[DriftFinding, ...]:
         out: list[DriftFinding] = []
-        exact_spans = {m.span() for m in self._exact.finditer(text)}
+        # Sorted, and searched by bisect rather than scanned. A linear lookup
+        # here is quadratic in the number of placeholders, which a model
+        # emitting tens of thousands of them turns into a denial of service.
+        exact_starts: list[int] = []
+        exact_ends: list[int] = []
+        for m in self._exact.finditer(text):
+            exact_starts.append(m.start())
+            exact_ends.append(m.end())
+
+        def contains_intact_placeholder(start: int, end: int) -> bool:
+            i = bisect_left(exact_starts, start)
+            return i < len(exact_starts) and exact_ends[i] <= end
 
         for m in RANGE_RE.finditer(text):
             if self._is_known_prefix(m.group("prefix")):
@@ -118,7 +130,7 @@ class DriftScanner:
             # customer names, so the sanitized text legitimately contains
             # "**<SYSTEM_001>**". What matters is whether the placeholder
             # itself survived intact, not what surrounds it.
-            if any(m.start() <= s and e <= m.end() for s, e in exact_spans):
+            if contains_intact_placeholder(m.start(), m.end()):
                 continue
             prefix, index = m.group("prefix"), m.group("index")
             if not self._is_known_prefix(prefix):

@@ -33,6 +33,11 @@ Status = Literal["ok", "degraded", "blocked"]
 
 UNRESOLVED_MARKER = "[UNRESOLVED_PLACEHOLDER]"
 
+#: Output longer than this is truncated before scanning. A model can emit an
+#: arbitrarily long response, and the scanners are linear in its length; this
+#: bounds the work regardless.
+MAX_SCAN_CHARS = 2_000_000
+
 
 @dataclass(frozen=True, slots=True)
 class ReidentificationResult:
@@ -76,8 +81,9 @@ class Reidentifier:
         if conversation_id is not None:
             self.store.require_conversation(conversation_id)
 
-        leaks = self._scanner.scan(text) if self._scanner else ()
-        drift = self._drift.scan(text) if self._drift else ()
+        scanned = text if len(text) <= MAX_SCAN_CHARS else text[:MAX_SCAN_CHARS]
+        leaks = self._scanner.scan(scanned) if self._scanner else ()
+        drift = self._drift.scan(scanned) if self._drift else ()
 
         restored: list[str] = []
         unknown: list[str] = []

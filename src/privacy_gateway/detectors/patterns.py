@@ -52,7 +52,9 @@ PHONE_PATTERN = re.compile(
     r"(?:\+\d{1,3}[ \-.]?)?"
     r"(?:\(\d{1,4}\)[ \-.]?)?"
     r"\d{2,8}(?:[ \-.]\d{2,8}){1,4}"
-    r"(?![\w.])"
+    # Reject a decimal continuation ("4.6.1") but allow ordinary
+    # sentence punctuation, so a number ending a sentence still matches.
+    r"(?!\w)(?!\.\d)"
 )
 
 IPV4_PATTERN = re.compile(
