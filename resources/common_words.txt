@@ -13,14 +13,17 @@
 # protected through the registry.
 #
 # Curated, not scraped. Regenerate with scripts/build_common_words.py
+absent
 access
 account
 accounting
 accounts
+acting
 action
 actions
 admin
 administrator
+advisor
 afternoon
 agent
 agents
@@ -40,7 +43,10 @@ architect
 architecture
 area
 areas
+assistant
+associate
 async
+attorney
 audit
 back
 backlog
@@ -61,8 +67,10 @@ cache
 capacity
 case
 cases
+chair
 change
 changes
+chief
 client
 clients
 cloud
@@ -74,6 +82,7 @@ company
 compliance
 composer
 conclusion
+confidential
 consultant
 content
 contents
@@ -88,7 +97,9 @@ cookie
 correct
 cost
 costs
+counsel
 coverage
+current
 customer
 customers
 dashboard
@@ -102,11 +113,13 @@ days
 debug
 decision
 decisions
+delegate
 deliverable
 deliverables
 delivery
 demo
 deployment
+deputy
 design
 designer
 designs
@@ -139,7 +152,10 @@ everyone
 everything
 example
 examples
+expert
 export
+external
+facilitator
 fact
 facts
 false
@@ -153,6 +169,7 @@ fine
 first
 fixture
 footer
+former
 fourth
 framework
 front
@@ -183,6 +200,10 @@ index
 instead
 integration
 integrations
+interim
+internal
+interviewee
+interviewer
 introduction
 invoice
 issue
@@ -191,6 +212,7 @@ item
 items
 job
 jobs
+junior
 kind
 kinds
 last
@@ -223,6 +245,7 @@ minutes
 mock
 model
 models
+moderator
 monitor
 monitoring
 month
@@ -242,6 +265,8 @@ number
 numbers
 objective
 objectives
+observer
+official
 okay
 onboarding
 operation
@@ -277,8 +302,14 @@ point
 points
 policies
 policy
+present
 price
 pricing
+primary
+principal
+prior
+private
+privileged
 problem
 problems
 procedure
@@ -293,6 +324,7 @@ project
 projects
 prompt
 prompts
+public
 purpose
 quality
 query
@@ -309,8 +341,10 @@ release
 releases
 remote
 report
+reporter
 reports
 repository
+representative
 request
 requests
 requirement
@@ -336,9 +370,12 @@ schedule
 scope
 search
 second
+secondary
+secretary
 section
 sections
 security
+senior
 server
 servers
 service
@@ -354,6 +391,7 @@ sorry
 sort
 source
 sources
+specialist
 sprint
 sprints
 stage
@@ -380,6 +418,7 @@ sure
 sync
 system
 systems
+taker
 target
 targets
 task
@@ -415,6 +454,7 @@ training
 true
 type
 types
+unofficial
 update
 updates
 upload
@@ -441,6 +481,7 @@ whom
 whose
 why
 window
+witness
 word
 words
 worker

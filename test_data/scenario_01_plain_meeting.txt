@@ -1,0 +1,4 @@
+09:00 - Ahmed Hassan: Good morning. Sarah Mitchell will lead the review.
+09:02 - Sarah Mitchell: Please send the action items to sarah.mitchell@example.com.
+09:04 - Michael Brown: The customer is BrightPath Logistics in London.
+09:06 - Ahmed Hassan: I will follow up tomorrow.

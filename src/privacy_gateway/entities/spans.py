@@ -27,6 +27,24 @@ DEFAULT_TRIM_CHARS = " \t\r\n`\"'*_()[]{}<>,;:.!?\u2018\u2019\u201c\u201d\u00ab\
 
 _POSSESSIVE_RE = re.compile(r"['\u2019]s$")
 
+#: A clock-time-then-dash prefix, e.g. "09:06 - ". Never part of any entity --
+#: no name, organisation or location starts with a timestamp -- but spaCy's NER
+#: model (via Presidio's SpacyRecognizer) reliably swallows exactly this shape
+#: on "HH:MM - Speaker: text" transcript lines, producing spans such as
+#: "09:06 - Ahmed Hassan". Confirmed as raw model output, not a bug in the
+#: Presidio wrapper: querying the analyzer directly for that line returns
+#: `PERSON score=0.85 '09:06 - Ahmed Hassan:'` verbatim. 0.85 is Presidio's
+#: fixed score for a spaCy-sourced match, not a computed confidence, so a
+#: confidence check cannot distinguish a genuine hit from this failure mode.
+#
+#: No leading ``^`` here: this is applied via ``Pattern.match(text, start,
+#: end)``, which already anchors the attempt at ``start``. A ``^`` would only
+#: match at absolute offset 0 of the whole document (or after a newline under
+#: MULTILINE, which this pattern does not set), so it would silently fail to
+#: match anywhere except the very first line -- exactly the bug this comment
+#: now documents, since it slipped past review once already.
+_LEADING_TIMESTAMP_DASH_RE = re.compile(r"\d{1,3}:\d{2}(?::\d{2})?[ \t]*[-\u2010-\u2015][ \t]*")
+
 #: Filler produced by automatic speech recognition. Statistical detectors label
 #: these as names with surprising frequency in noisy transcripts.
 ASR_NOISE = frozenset(
@@ -144,6 +162,14 @@ def realign(
     start, end = trim_span(text, start, end, trim_chars)
     if end <= start:
         return None
+
+    match = _LEADING_TIMESTAMP_DASH_RE.match(text, start, end)
+    if match is not None:
+        start = match.end()
+        start, end = trim_span(text, start, end, trim_chars)
+        if end <= start:
+            return None
+
     if strip_possessives and entity.entity_type in LINE_BOUNDED:
         start, end = strip_possessive(text, start, end)
     if end <= start:

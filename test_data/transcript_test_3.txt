@@ -1,0 +1,52 @@
+Interview Title: SME Requirements Gathering – Cloud Security Initiative
+Date: October 26, 2023
+Interviewer: Sarah Jenkins (Business Analyst)
+Interviewee: Marcus Thorne (Senior Data Security Analyst / SME)
+Duration: 45 Minutes
+
+Sarah Jenkins: Thanks for joining me today, Marcus. As you know, we’re in the early phases of selecting a CASB solution to improve our visibility into cloud app usage. Since you’re the SME on our current data loss prevention (DLP) protocols, I want to pick your brain on what’s working, what isn’t, and what you need from a new tool.
+
+Marcus Thorne: Happy to help, Sarah. Honestly, this is overdue. Right now, we’re flying blind on a lot of our SaaS traffic.
+
+Sarah: Let’s start there. What is the biggest gap in our current security posture regarding cloud usage?
+
+Marcus: Shadow IT. Absolute number one. We have marketing using unauthorized file-sharing tools, and engineering spinning up unapproved AWS instances. My team only finds out about these tools when we see a massive spike in egress traffic or when an employee leaves and we have to scrub their accounts manually. We need a tool that can discover these apps automatically.
+
+Sarah: So, discovery is the primary "Must Have" feature?
+
+Marcus: Yes. But not just discovery—categorization. I don’t care if someone is using a random app if it’s low risk. I need the system to tell me: Is this app compliant with GDPR? Does it have SOC2 certification? I need a risk score. If I have to manually research every new app that pops up, the tool is useless to me.
+
+Sarah: Understood. What about data loss prevention specifically? How should the CASB handle sensitive data?
+
+Marcus: We need granular control. Currently, our on-prem DLP is very rigid. In the cloud, we need context-aware policies.
+
+Sarah: Can you give me a specific example of a "context-aware" policy you’d want to build?
+
+Marcus: Sure. Take our source code. If a developer uploads a Python file to our corporate OneDrive, that’s fine—it’s sanctioned. But if that same developer tries to upload that file to a personal Dropbox or a public GitHub repo, the system needs to block it instantly.
+
+Sarah: Instantly block it, or alert?
+
+Marcus: Both. Block the action, and alert my team in Slack. But here is the nuance: if the CFO uploads a financial report to a personal drive, I might want to allow it but encrypt it, or require Multi-Factor Authentication (MFA) to open it. We need the ability to apply different rules based on user role and data classification.
+
+Sarah: That leads me to my next question. How important is the "Inline" vs. "API" scanning mode to you?
+
+Marcus: We need both. API mode is great for scanning data at rest—like finding old files that were shared publicly six months ago. But for real-time protection, we need Inline proxies. If I can’t stop the upload before it happens, I’m just doing forensics, not security.
+
+Sarah: Are there any concerns regarding user experience? We’ve heard rumors that engineering is worried about latency.
+
+Marcus: They should be. If this tool slows down their connection to GitHub or Jira, they will revolt and find a workaround. The latency needs to be negligible. If the CASB adds more than 100ms to a request, it’s a failure. We need to be able to whitelist specific high-bandwidth, low-risk activities to keep the pipes clear.
+
+Sarah: Let’s talk about integration. What other systems does this CASB need to talk to?
+
+Marcus: It has to tie into our Identity Provider—Okta. If someone is terminated in Okta, the CASB needs to instantly revoke their access to cloud apps and trigger a scan of their recent downloads. It also needs to feed logs into our SIEM—Splunk. I don’t want another dashboard to log into. I want the alerts in Splunk.
+
+Sarah: If you could write the headline for the successful implementation of this project one year from now, what would it say?
+
+Marcus: "Security Team Reduces Cloud Data Exfiltration Risks by 90% Without Impacting Employee Productivity." That’s the dream. We want to be enablers, not the "Department of No."
+
+Sarah: Great feedback, Marcus. I’m going to take these requirements—specifically the need for API and Inline scanning, Okta integration, and the risk scoring—and draft the user stories. I might follow up with you on the specific compliance regulations we need to map to.
+
+Marcus: Sounds good. Just send me a calendar invite. I’ll be here.
+
+Sarah: Thanks, Marcus.
+

@@ -361,3 +361,42 @@ def test_policy_engine_and_store_agree_on_prefixes():
     store = MappingStore("c-1")
     placeholder = store.assign(ent("Ahmed", 0), engine.rule_for("PERSON"))
     assert placeholder.startswith("<PERSON_")
+
+
+# -- abbreviation-shaped values are case-sensitive regardless of type -------
+#
+# "OR" (Oregon's postal abbreviation) detected as LOCATION at NER confidence
+# 1.00 -- a confidence gate cannot filter that out, the model is genuinely
+# (over)confident -- then case-insensitive identity merged it with every
+# ordinary lowercase "or" elsewhere in the document, and each one was reported
+# as a leak of the mapped value.
+
+def test_an_abbreviation_shaped_value_does_not_merge_with_an_ordinary_word():
+    from privacy_gateway.pseudonymization.mapping_store import is_abbreviation_shaped
+
+    store = MappingStore("c-1")
+    a = store.assign(ent("OR", 0, "LOCATION"), DEFAULT_RULES["LOCATION"])
+    b = store.assign(ent("or", 20, "LOCATION"), DEFAULT_RULES["LOCATION"])
+    assert a != b
+    assert is_abbreviation_shaped("OR")
+    assert not is_abbreviation_shaped("or")  # lowercase: ordinary word, not an abbreviation
+
+
+def test_an_abbreviation_shaped_value_still_merges_with_itself():
+    store = MappingStore("c-1")
+    a = store.assign(ent("NYC", 0, "LOCATION"), DEFAULT_RULES["LOCATION"])
+    b = store.assign(ent("NYC", 30, "LOCATION"), DEFAULT_RULES["LOCATION"])
+    assert a == b
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("OR", True), ("NYC", True), ("U.S.", True), ("or", False),
+        ("Ahmed", False), ("BrightPath", False), ("A", False), ("ABCDEFG", False),
+    ],
+)
+def test_is_abbreviation_shaped(value, expected):
+    from privacy_gateway.pseudonymization.mapping_store import is_abbreviation_shaped
+
+    assert is_abbreviation_shaped(value) is expected

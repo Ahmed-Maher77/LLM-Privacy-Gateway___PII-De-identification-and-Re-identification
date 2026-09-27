@@ -234,3 +234,37 @@ def test_asr_filler_is_recognised(word):
 @pytest.mark.parametrize("word", ["Rania", "Ahmed", "FleetCore", "Cortana"])
 def test_real_names_are_not_asr_filler(word):
     assert not is_asr_noise(word)
+
+
+# -- leading timestamp-dash prefix (the "HH:MM - Name" bug) -----------------
+#
+# Confirmed as raw spaCy/Presidio model output, not a bug in the wrapper:
+# querying the analyzer directly for "09:06 - Ahmed Hassan:" returns
+# PERSON score=0.85 '09:06 - Ahmed Hassan:' verbatim.
+
+def test_leading_timestamp_dash_is_stripped_from_a_person_span():
+    text = "call at 09:06 - Ahmed Hassan: I will follow up."
+    start = text.index("09:06")
+    end = text.index("Ahmed Hassan") + len("Ahmed Hassan")
+    e = DetectedEntity(
+        entity_type="PERSON", text=text[start:end], start=start, end=end,
+        confidence=0.85, detector="presidio",
+    )
+    out = realign(e, text, expand=False)
+    assert out is not None and out.text == "Ahmed Hassan"
+
+
+def test_leading_timestamp_dash_is_stripped_regardless_of_entity_type():
+    # The prefix is junk whatever type the detector assigned around it.
+    text = "09:00 - Ahmed Hassan: Good morning."
+    e = DetectedEntity(
+        entity_type="DATE", text=text[0:34], start=0, end=34,
+        confidence=0.85, detector="presidio",
+    )
+    out = realign(e, text, expand=False)
+    assert out is not None and not out.text.startswith("09:00")
+
+
+def test_a_span_with_no_leading_timestamp_is_unaffected():
+    out = realign(ent(0, 11), TEXT, expand=False)  # "Rania Fahmy"
+    assert out.text == "Rania Fahmy"

@@ -1,0 +1,10 @@
+Case summary
+
+Customer: Green Valley Foods
+Primary contact: Elena Rossi <elena.rossi@example.net>
+Address: 18 King Street, Manchester, M2 4AA
+
+Conversation:
+- Daniel Clark asked Emily Wilson to investigate the delayed shipment.
+- Emily said the issue affects the Dubai warehouse.
+- Next step: update ticket CASE-77821 and notify Elena.

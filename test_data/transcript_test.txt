@@ -1,0 +1,40 @@
+🎙️ Transcript: Quarterly Engineering & Onboarding Review
+Date: September 27, 2026
+
+Platform: Microsoft Teams
+
+Attendees: Sarah Jenkins (Engineering Manager), Michael Chang (Lead Security Engineer), David Miller (HR Operations Specialist)
+
+Sarah Jenkins: Alright everyone, thanks for hopping on the Teams call. Let's keep this quick. David, we need to finalize the onboarding setup for our new senior developer joining next Monday.
+
+David Miller: Sounds good, Sarah. I just received his verification forms. His full legal name is Marcus Aurelius Vance, born on November 14, 1988. His primary contact address is 742 Evergreen Terrace, Springfield, OR 97477, and you can reach him directly at +1 (555) 019-2834 or via email at marcus.vance.88@gmail.com.
+
+Michael Chang: Thanks, David. I’ll need his Social Security Number and Government ID details to complete his background clearance in the portal. Do you have those on hand?
+
+David Miller: Yes, I have his file open right now. His SSN is 987-65-4321, and his Driver’s License ID is DL-8829401-X, issued in Oregon. Also, for payroll setup, he’s set up direct deposit with Chase Bank, routing number 122000049, account number 88301928475.
+
+Sarah Jenkins: Perfect. Michael, can you issue his corporate equipment credit card for initial desk setup expenses?
+
+Michael Chang: Done. I generated a virtual card for his initial purchases. The card number is 4532-0192-8834-5610, expires 08/29, and the CVV is 482. The spending limit is capped at $2,500.
+
+Sarah Jenkins: Great. Before we jump to the next item, let's verify if his health insurance enrollment was processed under our group plan.
+
+David Miller: It was. His Member ID is MEM-992014-A, policy provider BlueCross, and his primary physician listed is Dr. Eleanor Rostova at Saint Jude Hospital, NYC.
+
+Michael Chang: Speaking of database access, I’m running into an issue where the microservice API returns raw JSON payloads containing user credentials in the dev environment. Look at what was returned in the log output earlier:
+
+JSON
+{
+  "user_id": "usr_991823",
+  "employee_code": "EMP-4029",
+  "auth_session": {
+    "ip_address": "192.168.1.105",
+    "mac_address": "00:1B:44:11:3A:B7",
+    "contact_email": "michael.chang@enterprise-corp.io"
+  }
+}
+Sarah Jenkins: Oof, that's definitely a privacy leak. We can't have raw IP addresses, MAC addresses, or internal employee emails sitting in debug logs. Make sure the PII middleware intercepts that exact JSON structure cleanly without breaking the key-value syntax.
+
+Michael Chang: Agreed. I’ll push a hotfix commit shortly. Let’s reconvene at 3:00 PM EST today. If you need me in the meantime, ping me on Slack or call my work mobile at +1-312-555-0143.
+
+Sarah Jenkins: Sounds like a plan. Thanks everyone, ending the recording now.

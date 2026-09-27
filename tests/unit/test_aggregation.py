@@ -318,3 +318,132 @@ def test_property_output_is_always_disjoint_aligned_and_faithful(raw):
     for e in result.entities:
         assert _SAMPLE[e.start : e.end] == e.text
         assert is_word_aligned(_SAMPLE, e.start, e.end)
+
+
+# -- DATE length cap ----------------------------------------------------------
+#
+# DATE defaults to policy ALLOW, so rejecting an oversized candidate costs
+# nothing -- but an oversized one left in place can win an overlap against a
+# real entity underneath it and then sail through unprotected, since ALLOW
+# never replaces it. Presidio's SpacyRecognizer has been observed returning a
+# 35-character DATE_TIME span on a single mis-parsed "HH:MM - Name:" line.
+
+def test_an_oversized_date_span_is_rejected():
+    text = "09:00 - Ahmed Hassan: Good morning. Sarah Mitchell will lead."
+    e = DetectedEntity(
+        entity_type="DATE", text=text[:34], start=0, end=34,
+        confidence=0.85, detector="presidio",
+    )
+    result = AGG.aggregate([e], text)
+    assert result.entities == ()
+    assert result.rejected[0].verdict == "too_long"
+
+
+def test_an_oversized_date_no_longer_suppresses_the_real_entity_beneath_it():
+    text = "09:00 - Ahmed Hassan: Good morning. Sarah Mitchell will lead."
+    bogus_date = DetectedEntity(
+        entity_type="DATE", text=text[:34], start=0, end=34,
+        confidence=0.85, detector="presidio", priority=60,
+    )
+    real_name = DetectedEntity(
+        entity_type="PERSON", text="Ahmed Hassan", start=8, end=20,
+        confidence=1.0, detector="ner", priority=40,
+    )
+    result = AGG.aggregate([bogus_date, real_name], text)
+    assert [e.text for e in result.entities] == ["Ahmed Hassan"]
+
+
+def test_an_ordinary_short_date_is_still_accepted():
+    text = "See you tomorrow."
+    e = DetectedEntity(
+        entity_type="DATE", text="tomorrow", start=8, end=16,
+        confidence=0.85, detector="presidio",
+    )
+    result = AGG.aggregate([e], text)
+    assert [x.text for x in result.entities] == ["tomorrow"]
+
+
+# -- must contain a letter ----------------------------------------------------
+#
+# Presidio's spaCy-sourced recogniser has also been observed labelling a bare
+# bracketed clock time ("10:08:20") as ORGANIZATION on a bracketed-timestamp
+# transcript line. A capitalised-type entity with no letters at all is never
+# legitimate, regardless of type.
+
+def test_a_bare_timestamp_typed_as_organization_is_rejected():
+    text = "seen at 10:08:20 today"
+    e = DetectedEntity(
+        entity_type="ORGANIZATION", text="10:08:20", start=8, end=16,
+        confidence=0.95, detector="presidio",
+    )
+    result = AGG.aggregate([e], text)
+    assert result.entities == ()
+    assert result.rejected[0].verdict == "not_proper_noun"
+
+
+# -- short-span floor split (person vs. everything else) ---------------------
+
+def test_a_three_letter_person_name_at_high_confidence_survives():
+    text = "Kim called today."
+    e = DetectedEntity(
+        entity_type="PERSON", text="Kim", start=0, end=3,
+        confidence=0.95, detector="ner",
+    )
+    result = AGG.aggregate([e], text)
+    assert [x.text for x in result.entities] == ["Kim"]
+
+
+def test_a_three_letter_organization_acronym_needs_higher_confidence():
+    # MAC/SSN/CVV/API/PII were all observed at Presidio's flat 0.85
+    # spaCy-sourced score, mistagged as ORGANIZATION.
+    text = "the MAC address is listed"
+    e = DetectedEntity(
+        entity_type="ORGANIZATION", text="MAC", start=4, end=7,
+        confidence=0.85, detector="presidio",
+    )
+    result = AGG.aggregate([e], text)
+    assert result.entities == ()
+    assert result.rejected[0].verdict == "too_short"
+
+
+def test_a_short_organization_at_high_confidence_still_survives():
+    text = "the MAC address is listed"
+    e = DetectedEntity(
+        entity_type="ORGANIZATION", text="MAC", start=4, end=7,
+        confidence=0.95, detector="ner",
+    )
+    result = AGG.aggregate([e], text)
+    assert [x.text for x in result.entities] == ["MAC"]
+
+
+# -- same-type containment: completeness beats detector priority ------------
+#
+# NER correctly detects the complete "James Anderson"; Presidio separately
+# detects only "Anderson" (a fragment of the same name) at higher detector
+# priority. The complete span must win regardless -- priority only arbitrates
+# between DIFFERENT entity types nested inside one another (an EMAIL inside a
+# sloppy ORGANIZATION), never between two candidates for the same name.
+
+def test_a_complete_name_beats_a_higher_priority_fragment_of_itself():
+    text = 'SERVICE_OWNER="James Anderson"'
+    start = text.index("James")
+    complete = DetectedEntity(
+        entity_type="PERSON", text="James Anderson", start=start, end=start + 14,
+        confidence=0.98, detector="ner", priority=40,
+    )
+    fragment = DetectedEntity(
+        entity_type="PERSON", text="Anderson", start=start + 6, end=start + 14,
+        confidence=0.85, detector="presidio", priority=60,
+    )
+    result = AGG.aggregate([complete, fragment], text)
+    assert [e.text for e in result.entities] == ["James Anderson"]
+
+
+def test_cross_type_containment_still_prefers_the_higher_priority_inner_span():
+    # The EMAIL-inside-ORGANIZATION case must be unaffected by the same-type
+    # carve-out above.
+    start = TEXT.index("sarah@example.com")
+    outer = ent(start - 8, start + 17, etype="ORGANIZATION", detector="ner", priority=40)
+    inner = ent(start, start + 17, etype="EMAIL", detector="regex", priority=90, conf=0.99)
+    result = AGG.aggregate([outer, inner], TEXT)
+    assert [e.entity_type for e in result.entities] == ["EMAIL"]

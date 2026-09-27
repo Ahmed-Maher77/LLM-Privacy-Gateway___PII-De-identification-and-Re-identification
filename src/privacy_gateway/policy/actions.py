@@ -105,6 +105,10 @@ DEFAULT_RULES: dict[str, EntityRule] = {
             Action.PSEUDONYMIZE,
             0.70,
             "CONFIDENTIAL",
+            # Case-sensitive: this bucket now also covers secrets (API keys,
+            # connection-string credentials), whose casing is part of the
+            # literal value, not a stylistic variation to fold away.
+            case_sensitive=True,
             max_chars=200,
         ),
         _rule(EntityType.CREDIT_CARD, Action.PSEUDONYMIZE, 0.90, "CARD", case_sensitive=True),

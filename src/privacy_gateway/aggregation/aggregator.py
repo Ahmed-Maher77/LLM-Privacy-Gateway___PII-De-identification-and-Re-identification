@@ -47,12 +47,37 @@ class RejectedEntity:
     stage: str
 
 
+#: Per-type ceilings tighter than ``max_entity_chars``. DATE is the case that
+#: matters: it defaults to policy ALLOW, so a rejected DATE candidate costs
+#: nothing, while an oversized one can win overlap resolution against a real
+#: entity underneath it and then sail through unprotected. Presidio's
+#: SpacyRecognizer has been observed returning a 35-character DATE_TIME span
+#: ("09:00 - Ahmed Hassan: Good morning") on a single mis-parsed line; a real
+#: date/time expression is essentially never that long.
+DEFAULT_MAX_CHARS_BY_TYPE: Mapping[str, int] = {"DATE": 25}
+
+
 @dataclass(frozen=True, slots=True)
 class AggregationConfig:
     min_entity_chars: int = 2
+    #: Below this length, a statistical-detector PERSON-like span needs
+    #: near-certain confidence to survive: real three-letter first names
+    #: ("Kim", "Ana", "Leo") are common enough that this floor is kept low.
     min_person_chars: int = 3
+    #: Below this length, a statistical-detector span of any OTHER capitalised
+    #: type needs near-certain confidence. Set higher than the person floor
+    #: because short LOCATION/ORGANIZATION detections are overwhelmingly
+    #: either name fragments or acronyms mistagged as an entity ("MAC", "SSN",
+    #: "CVV", "API", "PII" were all observed at Presidio's flat 0.85
+    #: spaCy-sourced score) rather than a genuine short org/place -- and a
+    #: real short org name is expected to come from the curated domain
+    #: lexicon, which this gate does not apply to at all.
+    min_capitalised_chars: int = 4
     short_entity_confidence: float = 0.90
     max_entity_chars: int = 96
+    max_chars_by_type: Mapping[str, int] = field(
+        default_factory=lambda: dict(DEFAULT_MAX_CHARS_BY_TYPE)
+    )
     require_word_boundary: bool = True
     trim_chars: str = DEFAULT_TRIM_CHARS
     strip_possessives: bool = True
@@ -124,18 +149,22 @@ class EntityAggregator:
                 rejected.append(RejectedEntity(repaired, SpanVerdict.ASR_NOISE, "clean"))
                 continue
 
-            # English proper nouns are capitalised. A statistical detector
-            # labelling an all-lowercase common noun ("operations", "finance")
-            # as an ORGANIZATION is a false positive, and pseudonymizing it
-            # both destroys the sentence and floods the mapping with words that
-            # then appear to "leak" everywhere else in the document.
-            # Deterministic and curated detectors are exempt, so a configured
-            # lowercase term is still honoured.
+            # English proper nouns are capitalised, and are made of letters. A
+            # statistical detector labelling an all-lowercase common noun
+            # ("operations", "finance") as an ORGANIZATION is a false positive,
+            # and so -- more surprisingly -- is one labelling a bare clock time
+            # ("10:08:20") as one: Presidio's spaCy-sourced recogniser has been
+            # observed doing exactly that on a bracketed-timestamp transcript
+            # line. Either way, pseudonymizing it both destroys the sentence
+            # and floods the mapping with a value that then appears to "leak"
+            # everywhere else in the document. Deterministic and curated
+            # detectors are exempt, so a configured lowercase term is still
+            # honoured.
             if (
                 cfg.require_capitalised_proper_nouns
                 and repaired.detector in _STATISTICAL
                 and repaired.entity_type in _CAPITALISED_TYPES
-                and surface[:1].islower()
+                and (surface[:1].islower() or not any(ch.isalpha() for ch in surface))
             ):
                 rejected.append(RejectedEntity(repaired, SpanVerdict.NOT_PROPER_NOUN, "clean"))
                 continue
@@ -156,15 +185,26 @@ class EntityAggregator:
                 rejected.append(RejectedEntity(repaired, SpanVerdict.COMMON_WORD, "clean"))
                 continue
 
-            # A very short person-like span is nearly always a fragment or an
-            # initial; require it to be near-certain before keeping it.
-            if (
-                repaired.entity_type in _PERSON_LIKE
-                and len(surface) < cfg.min_person_chars
-                and repaired.confidence < cfg.short_entity_confidence
-            ):
-                rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
-                continue
+            # A very short span from a statistical detector is nearly always a
+            # fragment, an initial, or an acronym/abbreviation (a US state code
+            # such as "OR" or "IN", or a technical term like "MAC"/"SSN"/"CVV")
+            # mistagged as an entity. This is not merely a missed detection:
+            # because identity matching is case-insensitive by default,
+            # pseudonymizing "OR" then makes every unrelated lowercase "or"
+            # elsewhere in the document match the same mapping entry, and the
+            # output scanner correctly (and confusingly) reports each one as a
+            # leak. Curated and deterministic detectors are exempt, since a
+            # domain-lexicon entry or a regex match is never a fragment.
+            if repaired.detector in _STATISTICAL:
+                if repaired.entity_type in _PERSON_LIKE:
+                    floor = cfg.min_person_chars
+                elif repaired.entity_type in _CAPITALISED_TYPES:
+                    floor = cfg.min_capitalised_chars
+                else:
+                    floor = 0
+                if len(surface) < floor and repaired.confidence < cfg.short_entity_confidence:
+                    rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
+                    continue
 
             if repaired.confidence < cfg.min_confidence:
                 rejected.append(RejectedEntity(repaired, SpanVerdict.LOW_CONFIDENCE, "clean"))
@@ -174,7 +214,7 @@ class EntityAggregator:
                 repaired,
                 text,
                 min_chars=cfg.min_entity_chars,
-                max_chars=cfg.max_entity_chars,
+                max_chars=cfg.max_chars_by_type.get(repaired.entity_type, cfg.max_entity_chars),
                 require_word_boundary=cfg.require_word_boundary,
             )
             if verdict is not SpanVerdict.VALID:
@@ -240,8 +280,17 @@ class EntityAggregator:
 
         if a_contains_b or b_contains_a:
             outer, inner = (a, b) if a_contains_b else (b, a)
-            # A high-precision detection nested inside a sloppy one wins: an
-            # EMAIL inside an NER ORGANIZATION must not be swallowed.
+            if inner.entity_type == outer.entity_type:
+                # Same type: this is a completeness question, not a
+                # specificity one. NER's complete "James Anderson" must not
+                # lose to Presidio's "Anderson" merely because Presidio has
+                # higher detector priority -- a fragment of the very entity
+                # the container already represents is never more correct than
+                # the container, whichever detector produced it.
+                return outer
+            # Different types: a high-precision detection nested inside a
+            # sloppy one wins, e.g. an EMAIL inside an NER ORGANIZATION must
+            # not be swallowed.
             return inner if inner.priority > outer.priority else outer
 
         # Partial (crossing) overlap.

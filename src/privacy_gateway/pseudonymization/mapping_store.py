@@ -47,6 +47,24 @@ def identity_key(entity_type: str, text: str, *, case_sensitive: bool) -> str:
     return f"{entity_type}\x1f{value}"
 
 
+def is_abbreviation_shaped(text: str) -> bool:
+    """True for a short, all-uppercase token: an abbreviation whose case IS
+    part of its meaning, e.g. "OR" (Oregon), "NYC", "U.S.".
+
+    Folding case for identity here is actively harmful rather than merely
+    imprecise: it merges the entity with any unrelated lowercase word that
+    happens to share the same letters ("OR" the state code and "or" the
+    conjunction), and every one of those unrelated occurrences then reads as a
+    leak of the mapped value to the output scanner, which matches
+    case-insensitively for exactly the same reason this function exists to
+    override. A real name or organisation's casing does not carry that kind of
+    meaning, so this check is deliberately narrow: 2-6 letters, no digits,
+    entirely upper-case once periods and hyphens are removed.
+    """
+    stripped = text.replace(".", "").replace("-", "")
+    return 2 <= len(stripped) <= 6 and stripped.isalpha() and stripped.isupper()
+
+
 @dataclass(frozen=True, slots=True)
 class Occurrence:
     start: int
@@ -111,7 +129,12 @@ class MappingStore:
     # -- assignment --------------------------------------------------------
     def assign(self, entity: DetectedEntity, rule: EntityRule) -> str:
         """Return the placeholder for ``entity``, minting one if it is new."""
-        key = identity_key(entity.entity_type, entity.text, case_sensitive=rule.case_sensitive)
+        # An abbreviation's case is part of its meaning, whatever the type's
+        # default. This is decided per occurrence from that occurrence's own
+        # text, not inherited from however an earlier mention of a
+        # differently-shaped surface form was classified.
+        case_sensitive = rule.case_sensitive or is_abbreviation_shaped(entity.text)
+        key = identity_key(entity.entity_type, entity.text, case_sensitive=case_sensitive)
         existing = self._by_identity.get(key)
         if existing is not None:
             self._record(existing, entity)
@@ -129,7 +152,7 @@ class MappingStore:
             placeholder_prefix=prefix,
             canonical=entity.text,
             identity_key=key,
-            case_sensitive=rule.case_sensitive,
+            case_sensitive=case_sensitive,
             occurrences=(
                 Occurrence(entity.start, entity.end, entity.text, entity.detector, entity.confidence),
             ),

@@ -1,0 +1,197 @@
+=====================================================================
+INTERVIEW TRANSCRIPT
+=====================================================================
+Interview Title:    Customer Discovery Call — Banking Platform Migration
+Interview ID:       CD-2024-0233
+Date:              July 9, 2024
+Time:              11:00 – 12:15 IST
+Location:          Mumbai, Maharashtra, India
+Interviewer:       Anjali Deshmukh (Product Manager, FinServe Technologies)
+Interviewee:       Rohan Mehta (Chief Technology Officer, Bharat Cooperative Bank)
+Observer:          Kenji Watanabe (Solutions Engineer, FinServe Technologies)
+=====================================================================
+
+[11:00:10] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Good morning, Rohan. Thank you for taking the time. Kenji from our
+engineering team is joining us. We'd like to understand your
+current infrastructure before we propose a migration plan.
+
+[11:00:35] ROHAN MEHTA:
+---------------------------------------------------------------------
+Happy to help, Anjali. Just to set context — Bharat Cooperative
+Bank has 247 branches across 12 states. We serve approximately
+4.2 million retail customers and 38,000 corporate clients. Our
+core banking system is Finacle, version 10.2.18, running on
+IBM AIX 7.2.
+
+[11:01:20] KENJI WATANABE:
+---------------------------------------------------------------------
+That's an older Finacle version. When was the last major upgrade?
+
+[11:01:32] ROHAN MEHTA:
+---------------------------------------------------------------------
+2019. We attempted an upgrade to Finacle 11 in March 2022, but
+it was rolled back after four days due to data reconciliation
+failures. The vendor — Infosys — sent a team of 14 engineers
+from their Pune and Bangalore offices. The project lead was
+Suresh Iyer, and his escalation contact was Deepa Krishnan.
+
+[11:02:30] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+What's driving the migration now?
+
+[11:02:45] ROHAN MEHTA:
+---------------------------------------------------------------------
+Three things. First, RBI mandated that all scheduled commercial
+banks migrate to ISO 20022 messaging by March 31, 2025. Second,
+our current infrastructure costs us ₹42 crore annually in
+licensing and support. Third, our UPI transaction volume has
+grown 340% year-over-year — we're processing about 18 million
+UPI transactions per day now.
+
+[11:03:50] KENJI WATANABE:
+---------------------------------------------------------------------
+What's your current uptime SLA with Infosys?
+
+[11:04:00] ROHAN MEHTA:
+---------------------------------------------------------------------
+99.5% for the core banking application. But we've had three
+major outages in the last 18 months. The worst was on
+August 14, 2023 — Diwali eve — when the system was down
+for 7 hours and 23 minutes. That outage affected 1.1 million
+customers and triggered an RBI inquiry. The incident reference
+was RBI/2023/CYB/0847.
+
+[11:05:15] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Ouch. What caused that outage?
+
+[11:05:25] ROHAN MEHTA:
+---------------------------------------------------------------------
+A failed batch reconciliation job that corrupted the transaction
+ledger. We had to restore from a backup taken at 02:00 IST the
+previous night. The root cause analysis was conducted by our
+internal audit team led by Vandana Rao, and an external firm
+called Grant Thornton India. Their engagement partner was
+Aravind Subramanian.
+
+[11:06:30] KENJI WATANABE:
+---------------------------------------------------------------------
+Let's talk about data. How much data are we migrating?
+
+[11:06:45] ROHAN MEHTA:
+---------------------------------------------------------------------
+Roughly 84 terabytes of structured data, plus 12 terabytes of
+unstructured documents — scanned KYC forms, loan agreements,
+cheque images. We retain transaction data for 8 years under
+RBI guidelines and customer records for the life of the account
+plus 5 years.
+
+[11:07:40] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Who are the key stakeholders on your side?
+
+[11:07:55] ROHAN MEHTA:
+---------------------------------------------------------------------
+The CIO is Meera Iyengar. Our CISO is Vikram Singh Rathore.
+The Head of Retail Banking is Fatima Sheikh. And the Chairman
+of the Board is Dr. Ramesh Subramanian — he's also on the
+board of the National Payments Corporation of India, or NPCI.
+
+[11:08:50] KENJI WATANABE:
+---------------------------------------------------------------------
+What about regulatory obligations? Anything beyond the RBI
+mandate?
+
+[11:09:05] ROHAN MEHTA:
+---------------------------------------------------------------------
+Yes. We're subject to the Digital Personal Data Protection Act
+of 2023, which came into force on August 11, 2023. We also
+follow the ISO 27001:2022 standard for information security,
+and we're audited annually by Deloitte Haskins & Sells. Our
+last audit was on February 22, 2024 — it resulted in two
+minor non-conformities.
+
+[11:10:20] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Can you share the audit findings?
+
+[11:10:32] ROHAN MEHTA:
+---------------------------------------------------------------------
+I can share the summary. The first finding was related to
+access control — specifically, 14 terminated employees still
+had active VPN credentials. The second was about encryption
+at rest — three backup servers in our Chennai data center
+were using AES-128 instead of AES-256. Both were remediated
+by April 5, 2024.
+
+[11:11:45] KENJI WATANABE:
+---------------------------------------------------------------------
+What about your network topology? Multi-region or single-region?
+
+[11:11:58] ROHAN MEHTA:
+---------------------------------------------------------------------
+We have primary data centers in Mumbai and Hyderabad, and a
+disaster recovery site in Chennai. We're connected via MPLS
+through Tata Communications. Our SWIFT infrastructure is
+segregated — it runs on a separate network with hardware
+security modules from Thales. The SWIFT BIC is BHRTINBB.
+
+[11:13:00] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+What's your team structure for the migration?
+
+[11:13:15] ROHAN MEHTA:
+---------------------------------------------------------------------
+We'll assign a core team of 22 people. The project sponsor is
+Meera Iyengar. The program manager will be Sanjay Kulkarni.
+We have two technical leads: one for the core banking side
+(Ashok Reddy) and one for the integration side (Nandini
+Bhattacharya). We'll also need a dedicated QA lead — that
+role is currently vacant, and we're interviewing candidates.
+One is a gentleman named Farhan Qureshi from HDFC Bank, and
+the other is a lady named Lakshmi Venkatesan from ICICI.
+
+[11:14:30] KENJI WATANABE:
+---------------------------------------------------------------------
+What's your target timeline?
+
+[11:14:42] ROHAN MEHTA:
+---------------------------------------------------------------------
+If we sign by August 15, 2024, we'd want a phased rollout:
+Phase 1 (pilot) in Q4 2024 at 12 branches in Maharashtra.
+Phase 2 in Q1 2025 across 80 branches in western India.
+Phase 3 in Q2 2025 for the remaining 155 branches. Full
+cutover must complete by March 20, 2025 — ten days before
+the RBI deadline.
+
+[11:15:50] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+One last question. What are your success criteria?
+
+[11:16:02] ROHAN MEHTA:
+---------------------------------------------------------------------
+Zero customer-facing outages during cutover. Migration
+completed within 5% of budget — our approved budget is
+₹280 crore. And CSAT maintained above 4.2 out of 5.
+If we hit all three, this will be the smoothest migration
+in our 78-year history.
+
+[11:16:55] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Thank you, Rohan. This has been very helpful. We'll send
+a follow-up proposal by July 19th.
+
+[11:17:10] ROHAN MEHTA:
+---------------------------------------------------------------------
+Sounds good. You can reach me at rohan.mehta@bharatcb.co.in
+or on my mobile at +91-98200-45173. My office line is
++91-22-6789-4500, extension 214.
+
+[11:17:45] ANJALI DESHMUKH:
+---------------------------------------------------------------------
+Perfect. Thank you both. Recording stopped.
+
+[11:17:55] END OF TRANSCRIPT
+=====================================================================

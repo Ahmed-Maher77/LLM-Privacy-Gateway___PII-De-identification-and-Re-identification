@@ -1,0 +1,216 @@
+=====================================================================
+SESSION RECORD
+=====================================================================
+Session ID:        REC-2023-11-14-0092
+Session Type:      SME Panel – Technical Deep Dive
+Topic:             CI/CD Pipeline Security Audit & Remediation
+Date:              November 14, 2023
+Time:              14:00 – 15:30 UTC
+Location:          Remote (Zoom Bridge)
+Recording Consent: Obtained from all parties
+Facilitator:       Priya Ramanathan (Program Manager, CyberShield Consulting)
+Note Taker:        Derek Okafor (Business Analyst, CyberShield Consulting)
+=====================================================================
+
+ATTENDEES
+---------------------------------------------------------------------
+1. Priya Ramanathan   – Facilitator – CyberShield Consulting
+2. Derek Okafor       – Note Taker – CyberShield Consulting
+3. Elena Vasquez      – SME: DevOps Architecture – Northwind Logistics
+4. Tomasz Kowalski    – SME: Application Security – Northwind Logistics
+5. Dr. Aisha Bello    – SME: Compliance & Audit – Northwind Logistics
+=====================================================================
+
+---------------------------------------------------------------------
+[14:00:12] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Alright everyone, thank you for making time. We're here to audit the
+current CI/CD pipeline at Northwind Logistics and identify gaps before
+the Q1 2024 SOC 2 Type II audit. Elena, I'd like to start with you
+since you own the pipeline architecture.
+
+---------------------------------------------------------------------
+[14:00:45] ELENA VASQUEZ:
+---------------------------------------------------------------------
+Sure. So the current setup runs on Jenkins for the legacy monolith,
+but we've been migrating new microservices to GitHub Actions. We also
+have a GitLab runner instance that nobody wants to admit still exists.
+The problem is that we have three separate secrets management systems:
+HashiCorp Vault for production, AWS Secrets Manager for the cloud-native
+stuff, and... honestly, a bunch of .env files sitting in S3 buckets.
+
+---------------------------------------------------------------------
+[14:01:30] TOMASZ KOWALSKI:
+---------------------------------------------------------------------
+I want to jump in on that. Those .env files are a nightmare. Last month
+I found an AWS access key and secret in a public-facing S3 bucket that
+had been sitting there for eight months. We rotated it, but the blast
+radius could have been catastrophic. My team has been asking for static
+analysis in the pipeline for over a year.
+
+---------------------------------------------------------------------
+[14:02:10] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Tomasz, when you say "static analysis," are you referring to SAST,
+secret scanning, or both?
+
+---------------------------------------------------------------------
+[14:02:22] TOMASZ KOWALSKI:
+---------------------------------------------------------------------
+Both, ideally. We're currently using SonarQube for SAST, but it only
+runs on the main branch. Feature branches get no coverage at all. And
+for secret scanning, we have TruffleHog configured, but it's a
+post-commit hook, so by the time it catches something, the secret is
+already in the git history. We need pre-commit scanning.
+
+---------------------------------------------------------------------
+[14:03:05] DR. AISHA BELLO:
+---------------------------------------------------------------------
+If I can add the compliance perspective here — the SOC 2 auditors are
+going to ask for evidence of change management controls. Right now, we
+have developers who can push directly to main on the GitHub Actions
+repos. There's no peer review requirement enforced. That's a CC8.1
+finding waiting to happen.
+
+---------------------------------------------------------------------
+[14:03:48] ELENA VASQUEZ:
+---------------------------------------------------------------------
+That's fair. We enabled branch protection on the Jenkins repos but
+never replicated it when we moved to GitHub. It was a gap in the
+migration checklist.
+
+---------------------------------------------------------------------
+[14:04:02] DR. AISHA BELLO:
+---------------------------------------------------------------------
+It's not just branch protection. We need immutable audit logs. GitHub
+Actions logs expire after 90 days by default. For SOC 2, we need to
+retain evidence for at least one year. So we either need to export
+those logs to Splunk or configure long-term retention in GitHub
+Enterprise.
+
+---------------------------------------------------------------------
+[14:04:40] DEREK OKAFOR:
+---------------------------------------------------------------------
+Quick clarification — is Splunk already ingesting GitHub audit logs,
+or would that be a new integration?
+
+---------------------------------------------------------------------
+[14:04:52] ELENA VASQUEZ:
+---------------------------------------------------------------------
+New integration. Right now Splunk only gets CloudTrail and GuardDuty
+findings. GitHub is a blind spot.
+
+---------------------------------------------------------------------
+[14:05:15] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Let's capture that as a requirement. Derek, note that. Now, let's talk
+about the artifact repository. Elena, where are build artifacts stored?
+
+---------------------------------------------------------------------
+[14:05:30] ELENA VASQUEZ:
+---------------------------------------------------------------------
+Historically, Nexus. But the new pipelines push container images to
+Amazon ECR. We also have some legacy WAR files being deployed directly
+to Tomcat servers via SCP. Those servers are running on-prem in the
+Frankfurt data center.
+
+---------------------------------------------------------------------
+[14:06:02] TOMASZ KOWALSKI:
+---------------------------------------------------------------------
+Those Tomcat servers are running Java 8, by the way. I've flagged that
+in the vulnerability report three quarters in a row. It's an
+end-of-life runtime with known CVEs.
+
+---------------------------------------------------------------------
+[14:06:20] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Is that in scope for this audit, or is that a separate infrastructure
+remediation track?
+
+---------------------------------------------------------------------
+[14:06:32] DR. AISHA BELLO:
+---------------------------------------------------------------------
+It's in scope because it affects the integrity of the deployment
+pipeline. If we're deploying to an unpatched runtime, the auditors
+will flag it under CC7.1 — detection and monitoring of vulnerabilities.
+
+---------------------------------------------------------------------
+[14:07:00] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Understood. Let me summarize what I'm hearing so far, and please
+correct me if I get anything wrong.
+
+    1. Secrets management is fragmented across Vault, AWS Secrets
+       Manager, and unsecured .env files.
+    2. SAST coverage is limited to main branch only.
+    3. Secret scanning is post-commit, not pre-commit.
+    4. Branch protection is not enforced on GitHub Actions repos.
+    5. Audit log retention is insufficient for SOC 2.
+    6. Splunk integration with GitHub is missing.
+    7. Legacy Tomcat servers are running EOL Java 8.
+
+Does that capture it?
+
+---------------------------------------------------------------------
+[14:07:45] ALL:
+---------------------------------------------------------------------
+[General agreement / nodding]
+
+---------------------------------------------------------------------
+[14:08:00] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Great. Now let's talk about remediation priorities. If you had to rank
+these, what's the order?
+
+---------------------------------------------------------------------
+[14:08:15] TOMASZ KOWALSKI:
+---------------------------------------------------------------------
+Secret scanning first. That's the highest risk. Then SAST coverage on
+feature branches. Then the Java 8 thing.
+
+---------------------------------------------------------------------
+[14:08:30] ELENA VASQUEZ:
+---------------------------------------------------------------------
+I'd actually put branch protection ahead of SAST. It's a quick win and
+it addresses the compliance finding directly.
+
+---------------------------------------------------------------------
+[14:08:48] DR. AISHA BELLO:
+---------------------------------------------------------------------
+I agree with Elena. Branch protection and audit log retention are the
+two things the auditors will check first. Everything else is important
+but those are the gate items.
+
+---------------------------------------------------------------------
+[14:09:10] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Okay. Derek, let's document this as a prioritized backlog. I'll draft
+the requirements document and circulate it by end of week. Any final
+comments?
+
+---------------------------------------------------------------------
+[14:09:25] TOMASZ KOWALSKI:
+---------------------------------------------------------------------
+Just one. Whatever tooling we pick, it needs to work with both Jenkins
+and GitHub Actions. I don't want two separate solutions.
+
+---------------------------------------------------------------------
+[14:09:38] ELENA VASQUEZ:
+---------------------------------------------------------------------
+Seconded. And it needs to be developer-friendly. If the pre-commit hook
+takes more than five seconds, people will bypass it with --no-verify.
+
+---------------------------------------------------------------------
+[14:09:52] DR. AISHA BELLO:
+---------------------------------------------------------------------
+And it needs to produce audit-ready reports. I don't want to manually
+compile evidence in a spreadsheet three weeks before the audit.
+
+---------------------------------------------------------------------
+[14:10:05] PRIYA RAMANATHAN:
+---------------------------------------------------------------------
+Perfect. That's a wrap. Thank you all. Recording stopped.
+
+=====================================================================
+END OF SESSION
+=====================================================================

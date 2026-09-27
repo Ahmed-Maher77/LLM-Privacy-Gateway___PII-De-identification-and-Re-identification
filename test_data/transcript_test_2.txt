@@ -1,0 +1,40 @@
+🎙️ Transcript: Incident Post-Mortem & Client Migration Sync
+Date: October 12, 2026
+
+Platform: Microsoft Teams
+
+Attendees: Omar Farooq (Principal Architect), Elena Rostova (Lead DevOps Engineer), Hannah Schmidt (Compliance Officer)
+
+Omar Farooq: Thanks for joining on short notice, team. We need to review the data exposure incident from yesterday and finalize the migration plan for our international client, Aegis Global Health.
+
+Hannah Schmidt: Thanks, Omar. Before we touch on the incident, I need to record the verified primary contact details for Aegis’s regional compliance director for our regulatory filing. Her name is Sophia Maria Rodriguez-Nielsen, born March 22, 1985.
+
+Elena Rostova: Got it. What are her contact details for the emergency registry?
+
+Hannah Schmidt: Her direct mobile is +44 20 7946 0912, and her backup line in Germany is +49 30 1234567. Her official email is sophia.rodriguez@aegis-health.eu, but her emergency backup email is s.rodriguez85@protonmail.com. Her physical office is listed at 10 Downing Street, Westminster, London SW1A 2AA, UK.
+
+Omar Farooq: Great. Now regarding the identity verification check, did we store her passport and European Tax ID safely?
+
+Hannah Schmidt: Yes, her Spanish Passport number is PAG98230149, and her EU VAT/Tax Identification Number is ES-B87654321. For compliance billing, they provided an international wire account with IBAN DE89 3704 0044 0532 0130 00 and SWIFT/BIC code DBEKDEFFXXX.
+
+Elena Rostova: Speaking of billing, I noticed a test transaction processed under our sandbox environment using a Master Card credit card. The payload contained card number 5412-7512-3412-8890, expiration date 11/28, and security code 891. Was that supposed to be masked?
+
+Hannah Schmidt: Absolutely, even in sandbox environments, card details and CVVs must be redacted under PCI-DSS. Also, make sure her personal health policy ID PHI-88209-X12 isn't stored in cleartext.
+
+Elena Rostova: Understood. Now let's talk about the database dump issue from yesterday's incident. The debug agent executed a cURL request that dumped raw database connection strings and user sessions into central logging:
+
+Bash
+curl -X POST "https://api.internal-service.net/v1/auth/session" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.usr_991823" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "db_connection": "postgresql://admin_user:P@ssw0rd2026!@10.0.4.15:5432/production_db",
+    "client_ip": "172.16.254.1",
+    "mac_address": "3A:80:41:FC:02:9A",
+    "patient_ssn": "456-78-9012"
+  }'
+Omar Farooq: That's severe. Look at what's exposed in that single block: a raw database password, internal IP address 172.16.254.1, MAC address 3A:80:41:FC:02:9A, and a patient SSN 456-78-9012.
+
+Elena Rostova: Right. We need the PII middleware to intercept that cURL payload and mask the SSN, IP, MAC address, and password without messing up the bash flags (-X, -H, -d) or JSON quotes.
+
+Hannah Schmidt: Perfect. Let's make sure the fix is deployed before our audit tomorrow at 9:00 AM. Thanks, everyone.

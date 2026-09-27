@@ -22,9 +22,26 @@ GENERAL = ["nice", "next", "last", "first", "second", "third", "fourth", "final"
 
 TECH = ["server", "servers", "client", "cloud", "local", "remote", "host", "hosting", "endpoint", "endpoints", "request", "response", "payload", "header", "token", "session", "cookie", "cache", "queue", "worker", "job", "jobs", "batch", "stream", "streaming", "model", "models", "agent", "agents", "prompt", "prompts", "context", "window", "memory", "storage", "backup", "restore", "index", "search", "query", "filter", "sort", "export", "import", "upload", "download", "sync", "async", "error", "errors", "warning", "warnings", "debug", "trace", "metric", "metrics", "monitor", "monitoring", "alert", "alerts", "latency", "throughput", "performance", "scale", "scaling", "capacity", "load", "test", "tests", "suite", "coverage", "mock", "stub", "fixture"]
 
+#: Interview and meeting role labels ("Interviewer:", "Witness:",
+#: "Observer:"), several of which are also ordinary adjectives that can appear
+#: unrelated to any label elsewhere in the same document. "External" is here
+#: because a header line "Observer: Amara Nwosu (External Advisor, ...)" got
+#: "External" detected as a standalone ORGANIZATION, which then case-
+#: insensitively collided with the ordinary phrase "an external observer"
+#: later in the transcript body and was reported as a leak of the mapped
+#: value -- the same class of bug as "operations", just a different word.
+ROLES = ["interviewer", "interviewee", "observer", "witness", "facilitator",
+         "secretary", "chair", "moderator", "note", "taker", "reporter",
+         "advisor", "consultant", "expert", "specialist", "official",
+         "representative", "delegate", "counsel", "attorney", "internal",
+         "external", "primary", "secondary", "senior", "junior", "principal",
+         "chief", "assistant", "associate", "deputy", "acting", "interim",
+         "former", "current", "prior", "present", "absent", "confidential",
+         "privileged", "public", "private", "official", "unofficial"]
+
 
 def build() -> list[str]:
-    words = {w.lower() for w in (*BUSINESS, *GENERAL, *TECH) if len(w) >= 3}
+    words = {w.lower() for w in (*BUSINESS, *GENERAL, *TECH, *ROLES) if len(w) >= 3}
     return sorted(words)
 
 

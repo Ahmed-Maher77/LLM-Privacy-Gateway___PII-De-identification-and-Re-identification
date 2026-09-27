@@ -1,0 +1,229 @@
+=====================================================================
+INTERVIEW TRANSCRIPT
+=====================================================================
+Interview Title:    Post-Incident Review — Data Breach at Meridian Health
+Interview ID:       PIR-2024-0088
+Date:              May 22, 2024
+Time:              14:30 – 16:00 AEST
+Location:          Sydney, Australia
+Interviewer:       James O'Connor (Chief Information Security Officer,
+                   Meridian Health Australia)
+Interviewee:       Dr. Yuki Tanaka-O'Brien (Head of Clinical Informatics,
+                   Meridian Health Australia)
+Observer:          Amara Nwosu (External Advisor, Deloitte Cyber)
+=====================================================================
+
+[14:30:15] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Thank you for joining, Yuki. Amara from Deloitte is here as an
+external observer. We're conducting this post-incident review
+to understand how the ransomware attack on April 3rd compromised
+our patient records system. Everything discussed today will be
+included in the report to the Office of the Australian Information
+Commissioner.
+
+[14:31:02] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+Thank you, James. Before we begin, I want to note that I've
+already provided a written statement to our legal counsel at
+MinterEllison. I'm happy to elaborate on anything in that
+statement.
+
+[14:31:30] AMARA NWOSU:
+---------------------------------------------------------------------
+Dr. Tanaka-O'Brien, can you walk us through what you observed
+on the morning of April 3rd?
+
+[14:31:48] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+At approximately 8:15 AM, our clinical staff at the Royal
+Prince Alfred Hospital reported that they couldn't access
+the electronic medical records system. I contacted our IT
+operations center, which is managed by a vendor called
+Nexus IT Services. Their on-call engineer, a gentleman named
+Marcus Chen, confirmed that multiple servers had been
+encrypted.
+
+[14:32:35] JAMES O'CONNOR:
+---------------------------------------------------------------------
+When you say "Nexus IT Services," is that the same Nexus
+that we contracted with in 2019, or the Nexus that was
+acquired by Telstra in 2021?
+
+[14:32:52] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+It's the same company, but after the Telstra acquisition it
+was rebranded as "Nexus Health Solutions." Same staff, same
+contracts. Marcus Chen stayed on through the transition.
+
+[14:33:20] AMARA NWOSU:
+---------------------------------------------------------------------
+What was the initial scope of the breach? How many patient
+records were affected?
+
+[14:33:35] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+The forensic report from CrowdStrike estimated approximately
+4.7 million patient records were exfiltrated. That includes
+patients at Royal Prince Alfred, St Vincent's Hospital, and
+our clinics in Parramatta and Blacktown.
+
+[14:34:10] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Were the records encrypted at rest?
+
+[14:34:18] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+Yes, using AES-256. But the attackers compromised an
+administrative account — I believe it belonged to a
+contractor named Priya Sharma — and used her credentials
+to access the decryption keys.
+
+[14:34:50] AMARA NWOSU:
+---------------------------------------------------------------------
+Was Ms. Sharma an employee of Meridian Health or of Nexus?
+
+[14:35:00] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+She was a contractor through Nexus Health Solutions, but
+she worked on-site at our Sydney office. Her manager was
+David Kim, who reports to me.
+
+[14:35:28] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Has Ms. Sharma been interviewed?
+
+[14:35:35] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+She has. She's cooperating fully. Her account was accessed
+from an IP address in Bucharest, Romania — which is
+obviously not where she was. She was in Melbourne at the
+time, attending a conference at the Melbourne Convention
+Centre.
+
+[14:36:10] AMARA NWOSU:
+---------------------------------------------------------------------
+What about the threat actor? Has there been any attribution?
+
+[14:36:22] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+The Australian Federal Police and the FBI are jointly
+investigating. The ransomware strain has been linked to a
+group called BlackCat, also known as ALPHV. They're believed
+to operate out of Russia. There's also speculation about a
+connection to a North Korean group called Lazarus, but that's
+unconfirmed.
+
+[14:37:00] JAMES O'CONNOR:
+---------------------------------------------------------------------
+What was the ransom demand?
+
+[14:37:08] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+$15 million USD in Monero. We did not pay. Our board made
+that decision on April 5th, following advice from our
+insurer, Marsh McLennan.
+
+[14:37:35] AMARA NWOSU:
+---------------------------------------------------------------------
+How did the attackers initially gain access? Was it phishing,
+a vulnerability, or something else?
+
+[14:37:48] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+CrowdStrike's report indicates it was a vulnerability in
+our VPN appliance — specifically a Fortinet FortiGate
+device that hadn't been patched since January. The CVE
+was CVE-2024-21762. Our patching team, led by a gentleman
+named Tom Blackwood, had flagged it, but the remediation
+ticket was deprioritized.
+
+[14:38:30] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Who deprioritized it?
+
+[14:38:38] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+That's a sensitive question. The ticket was managed through
+our ServiceNow instance. The change advisory board — chaired
+at the time by Rebecca Lindstrom — made the call. But I want
+to be clear that Rebecca is no longer with the organization.
+She left in February.
+
+[14:39:15] AMARA NWOSU:
+---------------------------------------------------------------------
+Was there any indication that the deprioritization was
+deliberate?
+
+[14:39:25] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+I have no evidence of that. I want to be careful not to
+speculate. What I can say is that the same patch had been
+applied at our Brisbane and Perth sites without issue.
+
+[14:39:55] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Let's talk about the notification process. When did we
+first notify affected patients?
+
+[14:40:05] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+We notified the OAIC within 72 hours, as required under the
+Privacy Act 1988. Patient notifications went out starting
+April 15th, in batches. We used a vendor called
+Experian Data Breach Resolution to handle the mail merge
+and call center. The notification was signed by our CEO,
+Michael Zhang.
+
+[14:40:50] AMARA NWOSU:
+---------------------------------------------------------------------
+Did you offer credit monitoring?
+
+[14:40:58] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+Yes. Twelve months of credit monitoring through Equifax
+for all affected patients. The cost was approximately
+$8.3 million AUD. Our CFO, Helen Papadopoulos, negotiated
+the rate directly with Equifax.
+
+[14:41:35] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Where are we now with remediation?
+
+[14:41:45] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+We've engaged KPMG to conduct a full security assessment.
+We've also implemented mandatory MFA across all
+administrative accounts, and we're migrating our
+infrastructure to Microsoft Azure with a zero-trust
+architecture. The target completion date is September 30th.
+
+[14:42:30] AMARA NWOSU:
+---------------------------------------------------------------------
+One more question. Is there anything you wish you'd done
+differently?
+
+[14:42:40] DR. YUKI TANAKA-O'BRIEN:
+---------------------------------------------------------------------
+I wish we'd listened to Tom Blackwood's team earlier. I
+wish we'd had better visibility into our third-party
+contractors. And I wish we'd encrypted our backup
+infrastructure — the attackers were able to delete our
+on-premise backups at the Sydney data center before we
+could isolate them. We've since moved backups to AWS S3
+with immutable retention.
+
+[14:43:30] JAMES O'CONNOR:
+---------------------------------------------------------------------
+Thank you, Yuki. Amara, any final questions?
+
+[14:43:38] AMARA NWOSU:
+---------------------------------------------------------------------
+No, I think we have what we need. Thank you.
+
+[14:43:45] JAMES O'CONNOR:
+---------------------------------------------------------------------
+This concludes the post-incident review. Recording stopped.
+
+[14:43:50] END OF TRANSCRIPT
+=====================================================================

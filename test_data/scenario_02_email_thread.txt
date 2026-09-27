@@ -1,0 +1,11 @@
+From: maria.garcia@example.com
+To: david.lee@example.org
+Subject: Account review
+
+Hi David,
+
+Please ask Robert Taylor to review account BP-28491. His office is in Manchester.
+Call me at +44 7700 900123 if anything is unclear.
+
+Regards,
+Maria Garcia

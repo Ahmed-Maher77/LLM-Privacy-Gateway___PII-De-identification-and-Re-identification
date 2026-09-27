@@ -1,0 +1,6 @@
+System health report
+
+The batch completed successfully.
+Three workers processed 420 records in 48 minutes.
+No warnings were reported and the queue is empty.
+The next scheduled run is tomorrow at 09:00.

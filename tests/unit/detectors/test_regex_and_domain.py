@@ -57,9 +57,66 @@ def test_detects_the_customer_id_from_the_sme_transcript():
     assert found("customer account BP-28491.", "CUSTOMER_ID") == ["BP-28491"]
 
 
+def test_detects_a_multi_segment_customer_id():
+    # "CUST-2026-0042": a prefix, then TWO separator+digit groups. The
+    # original pattern only allowed one, so the embedded dash before "0042"
+    # broke the match entirely -- it matched nothing at all, not "CUST-2026".
+    assert found('"account_id": "CUST-2026-0042"', "CUSTOMER_ID") == ["CUST-2026-0042"]
+
+
 @pytest.mark.parametrize("text", ["420 employees", "version 4.6", "BP28491", "bp-28491"])
 def test_account_id_pattern_does_not_fire_on(text):
     assert found(text, "CUSTOMER_ID") == []
+
+
+# -- financial and technical identifiers -------------------------------------
+
+def test_detects_a_mac_address():
+    assert found("mac_address: 00:1B:44:11:3A:B7", "ACCOUNT_IDENTIFIER") == ["00:1B:44:11:3A:B7"]
+
+
+def test_detects_a_hyphenated_mac_address():
+    assert found("00-1B-44-11-3A-B7", "ACCOUNT_IDENTIFIER") == ["00-1B-44-11-3A-B7"]
+
+
+def test_detects_a_swift_bic_code():
+    assert found("SWIFT: NWBKGB2L", "ACCOUNT_IDENTIFIER") == ["NWBKGB2L"]
+
+
+def test_detects_an_eleven_character_swift_code():
+    assert found("SWIFT/BIC code DBEKDEFF002", "ACCOUNT_IDENTIFIER") == ["DBEKDEFF002"]
+
+
+def test_an_all_letter_swift_code_is_a_known_limitation():
+    # The digit requirement that keeps this pattern from matching ordinary
+    # all-caps words also means a SWIFT code with an all-letter branch code
+    # ("XXX", the common default) is not detected. Pinned as a documented
+    # limitation rather than silently accepted: a false negative here should
+    # be a visible, deliberate trade-off, not an accident.
+    assert found("SWIFT/BIC code DBEKDEFFXXX", "ACCOUNT_IDENTIFIER") == []
+
+
+@pytest.mark.parametrize("text", ["PASSWORD", "PLAYBOOK", "OK", "HELLO WORLD", "OBTAINED"])
+def test_swift_pattern_does_not_fire_on_plain_all_letter_words(text):
+    assert found(text, "ACCOUNT_IDENTIFIER") == []
+
+
+def test_detects_a_social_security_number():
+    assert found("SSN: 123-45-6789", "ACCOUNT_IDENTIFIER") == ["123-45-6789"]
+
+
+def test_detects_a_labeled_routing_number():
+    assert found("Routing number: 122000049", "ACCOUNT_IDENTIFIER") == ["122000049"]
+
+
+def test_detects_a_labeled_account_number():
+    assert found("Account number: 9876543210", "ACCOUNT_IDENTIFIER") == ["9876543210"]
+
+
+def test_a_bare_unlabeled_digit_run_is_not_detected_as_an_account_number():
+    # No label, no shape: an unlabeled 10-digit run is too common a coincidence
+    # (a reference number, a zip+4, a quantity) to detect on its own.
+    assert found("the total was 9876543210 units", "ACCOUNT_IDENTIFIER") == []
 
 
 # -- url ---------------------------------------------------------------------
@@ -110,9 +167,17 @@ def test_luhn_rejects_an_invalid_number():
     assert not luhn_valid("4539578763621487")
 
 
-def test_credit_card_requires_a_valid_checksum():
+def test_credit_card_shaped_numbers_are_detected_regardless_of_luhn():
+    # Luhn validity no longer gates detection: a card-shaped number containing
+    # a transcription typo, or the kind of plausible-but-invalid test number
+    # this project's own test corpus turned out to use, must still be caught.
     assert found("card 4539 5787 6362 1486", "CREDIT_CARD") == ["4539 5787 6362 1486"]
-    assert found("card 4539 5787 6362 1487", "CREDIT_CARD") == []
+    assert found("card 4539 5787 6362 1487", "CREDIT_CARD") == ["4539 5787 6362 1487"]
+
+
+def test_luhn_validity_is_still_computable_for_reporting():
+    assert luhn_valid("4539578763621486")
+    assert not luhn_valid("4539578763621487")
 
 
 # -- ip ----------------------------------------------------------------------

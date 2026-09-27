@@ -1,0 +1,179 @@
+=====================================================================
+CLINICAL ADVISORY BOARD — CONSULTATION MINUTES
+=====================================================================
+Document Ref:      CAB-2024-0031
+Meeting Type:      SME Consultation — Protocol Review
+Subject:           Phase III Trial Design for BX-4471 (Oncology)
+Date:              February 8, 2024
+Time:              09:30 – 11:15 EST
+Venue:             Massachusetts General Hospital, Boston, MA
+Chair:             Prof. Helena Lindqvist, MD, PhD (Karolinska Institutet)
+Secretary:         Rajiv Menon, MSc (Meridian Clinical Research)
+=====================================================================
+
+CONSULTING EXPERTS
+---------------------------------------------------------------------
+- Prof. Helena Lindqvist    Chair, Principal Investigator
+                            Karolinska Institutet, Stockholm
+- Dr. Samuel Adeyemi       Oncology Lead, Sub-Saharan Africa
+                            Lagos University Teaching Hospital
+- Dr. Mei-Ling Chen        Biostatistics SME
+                            Genentech, South San Francisco
+- Mr. Javier Ortega        Regulatory Affairs SME
+                            European Medicines Agency (EMA)
+- Ms. Fatima Al-Rashid     Patient Advocacy Representative
+                            Gulf Cancer Foundation, Dubai
+=====================================================================
+
+---------------------------------------------------------------------
+[09:30:04] PROF. HELENA LINDQVIST:
+---------------------------------------------------------------------
+Good morning, everyone. Thank you for joining this consultation.
+The purpose today is to review the proposed Phase III protocol for
+BX-4471, our investigational monoclonal antibody targeting HER2-low
+metastatic breast cancer. Rajiv will circulate the draft protocol
+document after this meeting. I'd like to begin with Dr. Adeyemi
+because the proposed trial sites in West Africa raise important
+ethical and logistical questions.
+
+---------------------------------------------------------------------
+[09:31:22] DR. SAMUEL ADEYEMI:
+---------------------------------------------------------------------
+Thank you, Professor. I have three concerns. First, the protocol
+requires tumor biopsies at screening and again at week 12. In our
+setting, that is not always feasible — many of our patients travel
+over 400 kilometers to reach the Lagos University Teaching Hospital.
+Second, the washout period of 14 days is too short for patients
+who have been on tamoxifen. Third, and most importantly, the
+informed consent form is currently only available in English and
+French. We serve Yoruba-, Hausa-, and Igbo-speaking populations.
+This is a serious gap under the Declaration of Helsinki.
+
+---------------------------------------------------------------------
+[09:33:15] PROF. HELENA LINDQVIST:
+---------------------------------------------------------------------
+That's a critical point. We will need translated consent forms
+before any site activation in Nigeria. Mei-Ling, from a statistical
+perspective, does the sample size calculation account for
+anticipated dropout in these regions?
+
+---------------------------------------------------------------------
+[09:33:48] DR. MEI-LING CHEN:
+---------------------------------------------------------------------
+It does not, Professor. The current power calculation assumes a
+15% dropout rate across all sites. Based on historical data from
+the KEYNOTE-355 and DESTINY-Breast04 trials, dropout in
+resource-limited settings can reach 28-32%. If we don't adjust,
+we risk underpowering the primary endpoint. I recommend
+stratifying randomization by region and increasing the target
+enrollment from 640 to 780 patients.
+
+---------------------------------------------------------------------
+[09:35:10] MR. JAVIER ORTEGA:
+---------------------------------------------------------------------
+I'd like to flag a regulatory issue. If we increase enrollment
+and modify the stratification, this becomes a substantial
+modification under Article 19 of Regulation (EU) No 536/2014.
+The EMA will require a new Part II submission via the Clinical
+Trials Information System. That adds at least 60 days to the
+timeline. Also — and this is important — the current protocol
+cites ICH E6(R2), but the guideline has been updated to
+ICH E6(R3). The ethics committee at Karolinska will reject
+the submission if we don't reference the current version.
+
+---------------------------------------------------------------------
+[09:37:02] PROF. HELENA LINDQVIST:
+---------------------------------------------------------------------
+Noted. Rajiv, please add that to the action log. Ms. Al-Rashid,
+you've been quiet. I want to hear the patient perspective.
+
+---------------------------------------------------------------------
+[09:37:20] MS. FATIMA AL-RASHID:
+---------------------------------------------------------------------
+Thank you, Professor. I have reviewed the protocol from the
+patient's standpoint, and I have significant concerns. The
+quality-of-life questionnaire is the EORTC QLQ-C30, which
+has been validated in over 40 languages, but not in Arabic.
+If you intend to enroll patients in the Gulf region, you
+need the Arabic-validated version. Furthermore, the schedule
+of assessments requires clinic visits every two weeks for the
+first three months. For patients in rural areas of the UAE
+or Saudi Arabia, that is a significant burden. I would
+recommend allowing telehealth check-ins for weeks 2, 4, and 6,
+with in-person visits at weeks 8 and 12.
+
+---------------------------------------------------------------------
+[09:39:44] DR. SAMUEL ADEYEMI:
+---------------------------------------------------------------------
+I strongly support that. In fact, we have been using a
+telehealth model at LUTH since 2021 with good results.
+I would also add that the protocol should include a
+provision for community health workers to conduct home
+visits. This is standard practice in our setting.
+
+---------------------------------------------------------------------
+[09:40:55] DR. MEI-LING CHEN:
+---------------------------------------------------------------------
+I want to caution against that from a data integrity
+perspective. If assessments are conducted by different
+personnel — nurses in Boston, community health workers
+in Lagos, telehealth coordinators in Dubai — we introduce
+inter-rater variability. We would need to implement
+a rigorous training and certification program, and
+possibly a centralized imaging review. I suggest we
+include a blinded independent central review,
+similar to what was done in the CLEOPATRA trial.
+
+---------------------------------------------------------------------
+[09:42:30] MR. JAVIER ORTEGA:
+---------------------------------------------------------------------
+Agreed. And under the new ICH E6(R3), the sponsor must
+document a risk-based quality management plan. The
+central review would need to be described in that plan.
+I can share a template that was used in a recent
+oncology submission to the UK MHRA.
+
+---------------------------------------------------------------------
+[09:43:48] PROF. HELENA LINDQVIST:
+---------------------------------------------------------------------
+Excellent. Let me try to summarize the key decisions
+and action items before we adjourn.
+
+    ACTION LOG
+    ----------
+    A1. Translate ICF into Yoruba, Hausa, and Igbo.
+        Owner: Dr. Adeyemi — Due: 2024-02-22
+    A2. Translate EORTC QLQ-C30 into Arabic
+        and validate.
+        Owner: Ms. Al-Rashid — Due: 2024-03-15
+    A3. Revise sample size to 780 patients with
+        regional stratification.
+        Owner: Dr. Chen — Due: 2024-02-15
+    A4. Update regulatory references from ICH E6(R2)
+        to ICH E6(R3).
+        Owner: Mr. Ortega — Due: 2024-02-12
+    A5. Draft risk-based quality management plan
+        including blinded central review.
+        Owner: Mr. Ortega — Due: 2024-03-01
+    A6. Amend protocol to permit telehealth visits
+        at weeks 2, 4, and 6.
+        Owner: Prof. Lindqvist — Due: 2024-02-20
+
+Any objections?
+
+---------------------------------------------------------------------
+[09:45:10] ALL:
+---------------------------------------------------------------------
+[No objections]
+
+---------------------------------------------------------------------
+[09:45:15] PROF. HELENA LINDQVIST:
+---------------------------------------------------------------------
+Then we are adjourned. Thank you all. Rajiv, please
+distribute these minutes within 48 hours. The next
+consultation will be on March 14, 2024, at 09:30 EST.
+Recording stopped.
+
+=====================================================================
+END OF MINUTES
+=====================================================================

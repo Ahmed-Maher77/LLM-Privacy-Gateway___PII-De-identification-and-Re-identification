@@ -1,0 +1,125 @@
+=====================================================================
+INTERVIEW TRANSCRIPT
+=====================================================================
+Interview Title:    Vendor Onboarding Interview — Payment Gateway
+Interview ID:       INT-2024-0417
+Date:              April 17, 2024
+Time:              10:00 – 11:00 GMT
+Location:          London, United Kingdom
+Interviewer:       Olivia Hartwell (Procurement Lead, Brighton Systems)
+Interviewee:       Kwame Mensah (Solutions Architect, Adyen)
+Observer:          Hiroshi Tanaka (Security Officer, Brighton Systems)
+=====================================================================
+
+[10:00:10] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Good morning, Kwame. Thank you for joining us. Hiroshi from our
+security team will be observing. We're evaluating Adyen as our
+primary payment gateway for the European market.
+
+[10:00:35] KWAME MENSAH:
+---------------------------------------------------------------------
+Thank you, Olivia. Happy to be here. I've been with Adyen for
+four years, based out of our Amsterdam office.
+
+[10:00:50] HIROSHI TANAKA:
+---------------------------------------------------------------------
+Before we start, I need to confirm — are you PCI DSS Level 1
+certified?
+
+[10:01:05] KWAME MENSAH:
+---------------------------------------------------------------------
+Yes. We've been PCI DSS Level 1 certified since 2012, and we
+maintain ISO 27001 as well. Our most recent audit was
+conducted by PwC in November 2023.
+
+[10:01:30] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Excellent. Let's talk about integration. Our current provider
+is Stripe, but we're migrating because of pricing concerns.
+We process roughly 2 million transactions per month across
+Germany, France, and Spain.
+
+[10:02:00] KWAME MENSAH:
+---------------------------------------------------------------------
+That volume is well within our capacity. We handle over 1
+billion transactions annually. For your use case, I'd
+recommend our Checkout API. It supports SEPA, iDEAL,
+Bancontact, and all major card schemes.
+
+[10:02:40] HIROSHI TANAKA:
+---------------------------------------------------------------------
+Where is your data hosted? We have GDPR obligations and
+our legal team is based in Frankfurt.
+
+[10:03:00] KWAME MENSAH:
+---------------------------------------------------------------------
+Primary data centers are in Amsterdam and Dublin. We also
+have redundancy in Singapore and São Paulo. All EU customer
+data stays within the EU under our data residency policy.
+Our Data Protection Officer is Elena Novak — she's based
+in our Amsterdam headquarters.
+
+[10:03:45] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Who at Adyen will be our primary point of contact?
+
+[10:04:00] KWAME MENSAH:
+---------------------------------------------------------------------
+Your account manager will be Sophie Laurent. She's based in
+Paris. For technical escalations, you'll work with our
+support team led by Rajesh Iyer in Bangalore.
+
+[10:04:30] HIROSHI TANAKA:
+---------------------------------------------------------------------
+What about incident response? If there's a breach, what's
+the notification timeline?
+
+[10:04:50] KWAME MENSAH:
+---------------------------------------------------------------------
+We notify affected merchants within 72 hours, in line with
+GDPR Article 33. Our security operations center in Tel Aviv
+runs 24/7. The SOC lead is David Cohen.
+
+[10:05:30] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Can you share references from other customers in our
+industry? We're a logistics company — similar to DHL or
+Kuehne+Nagel.
+
+[10:06:00] KWAME MENSAH:
+---------------------------------------------------------------------
+Absolutely. I can connect you with the CFO at Zalando —
+that's Anna Schmidt. Also, the CTO at Bol.com, which is
+part of Ahold Delhaize. His name is Pieter van Dijk.
+
+[10:06:45] HIROSHI TANAKA:
+---------------------------------------------------------------------
+One more question. Do you support 3D Secure 2.0? Our
+fraud team insists on it.
+
+[10:07:00] KWAME MENSAH:
+---------------------------------------------------------------------
+Yes. We're fully compliant with 3D Secure 2.0 and PSD2
+Strong Customer Authentication. Our fraud prevention
+engine uses machine learning — it's called Risk
+Management, and it's built on technology we acquired
+from a company called Ravelin in 2022.
+
+[10:07:45] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Thank you, Kwame. We'll be in touch by end of next week.
+I'll send the follow-up to your email — is it still
+k.mensah@adyen.com?
+
+[10:08:00] KWAME MENSAH:
+---------------------------------------------------------------------
+Yes, that's correct. Or you can reach my assistant,
+Marta Kowalski, at m.kowalski@adyen.com.
+
+[10:08:20] OLIVIA HARTWELL:
+---------------------------------------------------------------------
+Perfect. Thank you both. This concludes the interview.
+
+[10:08:30] END OF TRANSCRIPT
+=====================================================================

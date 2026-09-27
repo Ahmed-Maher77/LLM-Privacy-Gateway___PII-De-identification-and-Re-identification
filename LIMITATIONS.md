@@ -73,6 +73,42 @@ plainly.
   median on identical input, stdev 3.6 s. That spread would need to be
   understood before committing to a latency target.
 
+## Detection gaps found by running real documents through the gateway
+
+Running `privacy-gateway run` over a broader corpus of realistic documents
+(interview transcripts, support tickets, config files, financial forms)
+surfaced detection gaps that the original two-transcript acceptance suite
+could not, since it never exercised these shapes of input. Each below is
+either fixed with a test pinning the fix, or is a known, documented residual
+gap.
+
+- **A bare 3-digit CVV and a bare `MM/YY` expiry are not detected.** Both are
+  contextually sensitive next to a card number, but a general regex for "any
+  3-digit number" or "any digit/digit token" would false-positive constantly
+  against ordinary quantities, ports and dates elsewhere in a document. Left
+  undetected deliberately; a semantic detector (Qwen) is the right tool for
+  this contextual case, not a pattern.
+- **A SWIFT/BIC code with an all-letter branch suffix (the common default
+  `XXX`) is not detected.** The pattern requires at least one digit somewhere
+  in the token specifically so it cannot be confused with an ordinary
+  all-caps English word or acronym of the same length; that same requirement
+  costs recall on the letters-only case. Pinned by test as a stated
+  trade-off, not a silent gap.
+- **A connection-string authority (`user:password@host:port`) is protected as
+  one coarse block** rather than splitting user, password and host apart.
+  A password containing its own literal `@` -- which this project's own test
+  corpus turned out to use -- makes a precise split ambiguous without
+  URL-decoding, and the previous behaviour (an email-address pattern
+  partially matching into the middle of the string) left part of the
+  password in plain text next to the placeholder. Redacting the whole
+  authority, host included, is coarser but cannot leak a fragment.
+- **A bare, unlabelled run of 6-17 digits is never treated as an account or
+  routing number.** Detection is anchored to an explicit label ("Routing
+  number:", "Account number:") immediately before the digits; on its own the
+  same digit run is too common a shape (a reference number, a zip+4, a
+  quantity) to detect safely. A label-free account number in unstructured
+  prose will not be caught by this layer.
+
 ## The gateway itself
 
 - **Restoration is exact except for case-folded variants.** Two spellings of one

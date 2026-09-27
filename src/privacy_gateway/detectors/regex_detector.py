@@ -38,17 +38,24 @@ class RegexDetector:
                 else matcher(text)  # type: ignore[operator]
             )
             for m in matches:
+                # A pattern anchored to a label ("Routing number: 122000049")
+                # matches the label too, but only the value itself is the
+                # entity; a named "value" group narrows the span to just that.
+                if "value" in m.re.groupindex:
+                    start, end, matched = m.start("value"), m.end("value"), m.group("value")
+                else:
+                    start, end, matched = m.start(), m.end(), m.group()
                 out.append(
                     make_entity(
                         text_source=text,
-                        start=m.start(),
-                        end=m.end(),
+                        start=start,
+                        end=end,
                         entity_type=entity_type,
                         confidence=confidence,
                         detector=self.name,
                         source=rule_id,
                         priority=self._priority,
-                        reported_text=m.group(),
+                        reported_text=matched,
                     )
                 )
         return tuple(out)
