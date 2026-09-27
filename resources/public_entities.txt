@@ -13,6 +13,7 @@ ORGANIZATION	Apple
 ORGANIZATION	OpenAI
 ORGANIZATION	Anthropic
 ORGANIZATION	GitHub
+ORGANIZATION	GitHub Actions
 ORGANIZATION	Atlassian
 ORGANIZATION	Slack
 ORGANIZATION	Zoom
@@ -123,4 +124,18 @@ ORGANIZATION	HIPAA
 ORGANIZATION	CCPA
 ORGANIZATION	SLA
 ORGANIZATION	CI/CD
+
+# Generic security-technology acronyms. Like the compliance standards above,
+# these name a category of tool or practice, not an organisation, and
+# identify no one. Bare (type-agnostic) rather than ORGANIZATION-scoped:
+# "SIEM" was observed detected as LOCATION, not ORGANIZATION, and a
+# type-scoped entry would not have matched that mistagging.
+SIEM
+IDS
+IPS
+EDR
+XDR
+MFA
+DLP
+CASB
 EU

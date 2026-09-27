@@ -30,14 +30,15 @@ TECH = ["server", "servers", "client", "cloud", "local", "remote", "host", "host
 #: insensitively collided with the ordinary phrase "an external observer"
 #: later in the transcript body and was reported as a leak of the mapped
 #: value -- the same class of bug as "operations", just a different word.
-ROLES = ["interviewer", "interviewee", "observer", "witness", "facilitator",
-         "secretary", "chair", "moderator", "note", "taker", "reporter",
-         "advisor", "consultant", "expert", "specialist", "official",
-         "representative", "delegate", "counsel", "attorney", "internal",
-         "external", "primary", "secondary", "senior", "junior", "principal",
-         "chief", "assistant", "associate", "deputy", "acting", "interim",
-         "former", "current", "prior", "present", "absent", "confidential",
-         "privileged", "public", "private", "official", "unofficial"]
+ROLES = ["interviewer", "interviewee", "interview", "interviews", "observer",
+         "witness", "facilitator", "secretary", "chair", "moderator", "note",
+         "taker", "reporter", "advisor", "consultant", "expert", "specialist",
+         "official", "representative", "delegate", "counsel", "attorney",
+         "internal", "external", "environmental", "primary", "secondary",
+         "senior", "junior", "principal", "chief", "assistant", "associate",
+         "deputy", "acting", "interim", "former", "current", "prior",
+         "present", "absent", "confidential", "privileged", "public",
+         "private", "unofficial"]
 
 
 def build() -> list[str]:
