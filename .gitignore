@@ -30,3 +30,32 @@ htmlcov/
 Thumbs.db
 
 src/
+
+# Run artefacts. These may contain real PII and must never be committed.
+# Written as reports/* plus a negation rather than reports/, so that
+# reports/.gitignore can itself be tracked: git cannot re-include a file whose
+# parent directory is excluded outright. That nested file is the belt-and-
+# braces guard -- deleting this rule alone does not un-quarantine the directory.
+reports/*
+!reports/.gitignore
+*__sanitized-input.txt
+.pii-triage.json
+
+# Working copies under test_data/. The scored corpus lives in tests/fixtures/
+# and is tracked deliberately -- every fixture there is synthetic. Anything
+# matching the rules below is a local working copy or a byte-identical
+# duplicate of a fixture, and several carry PII verbatim (the .expected.json
+# sidecars enumerate it in must_redact). A single literal filename was the old
+# rule here; it did not implement the intent, so these are globs.
+test_data/transcript_*.txt
+test_data/scenario_*.txt
+test_data/production_simulations/
+
+# Agent and editor local state. The .local convention is not self-enforcing:
+# this was previously ignored only by a personal global gitignore, which is
+# invisible to every other clone.
+.claude/settings.local.json
+
+# Local pattern overrides
+pii_patterns.toml
+.pii-patterns.toml

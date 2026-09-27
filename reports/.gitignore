@@ -1,0 +1,5 @@
+# Run artefacts quarantine. Reports and sanitized side-files may contain
+# real PII. Nothing in this directory is tracked except this file, which
+# exists so the rule survives an edit to the repository-root .gitignore.
+*
+!.gitignore
