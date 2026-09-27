@@ -1,0 +1,55 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "Mr. Aldercott",
+    "Ms. Aldercott"
+  ],
+  "must_keep": [],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 20,
+      "end": 33,
+      "label": "PERSON",
+      "text": "Ms. Aldercott",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 38,
+      "end": 51,
+      "label": "PERSON",
+      "text": "Mr. Aldercott",
+      "entity": "e2",
+      "origin": "generated"
+    },
+    {
+      "start": 67,
+      "end": 80,
+      "label": "PERSON",
+      "text": "Ms. Aldercott",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 102,
+      "end": 115,
+      "label": "PERSON",
+      "text": "Mr. Aldercott",
+      "entity": "e2",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [],
+  "assertions": {
+    "expect_distinct_entities": [
+      [
+        "e1",
+        "e2"
+      ]
+    ]
+  }
+}

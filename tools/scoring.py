@@ -135,6 +135,27 @@ class Match:
         """Whether the redaction fully covered the labelled identifier."""
         return self.pred.start <= self.gold.start and self.pred.end >= self.gold.end
 
+    def surviving(self, source: str) -> tuple[str, str]:
+        """The parts of the labelled identifier the redaction did not cover."""
+        if self.contains:
+            return "", ""
+        left = source[self.gold.start : min(self.pred.start, self.gold.end)]
+        right = source[max(self.pred.end, self.gold.start) : self.gold.end]
+        return left, right
+
+    def substantive_remainder(self, source: str) -> str:
+        """Surviving text that carries content, not just punctuation.
+
+        A trailing "." left behind by a span that stopped one character short
+        of "ROBERT CHEN JR." is a label that is one character too wide, not a
+        disclosure. A surviving "14 ... , 75002 Paris, France" is most of a
+        street address. Grading on the remainder keeps the gate pointed at the
+        second kind without an allowlist that could quietly swallow the first.
+        """
+        left, right = self.surviving(source)
+        remainder = f"{left} {right}".strip()
+        return remainder if any(c.isalnum() for c in remainder) else ""
+
 
 @dataclass
 class Alignment:
@@ -146,17 +167,29 @@ class Alignment:
 
     @property
     def partial(self) -> list[Match]:
-        """Matches where part of the identifier survived in plaintext.
-
-        A prediction that overlaps a gold span without covering it left
-        characters of a real identifier in the output. In privacy terms that is
-        a leak, not a boundary nitpick, so it is gated separately from F1.
-        """
+        """Matches where part of the identifier survived in plaintext."""
         return [m for m in self.matches if not m.contains]
+
+    def partial_substantive(self, source: str) -> list[Match]:
+        """Partial matches where what survived still carries content.
+
+        This is the gate. A prediction that overlaps a gold span without
+        covering it left characters of a real identifier in the output, and
+        when those characters are a house number, a postcode or a first name
+        that is a disclosure -- one that whole-string substring checks cannot
+        see, because the labelled string as a whole did disappear.
+        """
+        return [m for m in self.partial if m.substantive_remainder(source)]
 
     @property
     def tp(self) -> int:
-        return len(self.matches)
+        """Gold spans that were covered -- the recall numerator."""
+        return len({(m.gold.start, m.gold.end) for m in self.matches})
+
+    @property
+    def tp_pred(self) -> int:
+        """Predictions that were justified -- the precision numerator."""
+        return len({(m.pred.start, m.pred.end) for m in self.matches})
 
     @property
     def fp(self) -> int:
@@ -169,14 +202,33 @@ class Alignment:
 
 @dataclass(frozen=True, slots=True)
 class Counts:
+    """Precision and recall counted over different populations.
+
+    One prediction can legitimately satisfy several gold spans: redacting
+    "12 Rue Victor Hugo, Paris, 75001" as one ADDRESS covers a separately
+    labelled postcode, and redacting a whole connection string covers the
+    password inside it. Forcing a one-to-one alignment would charge a miss for
+    every gold span after the first, which is the opposite of the truth --
+    the wider redaction is the safer one.
+
+    So recall is counted over gold spans (how many were covered) and precision
+    over predictions (how many were justified). ``tp_pred`` defaults to ``tp``
+    because the two coincide whenever the alignment happens to be one-to-one.
+    """
+
     tp: int = 0
     fp: int = 0
     fn: int = 0
     unverified: int = 0
+    tp_pred: int | None = None
+
+    @property
+    def justified(self) -> int:
+        return self.tp if self.tp_pred is None else self.tp_pred
 
     @property
     def precision(self) -> float:
-        return _ratio(self.tp, self.tp + self.fp)
+        return _ratio(self.justified, self.justified + self.fp)
 
     @property
     def recall(self) -> float:
@@ -198,7 +250,7 @@ class Counts:
         undefined rows from macro averages and print them as n/a; those
         documents are gated on byte-identical output instead.
         """
-        return (self.tp + self.fp + self.fn) > 0
+        return (self.tp + self.fp + self.fn + self.justified) > 0
 
 
 @dataclass
@@ -310,7 +362,14 @@ def align(
     used_pred: set[int] = set()
     matches: list[Match] = []
     for overlap, gi, pi in candidates:
-        if gi in used_gold or pi in used_pred:
+        if gi in used_gold:
+            continue
+        contains = pred[pi].start <= gold[gi].start and pred[pi].end >= gold[gi].end
+        # A prediction already spoken for may still satisfy another gold span,
+        # but only by covering it outright. Allowing a *partial* overlap to be
+        # reused would let one narrow redaction claim credit for several
+        # identifiers it only clipped.
+        if pi in used_pred and not contains:
             continue
         used_gold.add(gi)
         used_pred.add(pi)
@@ -351,16 +410,32 @@ def counts_by_label(alignment: Alignment) -> dict[str, Counts]:
     for span in alignment.unverified:
         unver[span.label] += 1
 
-    labels = set(tp) | set(fp) | set(fn) | set(unver)
+    justified: dict[str, int] = defaultdict(int)
+    seen: set[tuple[int, int, str]] = set()
+    for match in alignment.matches:
+        key = (match.pred.start, match.pred.end, match.pred.label)
+        if key in seen:
+            continue
+        seen.add(key)
+        label = match.pred.label if match.gold.label == WILDCARD_LABEL else match.gold.label
+        justified[label] += 1
+
+    labels = set(tp) | set(fp) | set(fn) | set(unver) | set(justified)
     return {
-        label: Counts(tp=tp[label], fp=fp[label], fn=fn[label], unverified=unver[label])
+        label: Counts(
+            tp=tp[label],
+            fp=fp[label],
+            fn=fn[label],
+            unverified=unver[label],
+            tp_pred=justified[label],
+        )
         for label in sorted(labels)
     }
 
 
 def merge_counts(per_label: Iterable[dict[str, Counts]]) -> dict[str, Counts]:
     """Sum per-label counts across documents, for the corpus table."""
-    totals: dict[str, list[int]] = defaultdict(lambda: [0, 0, 0, 0])
+    totals: dict[str, list[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
     for mapping in per_label:
         for label, counts in mapping.items():
             row = totals[label]
@@ -368,8 +443,9 @@ def merge_counts(per_label: Iterable[dict[str, Counts]]) -> dict[str, Counts]:
             row[1] += counts.fp
             row[2] += counts.fn
             row[3] += counts.unverified
+            row[4] += counts.justified
     return {
-        label: Counts(tp=row[0], fp=row[1], fn=row[2], unverified=row[3])
+        label: Counts(tp=row[0], fp=row[1], fn=row[2], unverified=row[3], tp_pred=row[4])
         for label, row in sorted(totals.items())
     }
 

@@ -1,0 +1,56 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [],
+  "must_keep": [
+    "Norvane Interchange Bureau",
+    "TLS",
+    "AES-256-GCM",
+    "SLA",
+    "P95",
+    "CVE-2026-1111"
+  ],
+  "same_entity": [],
+  "gold_spans": [],
+  "gold_negatives": [
+    {
+      "start": 30,
+      "end": 56,
+      "text": "Norvane Interchange Bureau",
+      "reason": "ORG, outside the balanced profile"
+    },
+    {
+      "start": 107,
+      "end": 110,
+      "text": "TLS",
+      "reason": "technical acronym"
+    },
+    {
+      "start": 120,
+      "end": 131,
+      "text": "AES-256-GCM",
+      "reason": "cipher suite"
+    },
+    {
+      "start": 137,
+      "end": 140,
+      "text": "SLA",
+      "reason": "technical acronym"
+    },
+    {
+      "start": 151,
+      "end": 154,
+      "text": "P95",
+      "reason": "latency percentile"
+    },
+    {
+      "start": 177,
+      "end": 190,
+      "text": "CVE-2026-1111",
+      "reason": "vulnerability id"
+    }
+  ],
+  "assertions": {}
+}

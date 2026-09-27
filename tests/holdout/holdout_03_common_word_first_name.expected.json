@@ -1,0 +1,71 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "Grace Aldercott",
+    "Will Vuorinen"
+  ],
+  "must_keep": [
+    "Will",
+    "Mark"
+  ],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 26,
+      "end": 39,
+      "label": "PERSON",
+      "text": "Will Vuorinen",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 41,
+      "end": 56,
+      "label": "PERSON",
+      "text": "Grace Aldercott",
+      "entity": "e2",
+      "origin": "generated"
+    },
+    {
+      "start": 94,
+      "end": 107,
+      "label": "PERSON",
+      "text": "Will Vuorinen",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 196,
+      "end": 211,
+      "label": "PERSON",
+      "text": "Grace Aldercott",
+      "entity": "e2",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 58,
+      "end": 62,
+      "text": "Will",
+      "reason": "sentence-initial modal verb"
+    },
+    {
+      "start": 143,
+      "end": 147,
+      "text": "Mark",
+      "reason": "sentence-initial imperative verb"
+    }
+  ],
+  "assertions": {
+    "expect_distinct_entities": [
+      [
+        "e1",
+        "e2"
+      ]
+    ]
+  }
+}

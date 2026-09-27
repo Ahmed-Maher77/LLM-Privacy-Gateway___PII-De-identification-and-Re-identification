@@ -1,0 +1,77 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "Bardhyl Szabolcsi",
+    "Ingibjorg Sigurdardottir",
+    "Nandor Delacroix-Mwangi",
+    "Thandiwe Okonkwo-Baptiste",
+    "ayodele.kone@norvane-ib.example"
+  ],
+  "must_keep": [
+    "Trondheim"
+  ],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 26,
+      "end": 50,
+      "label": "PERSON",
+      "text": "Ingibjorg Sigurdardottir",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 72,
+      "end": 89,
+      "label": "PERSON",
+      "text": "Bardhyl Szabolcsi",
+      "entity": "e2",
+      "origin": "generated"
+    },
+    {
+      "start": 99,
+      "end": 124,
+      "label": "PERSON",
+      "text": "Thandiwe Okonkwo-Baptiste",
+      "entity": "e3",
+      "origin": "generated"
+    },
+    {
+      "start": 135,
+      "end": 158,
+      "label": "PERSON",
+      "text": "Nandor Delacroix-Mwangi",
+      "entity": "e4",
+      "origin": "generated"
+    },
+    {
+      "start": 194,
+      "end": 225,
+      "label": "EMAIL",
+      "text": "ayodele.kone@norvane-ib.example",
+      "entity": "e6",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 175,
+      "end": 184,
+      "text": "Trondheim",
+      "reason": "LOCATION, outside the balanced profile"
+    }
+  ],
+  "assertions": {
+    "expect_distinct_entities": [
+      [
+        "e1",
+        "e2",
+        "e3",
+        "e4"
+      ]
+    ]
+  }
+}

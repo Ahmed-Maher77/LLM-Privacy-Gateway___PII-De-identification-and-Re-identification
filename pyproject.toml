@@ -29,6 +29,9 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-markers = ["slow: exercises the real NER models"]
+markers = [
+    "slow: exercises the real NER models",
+    "holdout: the held-out corpus; scored, never tuned against",
+]
 testpaths = ["tests"]
 pythonpath = ["."]

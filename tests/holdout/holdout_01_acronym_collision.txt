@@ -1,0 +1,7 @@
+ARCHITECTURE REVIEW
+
+Sponsor: Norvane Interchange Bureau (NIB)
+
+NIB requires that every endpoint negotiate TLS 1.3 with AES-256-GCM.
+The SLA target is P95 under 200ms.
+Tracking CVE-2026-1111 separately.

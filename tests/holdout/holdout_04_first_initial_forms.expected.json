@@ -1,0 +1,72 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "A. Kone",
+    "Ayodele K.",
+    "Ayodele Kone",
+    "Kone, Ayodele"
+  ],
+  "must_keep": [
+    "REF-99120-XZ"
+  ],
+  "same_entity": [
+    [
+      "Ayodele Kone",
+      "Ayodele K.",
+      "A. Kone",
+      "Kone, Ayodele"
+    ]
+  ],
+  "gold_spans": [
+    {
+      "start": 26,
+      "end": 38,
+      "label": "PERSON",
+      "text": "Ayodele Kone",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 51,
+      "end": 61,
+      "label": "PERSON",
+      "text": "Ayodele K.",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 76,
+      "end": 83,
+      "label": "PERSON",
+      "text": "A. Kone",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 96,
+      "end": 109,
+      "label": "PERSON",
+      "text": "Kone, Ayodele",
+      "entity": "e1",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 123,
+      "end": 135,
+      "text": "REF-99120-XZ",
+      "reason": "internal reference, not a person"
+    }
+  ],
+  "assertions": {
+    "expect_same_entity": [
+      [
+        "e1"
+      ]
+    ]
+  }
+}

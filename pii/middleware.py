@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import re
 import warnings
 from collections.abc import Mapping, Sequence
@@ -33,6 +34,30 @@ from .spacy_detector import SpacyDetector
 from .spanfix import normalize_spans
 from .spans import SOURCE_PRIORITY, Span, SpanSet, apply_spans
 from .structure import StructureMap, analyze_structure, protect_spans
+
+
+def package_version(name: str | None) -> str | None:
+    """Installed version of a distribution, or None when it is absent.
+
+    Used for provenance only, so a missing package is a blank field rather
+    than an error: a detector can be running from a source checkout with no
+    distribution metadata at all.
+    """
+    if not name:
+        return None
+    try:
+        return importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+
+def _detector_package(detector: object) -> str | None:
+    """Which distribution provides a detector's weights."""
+    if isinstance(detector, GlinerDetector):
+        return "gliner"
+    if isinstance(detector, SpacyDetector):
+        return "spacy"
+    return None
 from .titles import detect_titles
 from .vault import ESCAPE_LABEL, PseudonymVault, find_template_literals
 from .vault import restore as restore_text
@@ -227,7 +252,17 @@ class PIIMiddleware:
         """
         names = {type(detector).__name__ for detector in self.detectors}
         status = [
-            {"name": type(detector).__name__, "available": True}
+            {
+                "name": type(detector).__name__,
+                "available": True,
+                # The class name alone cannot be reproduced against. A report
+                # that does not say which weights produced it is an artefact
+                # nobody can re-run, which is most of what an audit trail is
+                # for. The model id is known here; recording it costs nothing.
+                "model_id": getattr(detector, "model_name", None),
+                "package": _detector_package(detector),
+                "package_version": package_version(_detector_package(detector)),
+            }
             for detector in self.detectors
         ]
         if "SpacyDetector" not in names:
@@ -235,6 +270,9 @@ class PIIMiddleware:
                 {
                     "name": "SpacyDetector",
                     "available": False,
+                    "model_id": None,
+                    "package": "spacy",
+                    "package_version": package_version("spacy"),
                     "reason": "model not installed; recall is reduced",
                 }
             )

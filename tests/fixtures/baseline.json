@@ -1,83 +1,721 @@
 {
-  "macro_recall": 1.0,
-  "macro_precision": 1.0,
+  "schema": 2,
+  "profile": "balanced",
+  "detectors": [
+    {
+      "name": "GlinerDetector",
+      "available": true
+    },
+    {
+      "name": "SpacyDetector",
+      "available": true
+    }
+  ],
+  "init_seconds": 8.37,
+  "corpus": {
+    "documents": 31,
+    "gold_spans": 521,
+    "gold_complete": 0
+  },
+  "micro": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 521,
+    "fp": 0,
+    "fn": 0,
+    "unverified": 240
+  },
+  "macro": {
+    "recall": 1.0,
+    "precision": 0.9862,
+    "f1": 1.0
+  },
+  "boundary_exact_rate": 0.858,
+  "by_label": {
+    "ADDRESS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 16,
+      "fp": 0,
+      "fn": 0
+    },
+    "AMOUNT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    "BANK_ACCOUNT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "CARD_EXPIRY": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    "CONNECTION_STRING": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "CREDENTIAL": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    "CREDIT_CARD": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    "CUSTOM_ID": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 22,
+      "fp": 0,
+      "fn": 0
+    },
+    "CVV": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "DURATION": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    "EMAIL": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 29,
+      "fp": 0,
+      "fn": 0
+    },
+    "EPONYMOUS_ORG": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "EU_VAT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "IBAN": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "ID": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    "IP_ADDRESS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    },
+    "MAC_ADDRESS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 6,
+      "fp": 0,
+      "fn": 0
+    },
+    "NORP": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    "ORG": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "PASSPORT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "PERSON": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 374,
+      "fp": 0,
+      "fn": 0
+    },
+    "PHONE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 15,
+      "fp": 0,
+      "fn": 0
+    },
+    "ROUTING_NUMBER": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    "SSN": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    "SWIFT_BIC": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 6,
+      "fp": 0,
+      "fn": 0
+    },
+    "TIME": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    "URL": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    }
+  },
   "total_leaks": 0,
   "per_document": {
+    "prod_01_telehealth_clinical_soap": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 13,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 3,
+      "entities": 9,
+      "gold_complete": false,
+      "measured": true,
+      "status": "review"
+    },
+    "prod_02_fintech_wire_fraud_triage": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 28,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 3,
+      "entities": 15,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
+    },
+    "prod_03_devops_incident_warroom": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 19,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 2,
+      "entities": 12,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
+    },
+    "prod_04_legal_compliance_deposition": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 17,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 4,
+      "entities": 14,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
+    },
+    "prod_05_ecommerce_shipping_ticket": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 1,
+      "entities": 8,
+      "gold_complete": false,
+      "measured": true,
+      "status": "review"
+    },
+    "prod_06_hr_executive_compensation": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 14,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 4,
+      "entities": 11,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
+    },
+    "prod_07_multilingual_crossborder_merger": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 17,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 6,
+      "entities": 16,
+      "gold_complete": false,
+      "measured": true,
+      "status": "failed"
+    },
+    "prod_08_noisy_voice_asr_call": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 15,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 6,
+      "gold_complete": false,
+      "measured": true,
+      "status": "failed"
+    },
+    "prod_09_api_microservice_payload_logs": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 1,
+      "entities": 8,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
+    },
+    "prod_10_irb_academic_study_interview": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 2,
+      "entities": 7,
+      "gold_complete": false,
+      "measured": true,
+      "status": "failed"
+    },
+    "prod_11_repeated_coreference_story": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 23,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 1,
+      "entities": 6,
+      "gold_complete": false,
+      "measured": true,
+      "status": "review"
+    },
+    "prod_12_zero_pii_technical_deepdive": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 0,
+      "gold_complete": false,
+      "measured": false,
+      "status": "clean"
+    },
     "scenario_01_plain_meeting": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 6,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 4,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_02_email_thread": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 7,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_03_json_payload": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 5,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_04_code_and_config": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 4,
+      "gold_complete": false,
+      "measured": true,
+      "status": "failed"
     },
     "scenario_05_financial_identifiers": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 9,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 9,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_06_structured_support_case": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 6,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_07_multilingual_names": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 7,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_08_noisy_asr": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 0.7143,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 3,
+      "entities": 7,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_09_repeated_entities": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 9,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 3,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "scenario_10_no_pii_control": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 0.8571,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 1,
+      "entities": 1,
+      "gold_complete": false,
+      "measured": false,
+      "status": "clean"
     },
     "transcript_new_1": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 26,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 13,
+      "entities": 16,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_new_2": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 42,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 24,
+      "entities": 22,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_new_3": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 45,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 32,
+      "entities": 30,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_new_4": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 39,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 25,
+      "entities": 29,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_test": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 34,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 7,
+      "entities": 24,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_test_2": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 37,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 6,
+      "entities": 25,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_test_3": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 29,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 3,
+      "entities": 5,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     },
     "transcript_test_5": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 11,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 33,
+      "entities": 20,
+      "gold_complete": false,
+      "measured": true,
+      "status": "failed"
     },
     "transcript_test_6": {
       "recall": 1.0,
-      "precision": 1.0
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 24,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 66,
+      "entities": 34,
+      "gold_complete": false,
+      "measured": true,
+      "status": "clean"
     }
   }
 }

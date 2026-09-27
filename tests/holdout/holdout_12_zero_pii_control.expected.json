@@ -1,0 +1,44 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [],
+  "must_keep": [
+    "v3.11.2",
+    "10.0.0.0/8",
+    "AES-256-GCM",
+    "TLS"
+  ],
+  "same_entity": [],
+  "gold_spans": [],
+  "gold_negatives": [
+    {
+      "start": 111,
+      "end": 118,
+      "text": "v3.11.2",
+      "reason": "semantic version"
+    },
+    {
+      "start": 145,
+      "end": 155,
+      "text": "10.0.0.0/8",
+      "reason": "CIDR block"
+    },
+    {
+      "start": 170,
+      "end": 181,
+      "text": "AES-256-GCM",
+      "reason": "cipher suite"
+    },
+    {
+      "start": 187,
+      "end": 190,
+      "text": "TLS",
+      "reason": "technical acronym"
+    }
+  ],
+  "assertions": {
+    "byte_identical": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "ayo delay",
+    "ayodele"
+  ],
+  "must_keep": [],
+  "same_entity": [
+    [
+      "ayodele",
+      "ayo delay"
+    ]
+  ],
+  "gold_spans": [
+    {
+      "start": 33,
+      "end": 40,
+      "label": "PERSON",
+      "text": "ayodele",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 83,
+      "end": 92,
+      "label": "PERSON",
+      "text": "ayo delay",
+      "entity": "e1",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [],
+  "assertions": {}
+}

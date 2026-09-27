@@ -183,7 +183,8 @@ class TestCounts:
             {"EMAIL": Counts(tp=2, fp=1)},
             {"EMAIL": Counts(tp=3, fn=1), "PHONE": Counts(tp=1)},
         ])
-        assert merged["EMAIL"] == Counts(tp=5, fp=1, fn=1, unverified=0)
+        email = merged["EMAIL"]
+        assert (email.tp, email.fp, email.fn, email.unverified) == (5, 1, 1, 0)
         assert merged["PHONE"].tp == 1
 
 
@@ -287,3 +288,41 @@ class TestCheckAssertions:
             result, [], {"expect_escaped_literals": ["{{PERSON_1}}"]}
         )
         assert violations
+
+
+class TestManyToOneCoverage:
+    """One wide redaction can satisfy several labels, and should.
+
+    Redacting "12 Rue Victor Hugo, Paris, 75001" as a single ADDRESS covers a
+    separately labelled postcode. Charging a miss for the postcode would
+    penalise the safer, wider redaction.
+    """
+
+    def test_containing_prediction_covers_several_gold_spans(self):
+        a = align(
+            [gold(0, 18, "ADDRESS", "12 Rue Victor Hugo"), gold(27, 32, WILDCARD_LABEL, "75001")],
+            [pred(0, 32, "ADDRESS", "12 Rue Victor Hugo, Paris, 75001")],
+            gold_complete=True,
+        )
+        assert a.fn == 0
+        assert a.tp == 2
+        assert a.tp_pred == 1
+
+    def test_precision_counts_predictions_not_gold(self):
+        a = align(
+            [gold(0, 18, "ADDRESS", "addr"), gold(27, 32, WILDCARD_LABEL, "75001")],
+            [pred(0, 32, "ADDRESS", "whole")],
+            gold_complete=True,
+        )
+        counts = counts_by_label(a)
+        assert sum(c.justified for c in counts.values()) == 1
+        assert sum(c.fp for c in counts.values()) == 0
+
+    def test_partial_overlap_is_not_reused(self):
+        """A clipped redaction must not claim credit for a second identifier."""
+        a = align(
+            [gold(0, 10, "PERSON", "a"), gold(8, 20, "PERSON", "b")],
+            [pred(5, 12, "PERSON", "clip")],
+            gold_complete=True,
+        )
+        assert a.fn == 1

@@ -1,0 +1,9 @@
+STANDUP NOTES
+
+Attendees: Will Vuorinen, Grace Aldercott
+
+Will you approve the rollout today?
+Will Vuorinen: I can, once the soak test passes.
+Mark the ticket as resolved afterwards.
+We will need Grace Aldercott to sign off on the audit.
+Please mark the runbook and note we will revisit next week.

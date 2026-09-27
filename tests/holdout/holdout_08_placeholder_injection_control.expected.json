@@ -1,0 +1,27 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "Anneliese Vuorinen"
+  ],
+  "must_keep": [],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 97,
+      "end": 115,
+      "label": "PERSON",
+      "text": "Anneliese Vuorinen",
+      "entity": "e1",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [],
+  "assertions": {
+    "expect_escaped_literals": [
+      "{{PERSON_1}}"
+    ]
+  }
+}

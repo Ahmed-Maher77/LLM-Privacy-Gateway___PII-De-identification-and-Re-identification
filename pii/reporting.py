@@ -123,13 +123,17 @@ def summarize_leaks(
     return items
 
 
-def write_json(path: Path, payload: str, *, contains_secrets: bool) -> None:
-    """Write the report, restricting permissions when secrets are inside.
+def write_text(path: Path, payload: str, *, contains_secrets: bool) -> None:
+    """Write an artefact, restricting permissions when secrets are inside.
 
     ``0o600`` is close to advisory on Windows, which is this project's home
     platform -- the control that actually bites there is the parent directory
     ACL. The mode is still set for the POSIX case, and the README says plainly
     which one is load-bearing where.
+
+    Named for text rather than JSON because the markdown evaluation report
+    needs exactly the same handling, and previously went out through a bare
+    ``write_text`` with no mode at all.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     if not contains_secrets:
@@ -139,3 +143,8 @@ def write_json(path: Path, payload: str, *, contains_secrets: bool) -> None:
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
         handle.write(payload)
+
+
+def write_json(path: Path, payload: str, *, contains_secrets: bool) -> None:
+    """Backwards-compatible alias for :func:`write_text`."""
+    write_text(path, payload, contains_secrets=contains_secrets)

@@ -1,0 +1,59 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "+44 20 8081 0733",
+    "Eirlys Aldercott",
+    "Kwabena Kone",
+    "Marisol Vuorinen",
+    "NVN-704821"
+  ],
+  "must_keep": [],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 20,
+      "end": 32,
+      "label": "PERSON",
+      "text": "Kwabena Kone",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 42,
+      "end": 52,
+      "label": "CUSTOM_ID",
+      "text": "NVN-704821",
+      "entity": "e2",
+      "origin": "generated"
+    },
+    {
+      "start": 66,
+      "end": 82,
+      "label": "PERSON",
+      "text": "Marisol Vuorinen",
+      "entity": "e3",
+      "origin": "generated"
+    },
+    {
+      "start": 95,
+      "end": 111,
+      "label": "PHONE",
+      "text": "+44 20 8081 0733",
+      "entity": "e4",
+      "origin": "generated"
+    },
+    {
+      "start": 141,
+      "end": 157,
+      "label": "PERSON",
+      "text": "Eirlys Aldercott",
+      "entity": "e5",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [],
+  "assertions": {}
+}

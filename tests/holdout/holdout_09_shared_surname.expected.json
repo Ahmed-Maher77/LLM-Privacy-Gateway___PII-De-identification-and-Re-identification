@@ -1,0 +1,64 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "Ayodele Ramachandran",
+    "Solveig Ramachandran"
+  ],
+  "must_keep": [
+    "v3.11.2"
+  ],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 45,
+      "end": 65,
+      "label": "PERSON",
+      "text": "Ayodele Ramachandran",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 88,
+      "end": 108,
+      "label": "PERSON",
+      "text": "Solveig Ramachandran",
+      "entity": "e2",
+      "origin": "generated"
+    },
+    {
+      "start": 170,
+      "end": 190,
+      "label": "PERSON",
+      "text": "Ayodele Ramachandran",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 220,
+      "end": 240,
+      "label": "PERSON",
+      "text": "Solveig Ramachandran",
+      "entity": "e2",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 269,
+      "end": 276,
+      "text": "v3.11.2",
+      "reason": "semantic version"
+    }
+  ],
+  "assertions": {
+    "expect_distinct_entities": [
+      [
+        "e1",
+        "e2"
+      ]
+    ]
+  }
+}

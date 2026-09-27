@@ -1,0 +1,8 @@
+# deploy.yaml
+
+database_url: postgresql://svc_norvane:Hunter2Seven@db.internal:5432/ledger
+allowed_cidr: 10.0.0.0/8
+build_sha: a4f9c21
+released: 2026-03-14
+protocol: HTTP/1.1
+contact: ops@quillon-analytics.example

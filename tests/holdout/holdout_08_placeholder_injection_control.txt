@@ -1,0 +1,4 @@
+TICKET BODY
+
+The customer pasted a template they found: {{PERSON_1}} and ${TOKEN_2}.
+Reported by Anneliese Vuorinen.

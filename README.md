@@ -270,29 +270,157 @@ committed.
 ## Measuring whether it generalises
 
 Three earlier rounds of fixes each repaired the newest transcript and regressed
-an older one, because there was nothing measuring across documents. There now
-is:
+an older one, because there was nothing measuring across documents. Scoring is
+now tiered, cheapest first.
+
+**Tier 1 -- the substring gate.** Did every `must_redact` value disappear and
+every `must_keep` value survive? Cheap to read and write, and a leak here is
+the one unconditional failure. It cannot see anything outside those lists,
+which is why it is a gate and not the headline: on the twelve production
+fixtures the pipeline redacted 112 entities while the labels covered 71, and
+precision still printed 100%.
+
+**Tier 2 -- entity-level, the headline.** Every span the pipeline actually
+replaced is aligned against offset-anchored gold, giving micro precision,
+recall and F1 per label plus the specific false redactions behind the number.
 
 ```bash
-uv run python tools/evaluate.py            # score every fixture
-uv run python tools/evaluate.py --baseline # record the current numbers
+uv run python tools/evaluate.py                     # score every fixture
+uv run python tools/evaluate.py --select "prod_*"   # one family
+uv run python tools/evaluate.py --show-fp 0         # every false redaction
+uv run python tools/evaluate.py --triage            # queue unlabelled predictions
+uv run python tools/evaluate.py --report            # markdown + json artefacts
+uv run python tools/evaluate.py --baseline          # record the numbers
 ```
 
-`tests/fixtures/<name>.txt` sits beside `<name>.expected.json`, which lists
-what must be removed (**recall** — a miss is an unrecoverable leak) and what
-must survive (**precision** — the number that was quietly falling). The harness
-also checks that each entity has exactly one placeholder and that brackets,
-quotes and line counts are preserved.
+Two decisions cut against a naive reading of the metric.
 
-`tests/test_generalisation.py` gates on it: zero leaks, and no precision
-regression against the recorded baseline.
+Matching is **overlap plus label compatibility, not exact offsets**. The
+pipeline deliberately redacts more than the label says -- gold derived from
+`Aris Thorne` is met by a prediction covering `Dr. Aris Thorne`, because
+honorifics are stripped before a label is written but not before text is
+replaced. Exact matching would charge a miss *and* a false alarm for a
+redaction that is strictly safer than the label. Boundary quality is reported
+separately so drift stays visible without contaminating the headline, and a
+prediction that overlaps gold **without covering it** is a partial redaction --
+part of an identifier survived, which is a leak and gated as one.
+
+False positives are counted **only on documents that declare `gold_complete`**.
+Counting them elsewhere would invent a precision number out of the labeller's
+stamina. Until that flag is set everywhere, unmatched predictions are reported
+as `unverified` and **precision is a lower bound**. The tool says so on every
+run rather than rounding up to 1.00.
+
+`tools/derive_gold_spans.py` migrates the hand-written labels into offsets
+mechanically. It will not guess a type: a value the pattern layer cannot
+identify gets a wildcard label, because a wrong gold label manufactures both a
+false positive and a false negative out of one correct redaction.
+
+## The held-out corpus
+
+The fixture corpus has been fixed against, round after round, so it cannot
+measure generalisation. `tools/make_holdout.py` generates a second corpus from
+name and identifier pools proven disjoint from the fixtures, recording each
+span's offset at the moment it is inserted -- labels are exact by construction,
+not derived.
+
+```bash
+uv run python tools/make_holdout.py    # regenerate at the committed seed
+uv run pytest -m holdout               # score it
+```
+
+Each template targets a specific code path rather than sampling realistic
+prose: two people sharing a surname, a first name that is also an ordinary
+word, `A. Kone` against `Kone, Ayodele`, an acronym colliding with a technical
+one, non-Anglo names, lowercase ASR, and controls that must survive untouched.
+A wrong merge and a missed merge both produce perfectly correct spans and
+differ only in which placeholder they land on, which span metrics alone cannot
+see.
+
+**This corpus is scored, never tuned against.** You may read a failure. You may
+not add a holdout value to an allowlist, a pattern, `COMMON_WORDS` or a
+threshold -- that converts the only independent measurement here into another
+fixture. Reproduce the failure in `tests/fixtures/` with fresh values, fix it
+there, then re-run the holdout. The rule is enforced, not merely stated: a test
+fails if any pool value appears anywhere in `pii/`, and another regenerates the
+corpus at the committed seed and asserts byte-equality, so a failing document
+cannot be hand-edited into passing.
+
+It currently **fails seven checks** that the tuned corpus reports as clean, and
+they are reported rather than fixed -- editing against the holdout would
+destroy the measurement. See `docs/review-response.md` for the list.
+
+## Limitations
+
+Stated plainly, because these matter more than the numbers above.
+
+- **No independently labelled real-world corpus exists.** The 31 fixtures are
+  synthetic or curated and the 12 held-out documents are generated. Generated
+  labels are exact, which removes labelling error, but does not make the text
+  representative. Nothing here establishes real-world precision or recall.
+- **"Clean" means "these checks found no issue"**, not "contains no PII".
+  `audit()` cannot find a MAC address no detector saw; `scan_residual()` cannot
+  find the name "Sarah" surviving in prose. Six of the seven holdout failures
+  occurred on documents reported as clean.
+- **Precision is published as a lower bound** while any document lacks
+  exhaustive gold.
+- **Not thread-safe.** See *Concurrency* below.
+- **Restored text is untrusted.** Re-identification puts the original values
+  back by design; the calling application controls who sees them.
+
+Before trusting this on a real workload: assemble a domain-representative
+labelled sample, have a human review redaction behaviour on it, and measure
+latency and concurrency on your own hardware.
+
+## Concurrency
+
+`PIIMiddleware` is **one instance per worker**. `analyze()` is neither
+re-entrant nor thread-safe: a spaCy `Language` pipeline is not safe for
+concurrent `nlp()` calls, and the lazy model initialisers in `detector.py` and
+`spacy_detector.py` are unsynchronised, so two threads can both enter
+`from_pretrained` and load the weights twice.
+
+No lock is placed around `analyze()` deliberately: it would serialise every
+call while *looking* concurrent, which hides the contract instead of stating
+it. Use process-level workers, or a `threading.local()` middleware factory.
+
+## Data at rest
+
+Where the originals live.
+
+| Artefact | Location | Holds PII | Control |
+|---|---|---|---|
+| `PseudonymVault` | process memory, one per `analyze()` call | yes | never serialised; no cross-call store exists |
+| `AnonymizationResult.mapping` | caller memory | yes | reaches disk only under `--include-secrets` |
+| Report JSON | `reports/` (gitignored) | no, by default | `0o600` when secrets are included |
+| Sanitized side-files | `reports/sanitized/` | no | written only after the status gate |
+| Evaluation markdown | `reports/` | no, by default | masked via `pii.residual.mask`; unmasked needs a flag |
+| Restored LLM response | memory | yes | caller's responsibility |
+| stdout / CI logs | terminal, CI transcript | no | leaks and over-redactions masked before printing |
+| Exceptions | -- | no | masked by design |
+
+The vault never touching disk is a deliberate property, not an omission. The
+residual risk is worth stating: Python strings are not zeroable and may persist
+in freed heap, swap or a core dump.
+
+`0o600` is close to advisory on Windows, this project's home platform. The
+control that bites there is the parent directory ACL:
+
+```
+icacls reports /inheritance:r /grant:r "%USERNAME%":(OI)(CI)F
+```
 
 ## Tests
 
 ```bash
-uv run pytest -m "not slow"   # fast unit tests
+uv run pytest -m "not slow"   # fast unit tests -- no models loaded, ~2 seconds
 uv run pytest                 # full suite, including corpus scoring
+uv run pytest -m holdout      # the held-out corpus
 ```
+
+The fast suite loads no model weights: every model-backed fixture is
+module-scoped and consumed only by `slow`-marked classes. That is what keeps a
+pull-request check cheap.
 
 ## Handling real transcripts
 
@@ -323,7 +451,13 @@ more than any history fix.
 - `pii/errors.py` — exception hierarchy and exit codes
 - `pii/detector.py`, `pii/spacy_detector.py` — model ensemble
 - `pii/roster.py`, `pii/spans.py`, `pii/chunking.py` — supporting machinery
-- `tests/` — 204 regression tests
+- `tools/evaluate.py` — corpus scorer, tiered metrics, reports
+- `tools/scoring.py` — span alignment, per-label counts, cluster metrics
+- `tools/derive_gold_spans.py` — migrate string labels to offsets
+- `tools/make_holdout.py` — generate the held-out corpus
+- `tools/report.py` — markdown and JSON artefacts, masked by default
+- `docs/review-response.md` — point-by-point response to the external review
+- `tests/` — 425 fast tests, plus the slow corpus and holdout suites
 
 ## License
 

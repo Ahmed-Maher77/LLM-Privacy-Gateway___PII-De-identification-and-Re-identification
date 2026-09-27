@@ -1,0 +1,62 @@
+{
+  "schema": 2,
+  "generated_by": "tools/make_holdout.py",
+  "seed": 20260927,
+  "gold_complete": true,
+  "must_redact": [
+    "ops@quillon-analytics.example",
+    "postgresql://svc_norvane:Hunter2Seven@db.internal:5432/ledger"
+  ],
+  "must_keep": [
+    "10.0.0.0/8",
+    "a4f9c21",
+    "2026-03-14",
+    "HTTP/1.1"
+  ],
+  "same_entity": [],
+  "gold_spans": [
+    {
+      "start": 29,
+      "end": 90,
+      "label": "CONNECTION_STRING",
+      "text": "postgresql://svc_norvane:Hunter2Seven@db.internal:5432/ledger",
+      "entity": "e1",
+      "origin": "generated"
+    },
+    {
+      "start": 184,
+      "end": 213,
+      "label": "EMAIL",
+      "text": "ops@quillon-analytics.example",
+      "entity": "e2",
+      "origin": "generated"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 105,
+      "end": 115,
+      "text": "10.0.0.0/8",
+      "reason": "CIDR block"
+    },
+    {
+      "start": 127,
+      "end": 134,
+      "text": "a4f9c21",
+      "reason": "commit sha"
+    },
+    {
+      "start": 145,
+      "end": 155,
+      "text": "2026-03-14",
+      "reason": "ISO date"
+    },
+    {
+      "start": 166,
+      "end": 174,
+      "text": "HTTP/1.1",
+      "reason": "protocol version"
+    }
+  ],
+  "assertions": {}
+}
