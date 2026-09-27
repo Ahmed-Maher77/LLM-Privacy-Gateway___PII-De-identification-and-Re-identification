@@ -33,7 +33,7 @@ TOKEN_STOPWORDS = frozenset(
         "that", "with", "from", "have", "has", "had", "will", "can", "all",
         "any", "one", "two", "new", "now", "out", "get", "got", "see", "let",
         "yes", "no", "ok", "okay", "yeah", "well", "like", "just", "also",
-        "mark", "will", "may", "june", "july", "april", "march", "august",
+        "mark", "may", "june", "july", "april", "march", "august",
         "so", "to", "in", "on", "at", "it", "is", "be", "do", "go", "up",
         "good", "next", "last", "same", "some", "then", "than", "what",
         "when", "who", "how", "why", "very", "more", "most", "much", "many",

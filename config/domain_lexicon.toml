@@ -1,0 +1,71 @@
+# Domain knowledge: the business-confidential terms a generic NER model has no
+# concept of. This file is data, not code -- extend it per deployment without
+# touching the detectors.
+#
+# Matching is case-insensitive, whole-word, longest-first. Every entry becomes a
+# DetectedEntity of the section's type at the stated confidence.
+
+[internal_systems]
+# Named internal platforms and applications.
+terms = [
+    "FleetCore",
+    "CustomerDesk",
+    "BillingPro",
+    "OpsHub",
+]
+confidence = 0.95
+
+[internal_services]
+terms = []
+confidence = 0.90
+
+[customers]
+# Client organisations. Distinct from ORGANIZATION so that customer identity can
+# carry its own policy.
+terms = [
+    "BrightPath Logistics",
+    "Green Valley Foods",
+]
+confidence = 0.92
+
+[organizations]
+# Vendors and partners that are NOT public companies.
+terms = [
+    "NorthStar Systems",
+    "Exampleco",
+]
+confidence = 0.88
+
+[projects]
+terms = []
+confidence = 0.85
+
+[stakeholders]
+# Named individuals known to the business but who may never appear as speakers.
+terms = []
+confidence = 0.90
+
+[employees]
+terms = []
+confidence = 0.90
+
+[contracts]
+terms = []
+confidence = 0.90
+
+[internal_domains]
+# Any email address or URL on these domains is internal by definition.
+terms = [
+    "brightpath-example.com",
+]
+confidence = 0.95
+
+[patterns]
+# Additional regular expressions, as [type, pattern, confidence, rule-id].
+# Single-quoted TOML literal strings: no escape processing, so a regex can
+# be written exactly as Python would see it.
+rules = [
+    ['CUSTOMER_ID', '(?<![\w-])CUST-\d{4,10}(?![\w-])', 0.95, 'customer_id'],
+    ['CONTRACT',    '(?<![\w-])CTR-\d{4,10}(?![\w-])', 0.95, 'contract_id'],
+    ['EMPLOYEE',    '(?<![\w-])EMP-\d{3,10}(?![\w-])', 0.95, 'employee_id'],
+]

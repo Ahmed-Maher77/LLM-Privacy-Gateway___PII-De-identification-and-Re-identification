@@ -1,0 +1,3 @@
+# Always protect these, whatever the confidence and whatever the allowlist says.
+# This is the operator's override for "this specific name must never leave".
+# Format matches public_entities.txt.

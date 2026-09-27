@@ -213,9 +213,7 @@ def test_zero_length_span_maps_to_a_zero_length_span():
 # -- property ----------------------------------------------------------------
 
 _ALPHABET = st.sampled_from(
-    list("abcXYZ 0123.,\n\t")
-    + ["\r\n", "\r", "&amp;", "&lt;", "&#65;", " ", " ", "​",
-       "—", "“", "é", "﻿", "&notanentity", "AT&T"]
+    [*list("abcXYZ 0123.,\n\t"), "\r\n", "\r", "&amp;", "&lt;", "&#65;", "\xa0", "\u202f", "\u200b", "—", "“", "é", "\ufeff", "&notanentity", "AT&T"]
 )
 
 

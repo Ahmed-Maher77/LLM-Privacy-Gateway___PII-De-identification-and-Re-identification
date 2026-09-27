@@ -50,6 +50,8 @@ class SpanVerdict(StrEnum):
     NO_ALNUM = "no_alnum"
     ASR_NOISE = "asr_noise"
     LOW_CONFIDENCE = "low_confidence"
+    NOT_PROPER_NOUN = "not_proper_noun"
+    COMMON_WORD = "common_word"
 
 
 def is_word_aligned(text: str, start: int, end: int) -> bool:

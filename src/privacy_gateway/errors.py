@@ -73,6 +73,17 @@ class SanitizationLeakError(GatewayError):
         self.context = context
 
 
+
+class PlaceholderCollisionError(GatewayError):
+    """Two distinct values were assigned the same placeholder.
+
+    Cannot happen with a monotonic per-prefix counter; asserted because a
+    collision would silently restore one value as another.
+    """
+
+    exit_code = 4
+
+
 class PlaceholderInjectionError(GatewayError):
     exit_code = 5
 

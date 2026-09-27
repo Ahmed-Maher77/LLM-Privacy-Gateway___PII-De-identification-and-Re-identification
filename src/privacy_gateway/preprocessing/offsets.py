@@ -188,9 +188,7 @@ class EditRecorder:
         produced = len(replacement)
         if produced == 0:
             kind: EditKind = "delete"
-        elif consumed == produced:
-            kind = "subst"
-        elif consumed > produced:
+        elif consumed == produced or consumed > produced:
             kind = "subst"
         else:
             kind = "expand"

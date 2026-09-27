@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import itertools
+
 import pytest
 
 from privacy_gateway.preprocessing.registry import ParticipantRegistry
@@ -143,7 +145,7 @@ def test_speaker_label_spans_slice_back_to_the_name():
 
 def test_turns_are_ordered_and_non_overlapping():
     turns = P.parse(TEAMS).turns
-    for a, b in zip(turns, turns[1:], strict=False):
+    for a, b in itertools.pairwise(turns):
         assert a.body_end <= b.body_start or a.body_start <= b.body_start
 
 

@@ -1,0 +1,105 @@
+# Well-known public names. Detected, but NOT protected: pseudonymizing them
+# destroys the meaning of a sentence while protecting nothing, because they
+# identify no one.
+#
+# Format: TYPE<tab>value  (or just a value, which applies to every type)
+# Lines beginning with # are comments. Matching is case-insensitive.
+
+# Public technology vendors and products
+ORGANIZATION	Microsoft
+ORGANIZATION	Google
+ORGANIZATION	Amazon
+ORGANIZATION	Apple
+ORGANIZATION	OpenAI
+ORGANIZATION	Anthropic
+ORGANIZATION	GitHub
+ORGANIZATION	Atlassian
+ORGANIZATION	Slack
+ORGANIZATION	Zoom
+ORGANIZATION	Oracle
+ORGANIZATION	IBM
+ORGANIZATION	Salesforce
+
+# Products and services, frequently mistaken for people or organisations.
+# "Cortana" is here deliberately: the prototype detected it as a PERSON and
+# corrupted it into <PER_11>rtana.
+ORGANIZATION	Cortana
+ORGANIZATION	Siri
+ORGANIZATION	Alexa
+ORGANIZATION	Copilot
+ORGANIZATION	Microsoft Teams
+ORGANIZATION	Teams
+ORGANIZATION	SharePoint
+ORGANIZATION	Outlook
+ORGANIZATION	Azure
+ORGANIZATION	Microsoft Azure
+ORGANIZATION	Microsoft Entra ID
+ORGANIZATION	Entra
+ORGANIZATION	Excel
+ORGANIZATION	PowerPoint
+ORGANIZATION	Word
+ORGANIZATION	Chrome
+ORGANIZATION	Firefox
+ORGANIZATION	Windows
+ORGANIZATION	Linux
+ORGANIZATION	Jira
+ORGANIZATION	Confluence
+ORGANIZATION	Figma
+ORGANIZATION	Postman
+ORGANIZATION	Ollama
+
+# Major public places. A city name identifies nobody on its own.
+LOCATION	London
+LOCATION	Manchester
+LOCATION	Dubai
+LOCATION	Cairo
+LOCATION	Egypt
+LOCATION	United Kingdom
+LOCATION	UK
+LOCATION	United States
+LOCATION	USA
+LOCATION	Europe
+LOCATION	Middle East
+
+# Common business and technical abbreviations. Generic NER models label these
+# as organisations; they identify nobody and pseudonymizing them makes a
+# summary unreadable.
+ORGANIZATION	AI
+ORGANIZATION	QA
+ORGANIZATION	UI
+ORGANIZATION	UX
+ORGANIZATION	API
+ORGANIZATION	APIs
+ORGANIZATION	HR
+ORGANIZATION	IT
+ORGANIZATION	CTO
+ORGANIZATION	CEO
+ORGANIZATION	CFO
+ORGANIZATION	COO
+ORGANIZATION	PM
+ORGANIZATION	BA
+ORGANIZATION	QA/UAT
+ORGANIZATION	UAT
+ORGANIZATION	SLA
+ORGANIZATION	SDLC
+ORGANIZATION	REST
+ORGANIZATION	CSV
+ORGANIZATION	HTML
+ORGANIZATION	JSON
+ORGANIZATION	SQL
+ORGANIZATION	PDF
+ORGANIZATION	URL
+ORGANIZATION	LLM
+ORGANIZATION	NER
+ORGANIZATION	PII
+ORGANIZATION	RBAC
+ORGANIZATION	SSO
+ORGANIZATION	VPN
+ORGANIZATION	CRM
+ORGANIZATION	ERP
+ORGANIZATION	KPI
+ORGANIZATION	ROI
+ORGANIZATION	MVP
+ORGANIZATION	POC
+ORGANIZATION	GDPR
+ORGANIZATION	ISO
