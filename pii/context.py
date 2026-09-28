@@ -79,7 +79,7 @@ MAX_FIELD_VALUE_CHARS = 48
 # Conversational openers that indicate spoken dialogue, not a form field value.
 _SPEAKER_PROSE_RE = re.compile(
     r"^[ \t]*(?:"
-    r"I|We|You|He|She|They|It|Yes|No|Sure|Okay|Please|Thanks|Can|Could|Would|Should|Let|Let's|Sounds|Agreed|Great|Right|Good|Got|Done|Oof|Well|So|Actually|Honestly|Before"
+    r"I|We|You|He|She|They|It|Yes|No|Sure|Okay|Please|Thanks|Can|Could|Would|Should|Let|Let's|Sounds|Agreed|Great|Right|Good|Got|Done|Oof|Well|So|Actually|Honestly|Before|Alright|All\s+right"
     r"|مرحباً|أهلاً|شكراً|نعم|لا|هل|حسناً|طيب|تمام|أكيد|يا|صباح|مساء|سلام|أنا|نحن|هو|هي|هم|أنتم|أنت|ما|إيه|عظيم|كيف|لو"
     r")\b",
     re.IGNORECASE,
@@ -92,6 +92,8 @@ def _is_speaker_prose(remainder: str) -> bool:
     if _SPEAKER_PROSE_RE.search(remainder):
         return True
     if any(p in remainder for p in ("?", "؟", "!", "،")):
+        return True
+    if len(remainder.split()) > 6:
         return True
     return False
 
@@ -295,7 +297,8 @@ class DocumentContext:
                 continue
 
             match = FIELD_LABEL_RE.match(line_text)
-            if match:
+            remainder = line_text[match.end() :].strip() if match else ""
+            if match and not _is_speaker_prose(remainder):
                 current_block.append((
                     match.group("label").casefold(),
                     line_start + match.start("label"),

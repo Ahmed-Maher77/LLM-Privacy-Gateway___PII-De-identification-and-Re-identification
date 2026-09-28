@@ -75,11 +75,9 @@ def generate_report(
     # Default out of test_data/: that directory is tracked, and two sanitized
     # side-files had already been committed from it.
     #
-    # The write is deliberately below the status gate rather than here. On a
-    # failed verification "sanitized" text still contains whatever survived
-    # redaction, and writing it before the gate meant the report withheld that
-    # text while the side-file beside it had already published the same
-    # content at default permissions.
+    # Failed and review results may still contain PII. Never persist their
+    # candidate output as a sanitized side-file; the JSON report records that
+    # it was withheld instead.
     sanitized_path = sanitized_out or DEFAULT_SANITIZED_DIR / f"{input_path.stem}.txt"
 
     result = ""
@@ -88,12 +86,9 @@ def generate_report(
     restoration_seconds = 0.0
     llm_skipped = None
 
-    sanitized_path.parent.mkdir(parents=True, exist_ok=True)
-    write_text(
-        sanitized_path,
-        analysis.sanitized,
-        contains_secrets=analysis.status != "clean",
-    )
+    if analysis.status == "clean":
+        sanitized_path.parent.mkdir(parents=True, exist_ok=True)
+        write_text(sanitized_path, analysis.sanitized, contains_secrets=False)
 
     if skip_llm:
         llm_skipped = "--skip-llm"
@@ -120,7 +115,7 @@ def generate_report(
         "status": analysis.status,
         "created_at": datetime.now(UTC).isoformat(),
         "input_file": str(input_path),
-        "sanitized_input_file": str(sanitized_path),
+        "sanitized_input_file": str(sanitized_path) if analysis.status == "clean" else None,
         "profile": analysis.profile,
         "detectors": analysis.detector_status,
         "structure": analysis.structure,
@@ -172,7 +167,10 @@ def generate_report(
         contains_secrets=include_secrets,
     )
 
-    print(f"Sanitized input saved to {sanitized_path}")
+    if analysis.status == "clean":
+        print(f"Sanitized input saved to {sanitized_path}")
+    else:
+        print(f"Sanitized input withheld (verification status={analysis.status})")
     print(f"Entities: {len(analysis.mapping)} | status: {analysis.status}")
     if llm_skipped:
         print(f"LLM not called ({llm_skipped})")

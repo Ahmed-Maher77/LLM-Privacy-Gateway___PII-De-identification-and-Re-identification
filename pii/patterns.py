@@ -539,8 +539,8 @@ LABELLED_ID_PATTERN = re.compile(
     r"(?<![\w-])"
     r"(?P<prefix>[A-Za-z][A-Za-z0-9]{1,7})"
     r"(?P<sep>[-_])"
-    r"(?P<digits>\d{2,12})"
-    r"(?P<suffix>(?:(?P=sep)[A-Za-z0-9]{1,6}){1,3})?"
+    r"(?P<digits>\d{4,12})"
+    r"(?P<suffix>(?P=sep)[A-Za-z0-9]{1,4})?"
     r"(?![\w-])"
 )
 
@@ -570,7 +570,7 @@ def _score_slash_id(match: re.Match[str], text: str) -> float | None:
 ID_PREFIX_STOPLIST = frozenset(
     """
     rfc iso iec ansi ieee utf ucs ascii aes des rsa sha md crc http tls ssl
-    cve cwe cvss nist pci dss soc fips ecma jsr pep ec2 s3 k8s covid sars
+    cve cwe cvss nist pci dss soc fips irb ecma jsr pep ec2 s3 k8s covid sars
     utc gmt est pst fy rev ver es base jwt oauth saml ldap smtp imap ftp ssh
     tcp udp dns dhcp vlan vpn wpa wep gsm lte rj cat cidr asn win py
     """.split()

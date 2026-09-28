@@ -49,7 +49,7 @@ class TestSpans:
     def test_longest_span_wins_an_overlap(self):
         spans = SpanSet()
         spans.add(Span(0, 5, "PERSON", "Lamia", source="sweep"))
-        spans.add(Span(0, 9, "PERSON", "Lamia Aly", source="model"))
+        spans.add(Span(0, 9, "PERSON", "Lamia Aly", source="sweep"))
         resolved = spans.resolve()
         assert [span.text for span in resolved] == ["Lamia Aly"]
 

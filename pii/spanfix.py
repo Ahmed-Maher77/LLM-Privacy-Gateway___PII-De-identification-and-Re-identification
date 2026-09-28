@@ -371,7 +371,9 @@ def _is_name_like(
         # carries no information at all, so it cannot be evidence of
         # acronym-hood there.
         uncased = context.line_is_uncased(start) if context is not None else False
-        if all(_is_acronym_or_code(token, context, uncased_zone=uncased) for token in tokens):
+        if (len(tokens) == 1 or any(char.isdigit() for char in surface)) and all(
+            _is_acronym_or_code(token, context, uncased_zone=uncased) for token in tokens
+        ):
             return False
 
     if context is None:
