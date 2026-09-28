@@ -264,10 +264,11 @@ HONORIFIC_PREFIX_RE = re.compile(
 
 # Name-shaped tokens inside an email local part: david.lee@ -> {david, lee}.
 EMAIL_LOCAL_RE = re.compile(r"[^\W\d_]{3,}")
+HANDLE_RE = re.compile(r"(?<![\w.])@[a-z0-9][a-z0-9._-]{2,}", re.IGNORECASE)
 
 
 def names_from_emails(text: str, email_pattern: re.Pattern[str]) -> set[str]:
-    """Mine given names and surnames out of email addresses.
+    """Mine given names and surnames out of email addresses and handles.
 
     "Hi David," went unredacted in a thread addressed to
     david.lee@example.org. The address is already being masked, so the name
@@ -277,6 +278,11 @@ def names_from_emails(text: str, email_pattern: re.Pattern[str]) -> set[str]:
     for match in email_pattern.finditer(text):
         local = match.group().split("@", 1)[0]
         for token in EMAIL_LOCAL_RE.findall(local):
+            if len(token) >= 3:
+                names.add(token.capitalize())
+    for match in HANDLE_RE.finditer(text):
+        handle = match.group()[1:]
+        for token in EMAIL_LOCAL_RE.findall(handle):
             if len(token) >= 3:
                 names.add(token.capitalize())
     return names

@@ -464,4 +464,4 @@ class TestCaselessScripts:
         )
         roster = extract_roster(transcript)
         assert "طارق منصور" in roster
-        assert "فاطمة حسن" in roster\n
+        assert "فاطمة حسن" in roster

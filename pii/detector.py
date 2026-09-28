@@ -80,9 +80,9 @@ class GlinerDetector:
         model_name: str = DEFAULT_MODEL,
         labels: tuple[str, ...] = DEFAULT_LABELS,
         threshold: float = DEFAULT_THRESHOLD,
-        window_chars: int = 1200,
+        window_chars: int = 1600,
         overlap_chars: int = 250,
-        batch_size: int = 8,
+        batch_size: int = 16,
     ) -> None:
         self.model_name = model_name
         self.labels = list(labels)

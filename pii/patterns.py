@@ -539,8 +539,8 @@ LABELLED_ID_PATTERN = re.compile(
     r"(?<![\w-])"
     r"(?P<prefix>[A-Za-z][A-Za-z0-9]{1,7})"
     r"(?P<sep>[-_])"
-    r"(?P<digits>\d{4,12})"
-    r"(?P<suffix>(?P=sep)[A-Za-z0-9]{1,4})?"
+    r"(?P<digits>\d{2,12})"
+    r"(?P<suffix>(?:(?P=sep)[A-Za-z0-9]{1,6}){1,3})?"
     r"(?![\w-])"
 )
 
@@ -549,6 +549,12 @@ LABELLED_ID_PATTERN = re.compile(
 # masked while the regulator's case number beside it was not.
 SLASH_ID_PATTERN = re.compile(
     r"(?<![\w/-])(?P<prefix>[A-Z]{2,6})/(?:[A-Z0-9]{2,8}/){1,4}[A-Z0-9]{2,8}(?![\w/-])"
+)
+
+HANDLE_PATTERN = re.compile(r"(?<![\w.])@[a-z0-9][a-z0-9._-]{2,}", re.IGNORECASE)
+
+SPOKEN_DIGITS_PATTERN = re.compile(
+    r"(?i)\b(?:digits?|last\s+four|number)\b[^\w\n]{0,12}(?P<value>\b\d(?:\s*-\s*\d){3,}\b)"
 )
 
 
@@ -647,6 +653,8 @@ BUILTIN_RULES: tuple[PatternRule, ...] = (
     PatternRule("ADDRESS", PO_BOX_PATTERN),
     PatternRule("CUSTOM_ID", LABELLED_ID_PATTERN, scorer=_score_labelled_id),
     PatternRule("CUSTOM_ID", SLASH_ID_PATTERN, scorer=_score_slash_id),
+    PatternRule("CUSTOM_ID", HANDLE_PATTERN),
+    PatternRule("CUSTOM_ID", SPOKEN_DIGITS_PATTERN, group="value"),
     PatternRule("JOB_ID", JOB_ID_PATTERN, group="value"),
     PatternRule("ID", DOCUMENT_ID_PATTERN, group="value"),
     PatternRule("DOB", DOB_PATTERN, group="value"),

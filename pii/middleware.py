@@ -218,7 +218,7 @@ class PIIMiddleware:
         model_name: str = DEFAULT_MODEL,
         labels: tuple[str, ...] = DEFAULT_LABELS,
         threshold: float = DEFAULT_THRESHOLD,
-        window_chars: int = 1200,
+        window_chars: int = 1600,
         overlap_chars: int = 250,
         use_roster: bool = True,
         use_spacy: bool = True,
@@ -324,6 +324,7 @@ class PIIMiddleware:
                 "model_id": getattr(detector, "model_name", None),
                 "package": _detector_package(detector),
                 "package_version": package_version(_detector_package(detector)),
+                "torch_threads": getattr(self, "_torch_threads", None),
             }
             for detector in self.detectors
         ]
