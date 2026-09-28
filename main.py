@@ -20,10 +20,8 @@ MODEL = "gpt-oss:120b-cloud"
 
 llm = ChatOllama(model=MODEL, temperature=0)
 
-# on_leak="raise" is the default: analyze() refuses to return a result that
-# still contains PII, so the llm.invoke() below is unreachable on a failure.
-# Enforcement lives in one place rather than in every caller.
-middleware = PIIMiddleware()
+# Use the hardened fail-closed production factory with eager warmup
+middleware = PIIMiddleware.for_production()
 
 
 def secure_llm_call(user_input: str) -> str:
@@ -43,7 +41,8 @@ def secure_llm_call(user_input: str) -> str:
 
     # ============ 2. Send ONLY sanitized data to the LLM ============
     start = time.perf_counter()
-    response = llm.invoke(result.sanitized)
+    # safe_sanitized guarantees text is withheld if verification failed
+    response = llm.invoke(result.safe_sanitized)
     print(f"LLM call took {time.perf_counter() - start:.2f} seconds")
 
     # ============ 3. Restore original values ============

@@ -44,8 +44,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+if sys.platform == "win32":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8")
+
 from pii import PIIMiddleware  # noqa: E402
-from pii.policy import _normalize  # noqa: E402
+from pii.policy import _normalize, describe_policy  # noqa: E402
 from tools.scoring import (  # noqa: E402
     CRITICAL_LABELS,
     Alignment,
@@ -528,6 +534,9 @@ def build_baseline(scores: list[DocumentScore], middleware: PIIMiddleware, init_
     return {
         "schema": 2,
         "profile": middleware.profile,
+        "policy": describe_policy(
+            middleware.profile, middleware.entities, custom_labels=middleware._custom_labels
+        ),
         "detectors": middleware.describe_detectors(),
         "init_seconds": round(init_s, 3),
         "corpus": {
@@ -622,12 +631,43 @@ def regressions_against(scores: list[DocumentScore], baseline: dict) -> list[str
     return problems
 
 
+def _entity_override(raw: str) -> tuple[str, bool]:
+    """Parse "KEY=true"/"KEY=false" for --entity.
+
+    Key validation is left to ``PIIMiddleware`` itself, so a typo raises the
+    same error here as it would from a Python caller.
+    """
+    key, sep, value = raw.partition("=")
+    normalized = value.strip().casefold()
+    if not sep or normalized not in {"true", "false"}:
+        raise argparse.ArgumentTypeError(f"expected KEY=true|false, got {raw!r}")
+    return key.strip(), normalized == "true"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score redaction across the labelled corpus.")
     parser.add_argument("--only", default=None, help="score a single fixture by exact name")
     parser.add_argument("--select", default=None, help="glob over fixture names, e.g. 'prod_*'")
     parser.add_argument("--dir", default=None, help="corpus directory (default tests/fixtures)")
     parser.add_argument("--profile", default=None, help="override the redaction profile")
+    parser.add_argument(
+        "--entity",
+        action="append",
+        type=_entity_override,
+        default=[],
+        dest="entities",
+        metavar="KEY=true|false",
+        help="Override one entity type's redaction (repeatable), e.g. "
+        "--entity duration=true --entity url=false.",
+    )
+    parser.add_argument(
+        "--fixed-name",
+        action="append",
+        default=[],
+        dest="fixed_names",
+        metavar="NAME",
+        help="Mask this name wherever it appears (repeatable).",
+    )
     parser.add_argument("--repeat", type=int, default=1, help="runs per document; median reported")
     parser.add_argument("--show-fp", type=int, default=10, help="false redactions to print; 0 = all")
     parser.add_argument("--triage", action="store_true", help="list unverified predictions for labelling")
@@ -649,6 +689,10 @@ def main() -> int:
     kwargs = {"on_leak": "warn"}
     if args.profile:
         kwargs["profile"] = args.profile
+    if args.entities:
+        kwargs["entities"] = dict(args.entities)
+    if args.fixed_names:
+        kwargs["fixed_names"] = args.fixed_names
     started = time.perf_counter()
     middleware = PIIMiddleware(**kwargs)
     init_s = time.perf_counter() - started

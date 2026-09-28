@@ -21,6 +21,7 @@ import re
 import unicodedata
 
 from .context import NON_NAME_POS, DocumentContext
+from .policy import is_name_initial
 from .spans import Span
 
 # Types whose text must read as a name. Structured identifiers are exempt:
@@ -44,6 +45,34 @@ ACRONYM_MAX_LENGTH = 6
 # Two or more spaces/tabs: a column boundary in a fixed-width document.
 _COLUMN_GAP_RE = re.compile(r"[ 	]{2,}")
 
+# A narrower set than entities.HONORIFICS: only titles that never head a
+# document section in their own right. Widening a PERSON span over "Judge"
+# or "General" is how a deposition would lose a PROTECTED_TERMS heading or
+# an ORG span would swallow a military rank -- this widens PERSON only, and
+# only over a title that carries no other document role.
+_SPAN_HONORIFICS = frozenset({"mr", "mrs", "ms", "miss", "mx", "dr", "prof"})
+
+_HONORIFIC_PREFIX_RE = re.compile(
+    r"(?:" + "|".join(sorted(_SPAN_HONORIFICS, key=len, reverse=True)) + r")\.?[ \t]+$",
+    re.IGNORECASE,
+)
+
+
+def _extend_over_honorific(text: str, start: int, end: int) -> tuple[int, int]:
+    """Pull a PERSON span back over an "Mr./Ms./Dr." immediately before it.
+
+    The model tags plenty of surnames on their own -- "Mr. |Raman|" --
+    which leaves the honorific sitting in plaintext next to a placeholder.
+    Widening here, once, means every later stage (identity, the vault,
+    restoration) sees a span that already includes the title, rather than
+    trying to stitch it back on after the fact.
+    """
+    window_start = max(0, start - 24)
+    match = _HONORIFIC_PREFIX_RE.search(text[window_start:start])
+    if match is None:
+        return start, end
+    return window_start + match.start(), end
+
 
 def normalize_span(text: str, span: Span, context: DocumentContext | None = None) -> Span | None:
     """Tighten a span's edges, or drop it when nothing defensible remains."""
@@ -52,11 +81,36 @@ def normalize_span(text: str, span: Span, context: DocumentContext | None = None
 
     start, end = span.start, span.end
     start, end = _strip_outer(text, start, end)
+    # Model source and a single token only. A roster or sweep span is built
+    # from a name already known to the document, and its own matching
+    # already decides -- through propagate_names()'s honorific terms --
+    # when a title belongs in the surface and when it is left as plaintext
+    # beside the name; widening those too would fold "Ms. " into "Katherine
+    # Halloran" itself instead of only rescuing a bare "Raman" the model
+    # tagged alone. The single-token restriction keeps a full "Dr. Samuel
+    # Adeyemi" untouched -- there the title is better left visible beside
+    # the placeholder -- and widens only the case with no first name for it
+    # to attach to.
+    if (
+        span.label == "PERSON"
+        and span.source == "model"
+        and len(text[start:end].split()) == 1
+    ):
+        start, end = _extend_over_honorific(text, start, end)
     if span.label in NAME_LIKE:
         start, end = _cut_at_column_gap(text, start, end)
         start, end = _balance(text, start, end)
         start, end = _strip_clitic(text, start, end)
-        start, end = _trim_to_capitalised(text, start, end)
+        # A forced span (a ``fixed_names`` entry) is asserted by the caller;
+        # a roster span already had its capitalisation vetted at the match
+        # site, in ``_accept_match`` -- a lowercase one only exists because
+        # the roster confirmed the name and the line carries no capitals at
+        # all. Either way, trimming to a capitalised token here would
+        # collapse a lowercase ASR transcription of that exact name to
+        # nothing, undoing a decision already made with better evidence than
+        # this generic edge rule has.
+        if not (span.forced or span.source == "roster"):
+            start, end = _trim_to_capitalised(text, start, end)
     start, end = _strip_outer(text, start, end)
 
     if end <= start:
@@ -64,7 +118,13 @@ def normalize_span(text: str, span: Span, context: DocumentContext | None = None
 
     surface = text[start:end]
     if span.label in NAME_LIKE and not _is_name_like(
-        surface, start, end, context, span.label in {"ORG", "LOCATION"}
+        surface,
+        start,
+        end,
+        context,
+        span.label in {"ORG", "LOCATION"},
+        forced=span.forced,
+        source=span.source,
     ):
         return None
 
@@ -78,6 +138,7 @@ def normalize_span(text: str, span: Span, context: DocumentContext | None = None
         score=span.score,
         source=span.source,
         identity=span.identity,
+        forced=span.forced,
     )
 
 
@@ -192,16 +253,6 @@ def _strip_clitic(text: str, start: int, end: int) -> tuple[int, int]:
     return start, end
 
 
-def _is_name_initial(char: str) -> bool:
-    """Can this character begin a name?
-
-    Arabic, Hebrew, CJK, Devanagari, Thai and Amharic have no case, so
-    ``str.isupper()`` is False for every character in them. Demanding a capital
-    would delete every name in such a document outright.
-    """
-    return char.isupper() or unicodedata.category(char) == "Lo"
-
-
 def _trim_to_capitalised(text: str, start: int, end: int) -> tuple[int, int]:
     """A name begins and ends on a capitalised token.
 
@@ -210,12 +261,12 @@ def _trim_to_capitalised(text: str, start: int, end: int) -> tuple[int, int]:
     needed a word list to tell apart.
     """
     while start < end:
-        if _is_name_initial(text[start]):
+        if is_name_initial(text[start]):
             break
         start = _skip_space(text, _token_end(text, start, end), end)
     while end > start:
         token_start = _token_start(text, start, end)
-        if token_start < end and _is_name_initial(text[token_start]):
+        if token_start < end and is_name_initial(text[token_start]):
             break
         end = _rstrip_space(text, start, token_start)
     return start, end
@@ -289,8 +340,18 @@ def _is_name_like(
     end: int,
     context: DocumentContext | None,
     label_is_org_like: bool = False,
+    *,
+    forced: bool = False,
+    source: str = "model",
 ) -> bool:
-    """Final sanity check on a normalised name span."""
+    """Final sanity check on a normalised name span.
+
+    ``forced`` marks a span from a caller-supplied ``fixed_names`` entry: the
+    caller has already asserted this surface is a person, so the casing- and
+    part-of-speech-based heuristics below -- built to guess that from the
+    document alone -- are skipped. The field-label veto still applies: a form
+    key is never the data it labels, whoever asserted the name.
+    """
     if not any(char.isalpha() for char in surface):
         return False
 
@@ -298,18 +359,20 @@ def _is_name_like(
     if not tokens:
         return False
 
-    # "ICH E6", "SOC 2", "BX-4471": every token is an acronym or a code, so
-    # there is no name here whatever the model called it.
-    #
-    # A multi-token span additionally needs a digit somewhere before it can be
-    # dismissed. Without that condition this rule deleted "KWAME MENSAH",
-    # "JOHN SMITH", "ROBERT CHEN JR.", "AMARA NWOSU" and "ROHAN MEHTA" -- every
-    # all-caps name whose tokens are all short -- and they leaked as plaintext
-    # at roughly 110 sites. In an all-caps speaker label, casing carries no
-    # information at all, so it cannot be evidence of acronym-hood there.
-    uncased = context.line_is_uncased(start) if context is not None else False
-    if all(_is_acronym_or_code(token, context, uncased_zone=uncased) for token in tokens):
-        return False
+    if not forced:
+        # "ICH E6", "SOC 2", "BX-4471": every token is an acronym or a code, so
+        # there is no name here whatever the model called it.
+        #
+        # A multi-token span additionally needs a digit somewhere before it can
+        # be dismissed. Without that condition this rule deleted "KWAME MENSAH",
+        # "JOHN SMITH", "ROBERT CHEN JR.", "AMARA NWOSU" and "ROHAN MEHTA" --
+        # every all-caps name whose tokens are all short -- and they leaked as
+        # plaintext at roughly 110 sites. In an all-caps speaker label, casing
+        # carries no information at all, so it cannot be evidence of
+        # acronym-hood there.
+        uncased = context.line_is_uncased(start) if context is not None else False
+        if all(_is_acronym_or_code(token, context, uncased_zone=uncased) for token in tokens):
+            return False
 
     if context is None:
         return True
@@ -317,6 +380,14 @@ def _is_name_like(
     # A form field key is never the data it labels.
     if context.is_field_label(start, end):
         return False
+
+    if forced or source in ("roster", "sweep"):
+        return True
+
+    # The English tagger has no signal for caseless scripts (Arabic, Hebrew, CJK, etc.)
+    # and would reject every non-Latin name as non-PROPN.
+    if not any(char.isupper() or char.islower() for char in surface):
+        return True
 
     # The document writes this word in lower case too, so it is probably an
     # ordinary word. Only applied to ORG/LOCATION: surnames like Brown, Mark,

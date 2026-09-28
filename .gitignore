@@ -38,6 +38,10 @@ src/
 # braces guard -- deleting this rule alone does not un-quarantine the directory.
 reports/*
 !reports/.gitignore
+!reports/benchmark.json
+!reports/benchmark.md
+# Test-data audit artefacts may contain source text or incompletely redacted PII.
+artifacts/
 *__sanitized-input.txt
 .pii-triage.json
 
@@ -49,7 +53,9 @@ reports/*
 # rule here; it did not implement the intent, so these are globs.
 test_data/transcript_*.txt
 test_data/scenario_*.txt
+test_data/*.expected.json
 test_data/production_simulations/
+scratch/
 
 # Agent and editor local state. The .local convention is not self-enforcing:
 # this was previously ignored only by a personal global gitignore, which is

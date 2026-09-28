@@ -1,0 +1,103 @@
+{
+  "must_redact": [
+    "198.51.100.42",
+    "255.255.255.0",
+    "00:1B:44:11:3A:B7"
+  ],
+  "must_keep": [
+    "10.0.0.0/8",
+    "192.168.0.0/16",
+    "172.16.0.0/12",
+    "Routing table snapshot",
+    "captured for the network review meeting",
+    "the core router",
+    "the branch router",
+    "the lab router",
+    "No individuals are named anywhere in this configuration excerpt."
+  ],
+  "same_entity": [],
+  "schema": 2,
+  "gold_complete": true,
+  "gold_spans": [
+    {
+      "start": 315,
+      "end": 328,
+      "label": "IP_ADDRESS",
+      "text": "198.51.100.42",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 335,
+      "end": 348,
+      "label": "IP_ADDRESS",
+      "text": "255.255.255.0",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 386,
+      "end": 403,
+      "label": "MAC_ADDRESS",
+      "text": "00:1B:44:11:3A:B7",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 72,
+      "end": 82,
+      "text": "10.0.0.0/8",
+      "reason": "must_keep"
+    },
+    {
+      "start": 143,
+      "end": 157,
+      "text": "192.168.0.0/16",
+      "reason": "must_keep"
+    },
+    {
+      "start": 220,
+      "end": 233,
+      "text": "172.16.0.0/12",
+      "reason": "must_keep"
+    },
+    {
+      "start": 0,
+      "end": 22,
+      "text": "Routing table snapshot",
+      "reason": "must_keep"
+    },
+    {
+      "start": 24,
+      "end": 63,
+      "text": "captured for the network review meeting",
+      "reason": "must_keep"
+    },
+    {
+      "start": 87,
+      "end": 102,
+      "text": "the core router",
+      "reason": "must_keep"
+    },
+    {
+      "start": 162,
+      "end": 179,
+      "text": "the branch router",
+      "reason": "must_keep"
+    },
+    {
+      "start": 238,
+      "end": 252,
+      "text": "the lab router",
+      "reason": "must_keep"
+    },
+    {
+      "start": 426,
+      "end": 490,
+      "text": "No individuals are named anywhere in this configuration excerpt.",
+      "reason": "must_keep"
+    }
+  ]
+}

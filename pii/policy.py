@@ -11,7 +11,8 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Container, Iterable
+from collections.abc import Container, Iterable, Mapping
+from difflib import get_close_matches
 
 # Structured identifiers: always redacted, in every profile.
 STRUCTURED_TYPES = frozenset(
@@ -36,13 +37,19 @@ STRUCTURED_TYPES = frozenset(
         "SWIFT_BIC",
         "DOB",
         "ADDRESS",
-        "TIME",
-        "AMOUNT",
-        "DURATION",
         "ID",
         "JOB_ID",
     }
 )
+
+# Detected (the pattern rules are unchanged), but not personal data on their
+# own, so no profile redacts them by default. A meeting's length, a time of
+# day and a dollar figure are not identifiers -- "48 minutes" and "9:32 AM"
+# were being masked in every profile, which is what prompted splitting these
+# out of STRUCTURED_TYPES rather than deciding case by case. A caller who
+# genuinely needs them gone passes ``entities={"duration": True}`` (etc.) to
+# ``PIIMiddleware``.
+OPTIONAL_TYPES = frozenset({"TIME", "AMOUNT", "DURATION"})
 
 PROFILES: dict[str, frozenset[str]] = {
     # Who someone is and how to reach them -- the data that actually
@@ -86,6 +93,27 @@ def is_protected_term(text: str) -> bool:
     return normalized in {
         " ".join(_normalize(term).split()) for term in PROTECTED_TERMS
     }
+
+
+# Structural speaker labels that mark multi-speaker turns or transcript artifacts,
+# not personal names.
+STRUCTURAL_SPEAKER_LABELS = frozenset(
+    {
+        "ALL", "BOTH", "EVERYONE", "UNKNOWN", "CROSSTALK", "INAUDIBLE",
+        "THE COURT", "THE WITNESS", "Q", "A",
+    }
+)
+_SPEAKER_DIGITS_RE = re.compile(r"^SPEAKER\s*\d+$", re.IGNORECASE)
+
+
+def is_structural_speaker(label: str) -> bool:
+    """Return whether a speaker label is non-personal transcript structure."""
+    clean = label.strip().rstrip(":").strip()
+    if clean.upper() in STRUCTURAL_SPEAKER_LABELS:
+        return True
+    if _SPEAKER_DIGITS_RE.match(clean):
+        return True
+    return False
 
 # Redacted under every profile, regardless of what the caller selected.
 # Neutralized placeholder literals live here: if the profile filter dropped
@@ -176,6 +204,19 @@ def _normalize(value: str) -> str:
     return collapsed.casefold().strip()
 
 
+def is_name_initial(char: str) -> bool:
+    """Can this character begin a personal name?
+
+    Arabic, Hebrew, CJK, Devanagari, Thai and Amharic have no case, so
+    ``str.isupper()`` is False for every character in them.
+    """
+    return char.isupper() or unicodedata.category(char) == "Lo"
+
+
+def has_name_initial(text: str) -> bool:
+    return any(is_name_initial(char) for char in text)
+
+
 def allowlist_tokens(terms: Iterable[str]) -> frozenset[str]:
     """Normalize allowlist entries, splitting multi-word ones into tokens."""
     tokens: set[str] = set()
@@ -228,11 +269,102 @@ def is_non_personal(
     return is_allowlisted(text, allowlist, protected=protected)
 
 
-def resolve_types(profile: str = DEFAULT_PROFILE) -> frozenset[str]:
-    """Entity types redacted under ``profile``."""
+# Every type the policy layer knows the name of, whether or not any profile
+# redacts it by default. Used to validate ``entities`` overrides -- a typo in
+# a key must fail loudly, not be silently ignored and leak the type it was
+# meant to turn off.
+KNOWN_TYPES = frozenset().union(*PROFILES.values()) | MANDATORY_TYPES | NO_REDACT_TYPES | OPTIONAL_TYPES
+
+
+def _normalize_entity_key(key: str, known: frozenset[str]) -> str:
+    """Upper-case and validate a caller-supplied entity type name."""
+    normalized = key.strip().upper()
+    if normalized not in known:
+        valid = ", ".join(sorted(known))
+        hint = get_close_matches(normalized, sorted(known), n=1)
+        suggestion = f" did you mean {hint[0]!r}?" if hint else ""
+        raise ValueError(
+            f"unknown entity type {key!r} in entities;{suggestion} expected one of {valid}"
+        )
+    return normalized
+
+
+def resolve_types(
+    profile: str = DEFAULT_PROFILE,
+    entities: Mapping[str, bool] | None = None,
+    *,
+    custom_labels: frozenset[str] | set[str] = frozenset(),
+) -> frozenset[str]:
+    """Entity types redacted under ``profile``, with explicit overrides.
+
+    ``entities`` is a layer on top of the profile, not a replacement for it:
+    a type the caller does not mention keeps the profile's default --
+    ``resolve_types("balanced", {"url": False})`` still redacts ``PERSON``
+    and every other structured type, minus ``URL``. Keys are matched
+    case-insensitively (``"person"`` and ``"PERSON"`` are the same type) and
+    validated against every type this package knows about, plus any
+    ``custom_labels`` from a loaded pattern config -- an unrecognised key
+    raises rather than being silently ignored, which is the one way this
+    knob could turn into an unnoticed leak.
+
+    ``PLACEHOLDER_LITERAL``, ``NORP`` and ``EPONYMOUS_ORG`` (see
+    ``MANDATORY_TYPES``) cannot be turned off through ``entities``: they are
+    security handling, not a profile choice, and disabling
+    ``PLACEHOLDER_LITERAL`` in particular would silently defeat the
+    injection defence in ``vault.py``. Trying raises rather than the value
+    being quietly reinstated.
+    """
     try:
         selected = PROFILES[profile]
     except KeyError:
         valid = ", ".join(sorted(PROFILES))
         raise ValueError(f"unknown profile {profile!r}; expected one of {valid}") from None
-    return selected | MANDATORY_TYPES
+
+    # Custom labels are redacted by construction: a pattern rule loaded from
+    # TOML that the profile filter then silently discarded would be the
+    # easiest way to ship the feature broken. ``entities`` can still turn one
+    # off explicitly, the same as any other type.
+    resolved = selected | MANDATORY_TYPES | frozenset(custom_labels)
+
+    if entities:
+        known = KNOWN_TYPES | frozenset(custom_labels)
+        for raw_key, enabled in entities.items():
+            key = _normalize_entity_key(raw_key, known)
+            if key in MANDATORY_TYPES and not enabled:
+                raise ValueError(
+                    f"{key!r} cannot be disabled through entities -- it is "
+                    "mandatory security handling, not a profile choice"
+                )
+            resolved = (resolved | {key}) if enabled else (resolved - {key})
+
+    # NO_REDACT_TYPES are detected so they can win an overlap against a type
+    # that *is* redacted, then dropped -- they must never end up in the
+    # redacted set, regardless of profile or override.
+    return resolved - NO_REDACT_TYPES
+
+
+def describe_policy(
+    profile: str = DEFAULT_PROFILE,
+    entities: Mapping[str, bool] | None = None,
+    *,
+    custom_labels: frozenset[str] | set[str] = frozenset(),
+) -> dict:
+    """A report-friendly summary of what this policy actually redacts.
+
+    Not just the redacted set: also what is deliberately left alone, and
+    which overrides did the work, so an artefact can say *why* a type is or
+    is not in scope instead of just printing a set of labels.
+    """
+    redacted = resolve_types(profile, entities, custom_labels=custom_labels)
+    known = KNOWN_TYPES | frozenset(custom_labels)
+    overrides = {
+        _normalize_entity_key(key, known): bool(value)
+        for key, value in (entities or {}).items()
+    }
+    return {
+        "profile": profile,
+        "redacted": sorted(redacted),
+        "not_redacted": sorted(known - redacted),
+        "overrides": overrides,
+        "mandatory": sorted(MANDATORY_TYPES),
+    }

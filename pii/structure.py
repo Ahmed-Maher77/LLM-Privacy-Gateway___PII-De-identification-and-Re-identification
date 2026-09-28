@@ -138,12 +138,40 @@ def find_key_zones(text: str, regions: Sequence[Region]) -> list[tuple[int, int]
     return zones
 
 
+def find_gutter_zones(text: str) -> list[tuple[int, int]]:
+    """Identify left-gutter line numbers in deposition/arbitration transcripts."""
+    zones: list[tuple[int, int]] = []
+    pattern = re.compile(r"^[ \t]*(\d{1,4})(?=[ \t]{2,})", re.MULTILINE)
+    matches = list(pattern.finditer(text))
+    if len(matches) < 3:
+        return []
+
+    gutter_matches: list[re.Match[str]] = []
+    for i in range(len(matches)):
+        m = matches[i]
+        val = int(m.group(1))
+        is_seq = False
+        if i > 0 and int(matches[i - 1].group(1)) + 1 == val:
+            is_seq = True
+        elif i + 1 < len(matches) and val + 1 == int(matches[i + 1].group(1)):
+            is_seq = True
+        elif val == 1:
+            is_seq = True
+        if is_seq:
+            gutter_matches.append(m)
+
+    for m in gutter_matches:
+        zones.append((m.start(1), m.end(1)))
+    return zones
+
+
 def analyze_structure(text: str) -> StructureMap:
     regions = find_json_regions(text) + find_fenced_regions(text)
     regions.sort(key=lambda region: region.start)
+    key_zones = find_key_zones(text, regions) + find_gutter_zones(text)
     return StructureMap(
         regions=tuple(regions),
-        key_zones=tuple(find_key_zones(text, regions)),
+        key_zones=tuple(key_zones),
     )
 
 

@@ -19,9 +19,16 @@ from .middleware import (
     validate_output,
 )
 from .patterns import PatternRule, detect_patterns
-from .policy import PROTECTED_TERMS, is_allowlisted, is_protected_term
+from .policy import PROTECTED_TERMS, describe_policy, is_allowlisted, is_protected_term
 from .residual import Finding, ResidualPolicy, explain, scan_residual, severity_counts
-from .roster import extract_roster, name_variants, propagate_names, propagate_terms, rejoin_split_names
+from .roster import (
+    PropagationTerm,
+    extract_roster,
+    name_variants,
+    propagate_names,
+    propagate_terms,
+    rejoin_split_names,
+)
 from .spacy_detector import SpacyDetector
 from .spans import Span, SpanSet, apply_spans
 from .structure import StructureMap, analyze_structure, protect_spans
@@ -46,6 +53,7 @@ __all__ = [
     "PatternRule",
     "PROTECTED_TERMS",
     "PlaceholderInjection",
+    "PropagationTerm",
     "PseudonymVault",
     "ResidualPolicy",
     "ReviewRequired",
@@ -60,6 +68,7 @@ __all__ = [
     "detect_patterns",
     "detect_titles",
     "dedupe_placeholders",
+    "describe_policy",
     "explain",
     "extract_roster",
     "find_template_literals",

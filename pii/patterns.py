@@ -131,9 +131,13 @@ URL_PATTERN = re.compile(
 # The trailing lookahead must reject another octet but allow a sentence
 # period: "the private network at 10.0.4.15." leaked because "." was banned
 # outright, while the same address inside a connection string was masked.
+# It must also reject a CIDR suffix: "10.0.0.0/8" is a network range, not a
+# host, and "/" satisfied neither of the original two lookaheads, so it was
+# redacted as an address and left the prefix length dangling in the output
+# ("{{IP_ADDRESS_1}}/8") -- a false positive on text with no PII at all.
 IPV4_PATTERN = re.compile(
     r"(?<![\w.])(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}"
-    r"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?!\.?\d)(?!\w)"
+    r"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?!\.?\d)(?!/\d{1,2}(?!\d))(?!\w)"
 )
 
 # The backreference forces one consistent separator, so "00:1B-44:11-3A:B7" is
@@ -175,9 +179,28 @@ DATE_PATTERN = re.compile(
 
 MONTH_DATE_PATTERN = re.compile(
     r"(?<![A-Za-z])(?:January|February|March|April|May|June|July|August|"
-    r"September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?"
-    r"(?:,\s+\d{4})?(?![A-Za-z])",
+    r"September|October|November|December)\s+"
+    r"(?:(?:\d{1,2}(?:st|nd|rd|th)?(?:\s*,\s*|\s+)\d{4})|\d{1,2}(?:st|nd|rd|th)?(?!\d)|\d{4})"
+    r"(?![A-Za-z0-9])",
     re.IGNORECASE,
+)
+
+_MONTHS = (
+    r"(?:January|February|March|April|May|June|July|August|September|October|November|December|"
+    r"Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+)
+_DATE_VALUE = (
+    r"(?:"
+    r"\d{4}[-/](?:0?[1-9]|1[0-2])[-/](?:0?[1-9]|[12]\d|3[01])|"
+    r"(?:0?[1-9]|[12]\d|3[01])[-/.](?:0?[1-9]|1[0-2])[-/.]\d{2,4}|"
+    r"(?:0?[1-9]|1[0-2])[-/.](?:0?[1-9]|[12]\d|3[01])[-/.]\d{2,4}|"
+    rf"{_MONTHS}\s+\d{{1,2}}(?:st|nd|rd|th)?(?:\s*,\s*|\s+)\d{{4}}|"
+    rf"\d{{1,2}}(?:st|nd|rd|th)?\s+{_MONTHS}(?:\s*,\s*|\s+)\d{{4}}|"
+    rf"{_MONTHS}\s+\d{{4}}"
+    r")"
+)
+DOB_PATTERN = re.compile(
+    rf"(?i)\b(?:D\.?O\.?B\.?|date\s+of\s+birth|born(?:\s+on)?|birth\s*date)\b[^\w\n]{{0,12}}(?P<value>{_DATE_VALUE})(?![\w])"
 )
 
 TIME_PATTERN = re.compile(
@@ -206,8 +229,8 @@ ROLE_PATTERN = re.compile(
 )
 
 ORG_COMPOUND_PATTERN = re.compile(
-    r"(?<![\w-])[A-Z][A-Za-z]+\s+(?:&|and)\s+[A-Z][A-Za-z]+"
-    r"(?:\s+(?:LLP|LLC|Inc\.?|Corp\.?|Ltd\.?|LP))?(?![\w-])"
+    r"(?<![\w-])[A-Z][A-Za-z]+\s+&\s+[A-Z][A-Za-z]+(?:\s+(?:LLP|LLC|Inc\.?|Corp\.?|Ltd\.?|LP))?(?![\w-])|"
+    r"(?<![\w-])[A-Z][A-Za-z]+\s+and\s+[A-Z][A-Za-z]+\s+(?:LLP|LLC|Inc\.?|Corp\.?|Ltd\.?|LP)(?![\w-])"
 )
 
 JOB_ID_PATTERN = re.compile(
@@ -216,7 +239,7 @@ JOB_ID_PATTERN = re.compile(
 )
 
 DOCUMENT_ID_PATTERN = re.compile(
-    r"(?i)(?<![\w-])(?:exhibit|case[ \t]+no\.?|csr[ \t]+no\.?)"
+    r"(?i)(?<![\w-])(?:exhibit\b|case[ \t]+no\b\.?|csr[ \t]+no\b\.?)"
     r"[ \t:#-]*(?P<value>[A-Z0-9][A-Z0-9:-]{1,24})(?![\w-])"
 )
 
@@ -374,10 +397,20 @@ SWIFT_BIC_LABELLED_PATTERN = re.compile(
     r"(?P<value>" + _BIC_BODY + r")(?![\w-])"
 )
 
-# Standalone, but only the unambiguous 11-character form with a real country.
-SWIFT_BIC_PATTERN = re.compile(
-    r"(?<![\w-])[A-Z]{4}" + _ISO_COUNTRY + r"[A-Z0-9]{2}[A-Z0-9]{3}(?![\w-])"
-)
+# Standalone BIC with a real country code and optional branch code.
+SWIFT_BIC_PATTERN = re.compile(r"(?<![\w-])" + _BIC_BODY + r"(?![\w-])")
+
+
+def _score_swift_bic(match: re.Match[str], text: str) -> float | None:
+    """Require at least one digit or an adjacent banking keyword."""
+    value = match.group()
+    lead = text[max(0, match.start() - 40) : match.start()]
+    anchored = re.search(r"(?i)\b(?:swift|bic|bank|wire|transfer|iban|routing)\b", lead) is not None
+    if anchored:
+        return 0.95
+    if not any(char.isdigit() for char in value):
+        return None
+    return 0.75
 
 
 def _score_eu_vat(match: re.Match[str], text: str) -> float | None:
@@ -461,17 +494,21 @@ ADDRESS_PATTERN = re.compile(
 # this rewrite is removing.
 _STREET_PREFIX = (
     r"(?i:Rue|Avenue|Av\.|Boulevard|Bd\.|Impasse|Allee|Allée|Place|Chemin|Quai|"
-    r"Calle|Carrer|Avenida|Plaza|Paseo|Via|Viale|Piazza|Corso|"
-    r"Straße|Strasse|Str\.|Weg|Gasse|Platz|Ring|"
+    r"Calle|Carrer|Avenida|Plaza|Paseo|Viale|Piazza|Corso|"
+    r"Straße|Strasse|Str\.|Weg|Gasse|Platz|"
     r"Rua|Travessa|Laan|Straat|Gracht|Gatan|Vägen|Vej|Gade)"
 )
+
+_PARTICLES = r"(?:de\s+la|de\s+l'|d'|l'|de|la|le|des|du|del|van\s+der|van\s+den|van|der|den|am|an|da|do|dos|das)"
+_STREET_TOKEN = rf"(?:[A-Z][A-Za-z'’-]{{1,20}}|{_PARTICLES})"
 
 ADDRESS_PREFIXED_PATTERN = re.compile(
     r"(?<![\w-])\d{1,6}(?:[-/]\d{1,6})?[A-Za-z]?" + _H + r"+"
     + _STREET_PREFIX + _H + r"+"
-    r"(?:[A-Z][A-Za-z'’-]{1,20}" + _H + r"*){1,4}"
-    r"(?:,?" + _H + r"*[A-Z][A-Za-z'’-]{1,20})?"
+    rf"(?:{_STREET_TOKEN}" + _H + r"*){1,5}"
+    r"(?:,?" + _H + r"*(?:\d{4,6}" + _H + r"+)?[A-Z][A-Za-z'’-]{1,20})?"
     r"(?:,?" + _H + r"*\d{4,6})?"
+    r"(?:,?" + _H + r"*(?i:France|Germany|Spain|Italy|UK|United\s+Kingdom|Switzerland|Austria|Belgium|Netherlands))?"
 )
 
 PO_BOX_PATTERN = re.compile(
@@ -604,7 +641,7 @@ BUILTIN_RULES: tuple[PatternRule, ...] = (
     PatternRule("BANK_ACCOUNT", BANK_ACCOUNT_PATTERN, group=1),
     PatternRule("EU_VAT", EU_VAT_PATTERN, scorer=_score_eu_vat),
     PatternRule("SWIFT_BIC", SWIFT_BIC_LABELLED_PATTERN, group="value"),
-    PatternRule("SWIFT_BIC", SWIFT_BIC_PATTERN, base_score=0.75),
+    PatternRule("SWIFT_BIC", SWIFT_BIC_PATTERN, scorer=_score_swift_bic),
     PatternRule("ADDRESS", ADDRESS_PATTERN, scorer=_score_address),
     PatternRule("ADDRESS", ADDRESS_PREFIXED_PATTERN, base_score=0.85),
     PatternRule("ADDRESS", PO_BOX_PATTERN),
@@ -612,6 +649,7 @@ BUILTIN_RULES: tuple[PatternRule, ...] = (
     PatternRule("CUSTOM_ID", SLASH_ID_PATTERN, scorer=_score_slash_id),
     PatternRule("JOB_ID", JOB_ID_PATTERN, group="value"),
     PatternRule("ID", DOCUMENT_ID_PATTERN, group="value"),
+    PatternRule("DOB", DOB_PATTERN, group="value"),
     PatternRule("DATE", DATE_PATTERN),
     PatternRule("DATE", MONTH_DATE_PATTERN),
     PatternRule("TIME", TIME_PATTERN),

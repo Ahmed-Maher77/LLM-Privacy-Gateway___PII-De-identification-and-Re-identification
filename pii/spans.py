@@ -72,6 +72,12 @@ class Span:
     # Groups surface forms that refer to the same real person or thing, so
     # "Ahmed Farid", "Farid" and "Ahmed F" all collapse onto one placeholder.
     identity: str | None = None
+    # Set when this span comes from a caller-supplied ``fixed_names`` entry
+    # rather than being inferred from the document. It tells span-fixing and
+    # propagation to skip the capitalisation and part-of-speech heuristics
+    # those functions use to guess whether a lowercase token is a name --
+    # the caller has already answered that question.
+    forced: bool = False
 
     def __post_init__(self) -> None:
         if self.end <= self.start:
@@ -109,10 +115,10 @@ class SpanSet:
             self.spans,
             key=lambda s: (
                 s.source in AUTHORITATIVE,
-                # Longest match wins, so "Lamia Aly" is never displaced by a
-                # bare "Lamia" that a later pass also matched.
-                s.length,
                 SOURCE_PRIORITY.get(s.source, 0),
+                # Within the same source tier, longest match wins (e.g. "Lamia Aly"
+                # over bare "Lamia", or full address over street fragment).
+                s.length,
                 LABEL_PRIORITY.get(s.label, DEFAULT_LABEL_PRIORITY),
                 # Label specificity outranks score on purpose: PHONE reports a
                 # flat 1.0 while a graded CREDIT_CARD may report 0.70, and the
@@ -145,7 +151,19 @@ def apply_spans(text: str, replacements: list[tuple[Span, str]]) -> str:
     out = text
     for span, placeholder in sorted(replacements, key=lambda item: item[0].start, reverse=True):
         # A name wrapped across a line break is one span, but the line break
-        # belongs to the document's layout, not to the name. Put it back.
-        newlines = text.count(chr(10), span.start, span.end)
-        out = out[: span.start] + placeholder + chr(10) * newlines + out[span.end :]
+        # belongs to the document's layout. Putting the newline immediately
+        # after the placeholder strands attached punctuation (e.g. "Kenji\nYamashita."
+        # becomes "{{PERSON_10}}\n."). Attach any immediate punctuation to the
+        # placeholder before the newline.
+        newlines = text.count("\n", span.start, span.end)
+        tail = out[span.end :]
+        if newlines > 0:
+            punct_len = 0
+            while punct_len < len(tail) and tail[punct_len] in ".,;:?!'\"-–—":
+                punct_len += 1
+            punct = tail[:punct_len]
+            rest = tail[punct_len:]
+            out = out[: span.start] + placeholder + punct + ("\n" * newlines) + rest
+        else:
+            out = out[: span.start] + placeholder + tail
     return out

@@ -103,7 +103,7 @@ class ResidualRule:
     base_severity: str
     base_confidence: float
     reason: str
-    group: int = 0
+    group: int | str = 0
     validate: Callable[[re.Match[str]], bool] | None = None
 
 
@@ -113,6 +113,24 @@ SECRET_KEYWORDS = re.compile(
     r"policy|patient|iban|swift|pin|token|secret|password|api[_-]?key|mac|ip)"
 )
 KEYWORD_WINDOW = 40
+
+def _validate_speaker_label(match: re.Match[str]) -> bool:
+    name = match.group("name")
+    if "{{" in name:
+        return False
+    from .policy import is_structural_speaker
+    if is_structural_speaker(name):
+        return False
+    from .spanfix import _is_name_like
+    return _is_name_like(name, match.start("name"), match.end("name"), context=None)
+
+
+def _validate_orphan_number(match: re.Match[str]) -> bool:
+    text = match.string
+    line_start = text.rfind("\n", 0, match.start()) + 1
+    preceding = text[line_start:match.start()]
+    return bool(preceding.strip())
+
 
 RESIDUAL_RULES: tuple[ResidualRule, ...] = (
     ResidualRule(
@@ -135,6 +153,15 @@ RESIDUAL_RULES: tuple[ResidualRule, ...] = (
     ResidualRule("ssn", patterns.SSN_PATTERN, "GOVERNMENT_ID", HIGH, 0.95, "US SSN shape"),
     ResidualRule("email", patterns.EMAIL_PATTERN, "CONTACT", HIGH, 0.95, "email address"),
     ResidualRule("ipv4", patterns.IPV4_PATTERN, "NETWORK", HIGH, 0.85, "IPv4 address"),
+    ResidualRule(
+        "dob",
+        patterns.DOB_PATTERN,
+        "CONTACT",
+        HIGH,
+        0.90,
+        "date of birth keyword and date",
+        group="value",
+    ),
     ResidualRule(
         "jwt",
         re.compile(r"eyJ[\w-]{8,}\.[\w-]{8,}\.[\w-]{8,}"),
@@ -225,15 +252,16 @@ RESIDUAL_RULES: tuple[ResidualRule, ...] = (
         0.85,
         "speaker label still carries a name",
         group="name",
-        validate=lambda m: "{{" not in m.group("name"),
+        validate=_validate_speaker_label,
     ),
     ResidualRule(
         "orphan_number_beside_placeholder",
-        re.compile(r"(?<![\w.-])\d{1,6}(?=[ \t]*\{\{)"),
+        re.compile(r"(?<![\w.-])\d{1,6}(?=[ \t]*\{\{(?:ADDRESS|LOCATION))"),
         "LOCATION",
         HIGH,
         0.70,
         "bare number glued to a placeholder, typical of a split address",
+        validate=_validate_orphan_number,
     ),
     ResidualRule(
         "high_entropy_hex",
@@ -366,6 +394,62 @@ SUPPRESSORS: tuple[Suppressor, ...] = (
 )
 
 
+# Residual rules for credentials and secrets that are unconditionally enforced.
+# These cannot be disabled through entity profile overrides, ensuring secrets
+# never leak unflagged.
+SECRET_RULES: frozenset[str] = frozenset(
+    {
+        "jwt",
+        "secret_assignment",
+        "high_entropy_hex",
+        "high_entropy_b64",
+    }
+)
+
+# Residual rules mapped to the entity types that govern them. An entity-specific
+# residual rule is active only when at least one of its required entity types
+# is in the active redaction scope.
+RULE_REQUIRED_TYPES: dict[str, frozenset[str]] = {
+    "card_shape": frozenset({"CREDIT_CARD"}),
+    "expiry": frozenset({"CARD_EXPIRY"}),
+    "mac": frozenset({"MAC_ADDRESS"}),
+    "ssn": frozenset({"SSN"}),
+    "email": frozenset({"EMAIL"}),
+    "ipv4": frozenset({"IP_ADDRESS"}),
+    "dob": frozenset({"DOB"}),
+    "unredacted_speaker_label": frozenset({"PERSON"}),
+    "postal_with_state": frozenset({"ADDRESS", "LOCATION"}),
+    "orphan_number_beside_placeholder": frozenset({"ADDRESS", "LOCATION"}),
+    "long_digit_run": frozenset({"ID", "BANK_ACCOUNT", "ROUTING_NUMBER", "CUSTOM_ID"}),
+    "labelled_id": frozenset({"ID", "CUSTOM_ID", "JOB_ID"}),
+    "snake_id": frozenset({"ID", "CUSTOM_ID"}),
+}
+
+
+def rules_for_scope(
+    redacted_types: frozenset[str],
+    *,
+    enabled_rules: frozenset[str] = ALL_RULES,
+    secret_rules: frozenset[str] = SECRET_RULES,
+) -> frozenset[str]:
+    """Return residual rule names active for the given redacted entity types.
+
+    Secret rules (JWTs, API keys, credentials) are always retained as mandatory
+    security handling. Entity-specific residual rules (email, ipv4, ssn, etc.)
+    are enabled only if their corresponding entity type is actively being redacted.
+    """
+    active = set(SECRET_RULES)
+    if secret_rules:
+        active.update(secret_rules & enabled_rules)
+    for rule_name, required_types in RULE_REQUIRED_TYPES.items():
+        if rule_name in enabled_rules and (required_types & redacted_types):
+            active.add(rule_name)
+    # Rules with no required entity type mapping default to active if enabled
+    unmapped = enabled_rules - secret_rules - frozenset(RULE_REQUIRED_TYPES)
+    active.update(unmapped)
+    return frozenset(active)
+
+
 @dataclass(frozen=True, slots=True)
 class ResidualPolicy:
     enabled_rules: frozenset[str] = ALL_RULES
@@ -373,6 +457,32 @@ class ResidualPolicy:
     keyword_window: int = KEYWORD_WINDOW
     include_suppressed: bool = False
     key_zones: tuple[tuple[int, int], ...] = field(default=())
+    secret_rules: frozenset[str] = SECRET_RULES
+
+    def __post_init__(self) -> None:
+        if not (SECRET_RULES <= self.secret_rules):
+            missing = ", ".join(sorted(SECRET_RULES - self.secret_rules))
+            raise ValueError(
+                f"mandatory secret rules cannot be disabled in secret_rules: {missing}"
+            )
+        if not (SECRET_RULES <= self.enabled_rules):
+            missing = ", ".join(sorted(SECRET_RULES - self.enabled_rules))
+            raise ValueError(
+                f"mandatory secret rules cannot be disabled in enabled_rules: {missing}"
+            )
+
+    def for_scope(self, redacted_types: frozenset[str]) -> ResidualPolicy:
+        """Derive a policy scoped to the entity types actually being redacted.
+
+        Preserves mandatory secret rules while aligning entity-specific residual
+        checks with the caller's active redaction profile and entity overrides.
+        """
+        scoped_rules = rules_for_scope(
+            redacted_types,
+            enabled_rules=self.enabled_rules,
+            secret_rules=self.secret_rules,
+        )
+        return replace(self, enabled_rules=scoped_rules)
 
 
 DEFAULT_RESIDUAL_POLICY = ResidualPolicy()

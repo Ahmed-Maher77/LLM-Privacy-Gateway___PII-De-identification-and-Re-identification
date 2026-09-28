@@ -14,7 +14,8 @@ from __future__ import annotations
 import threading
 
 from .chunking import iter_windows
-from .roster import COMMON_WORDS, _normalize
+from .policy import has_name_initial
+from .roster import COMMON_WORDS, NAME_PARTICLES, _normalize
 from .spans import Span
 
 # Prompt labels handed to the model, mapped onto the canonical type used in
@@ -67,7 +68,7 @@ PATTERN_OWNED = frozenset(
 # one capital letter, and not an everyday word the model over-reached on.
 NAME_LIKE = frozenset({"PERSON", "ORG", "LOCATION", "JOB_TITLE"})
 
-MAX_NAME_TOKENS = 5
+MAX_NAME_TOKENS = 4
 MIN_NAME_LETTERS = 2
 
 
@@ -109,7 +110,12 @@ class GlinerDetector:
                 if self._model is None:
                     from gliner import GLiNER
 
-                    self._model = GLiNER.from_pretrained(self.model_name)
+                    try:
+                        self._model = GLiNER.from_pretrained(
+                            self.model_name, local_files_only=True
+                        )
+                    except Exception:
+                        self._model = GLiNER.from_pretrained(self.model_name)
         return self._model
 
     def detect(self, text: str) -> list[Span]:
@@ -122,12 +128,15 @@ class GlinerDetector:
         if not windows:
             return []
 
-        predictions = self.model.inference(
-            [window.text for window in windows],
-            self.labels,
-            threshold=self.threshold,
-            batch_size=self.batch_size,
-        )
+        import torch
+
+        with torch.inference_mode():
+            predictions = self.model.inference(
+                [window.text for window in windows],
+                self.labels,
+                threshold=self.threshold,
+                batch_size=self.batch_size,
+            )
 
         spans: list[Span] = []
         for window, entities in zip(windows, predictions):
@@ -202,6 +211,11 @@ def build_spans(
                 break
         if not is_plausible(label, surface):
             continue
+        # Caseless scripts (Arabic, Hebrew, CJK, etc.) have no upper/lower case.
+        # Zero-shot models have higher false positive rates without casing signal,
+        # so require higher confidence (>= 0.60).
+        if not any(char.isupper() or char.islower() for char in surface) and score < 0.60:
+            continue
         spans.append(
             Span(
                 start=piece_start,
@@ -233,7 +247,9 @@ def is_plausible(label: str, surface: str) -> bool:
         return False
 
     tokens = surface.split()
-    if not tokens or len(tokens) > MAX_NAME_TOKENS:
+    is_cased = any(char.isupper() or char.islower() for char in surface)
+    max_tokens = MAX_NAME_TOKENS if is_cased else 5
+    if not tokens or len(tokens) > max_tokens:
         return False
 
     if label in NAME_LIKE:
@@ -241,12 +257,18 @@ def is_plausible(label: str, surface: str) -> bool:
         # the separator rather than discarding, so nothing is lost here.
         if any(char in surface for char in ",;:"):
             return False
-        if not any(char.isupper() for char in surface):
+        if not has_name_initial(surface):
             return False
         # Rules out initials and stray punctuation such as "L." or "A".
         if sum(char.isalpha() for char in surface) < MIN_NAME_LETTERS:
             return False
-        if all(_normalize(token) in COMMON_WORDS for token in tokens):
-            return False
+        # COMMON_WORDS and lowercase check are English/cased-only.
+        if is_cased:
+            if all(_normalize(token) in COMMON_WORDS for token in tokens):
+                return False
+            for token in tokens:
+                clean_tok = token.strip(".'’-")
+                if clean_tok.islower() and clean_tok not in NAME_PARTICLES:
+                    return False
 
     return True

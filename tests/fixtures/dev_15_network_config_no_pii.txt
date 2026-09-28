@@ -1,0 +1,10 @@
+Routing table snapshot, captured for the network review meeting.
+
+route 10.0.0.0/8 via the core router, metric 1, standard private range
+route 192.168.0.0/16 via the branch router, metric 2, standard private range
+route 172.16.0.0/12 via the lab router, metric 3, standard private range
+
+Interface eth0 has address 198.51.100.42, mask 255.255.255.0.
+Interface eth1 has hardware address 00:1B:44:11:3A:B7 and is currently up.
+
+No individuals are named anywhere in this configuration excerpt.

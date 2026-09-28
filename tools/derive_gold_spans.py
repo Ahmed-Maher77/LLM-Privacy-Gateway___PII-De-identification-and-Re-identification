@@ -49,6 +49,14 @@ def find_occurrences(source: str, value: str) -> list[tuple[int, int]]:
     ]
     if spans:
         return spans
+    if " " in value:
+        pattern_str = r"\s+".join(re.escape(tok) for tok in value.split())
+        spans = [
+            (m.start(), m.end())
+            for m in re.finditer(rf"(?<!\w){pattern_str}(?!\w)", source)
+        ]
+        if spans:
+            return spans
     return [(m.start(), m.end()) for m in re.finditer(re.escape(value), source)]
 
 
@@ -148,7 +156,7 @@ def derive(source: str, expected: dict) -> tuple[list[GoldSpan], list[str]]:
                     start=start,
                     end=end,
                     label=label,
-                    text=value,
+                    text=source[start:end],
                     entity=clusters.get(value, ""),
                     origin="derived",
                 )
@@ -162,14 +170,16 @@ def derive_negatives(source: str, expected: dict) -> list[dict]:
     out: list[dict] = []
     for value in expected.get("must_keep", []):
         for start, end in find_occurrences(source, value):
-            out.append({"start": start, "end": end, "text": value, "reason": "must_keep"})
+            out.append({"start": start, "end": end, "text": source[start:end], "reason": "must_keep"})
             break  # one anchor per value is enough to prove it was locatable
     return out
 
 
-def load_pairs(only: str | None = None) -> list[tuple[str, Path, str, dict]]:
+def load_pairs(
+    only: str | None = None, *, directory: Path = FIXTURE_DIR
+) -> list[tuple[str, Path, str, dict]]:
     pairs: list[tuple[str, Path, str, dict]] = []
-    for expected_path in sorted(FIXTURE_DIR.glob("*.expected.json")):
+    for expected_path in sorted(directory.glob("*.expected.json")):
         name = expected_path.name.removesuffix(".expected.json")
         if only and only != name:
             continue
@@ -188,11 +198,11 @@ def load_pairs(only: str | None = None) -> list[tuple[str, Path, str, dict]]:
     return pairs
 
 
-def check(only: str | None = None) -> int:
+def check(only: str | None = None, *, directory: Path = FIXTURE_DIR) -> int:
     """Validate stored offsets against the sources. No model required."""
     problems = 0
     checked = 0
-    for name, _path, source, expected in load_pairs(only):
+    for name, _path, source, expected in load_pairs(only, directory=directory):
         gold_spans = expected.get("gold_spans")
         if gold_spans is None:
             print(f"  ! {name}: no gold_spans (run --write)")
@@ -223,10 +233,10 @@ def check(only: str | None = None) -> int:
     return 1 if problems else 0
 
 
-def write(only: str | None = None) -> int:
+def write(only: str | None = None, *, directory: Path = FIXTURE_DIR) -> int:
     total_spans = 0
     total_warnings = 0
-    for name, path, source, expected in load_pairs(only):
+    for name, path, source, expected in load_pairs(only, directory=directory):
         spans, warnings = derive(source, expected)
         expected["schema"] = 2
         expected.setdefault("gold_complete", False)
@@ -250,12 +260,16 @@ def main() -> int:
     parser.add_argument("--only", default=None, help="restrict to one fixture")
     parser.add_argument("--write", action="store_true", help="derive and write gold_spans")
     parser.add_argument("--check", action="store_true", help="validate stored offsets")
+    parser.add_argument(
+        "--dir", default=None, help="corpus directory (default tests/fixtures)"
+    )
     args = parser.parse_args()
+    directory = Path(args.dir) if args.dir else FIXTURE_DIR
 
     if args.write:
-        return write(args.only)
+        return write(args.only, directory=directory)
     if args.check:
-        return check(args.only)
+        return check(args.only, directory=directory)
     parser.error("pass --write or --check")
     return 2
 

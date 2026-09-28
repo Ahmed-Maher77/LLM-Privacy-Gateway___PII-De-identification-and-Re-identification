@@ -33,14 +33,14 @@ FIELD_LABEL_RE = re.compile(
 # This is what catches "Matter No: 2024-AML-0876" and
 # "Session ID: REC-2023-11-14-0092", which no digit-shape regex caught.
 ID_LABEL_RE = re.compile(
-    r"(?i)\b(?:id|ids|ref|reference|no|number|matter|case|session|ticket|"
-    r"record|file|docket|claim|policy|account)\b"
+    r"(?i)(?:\b|_)(?:id|ids|ref|reference|no|number|matter|case|session|ticket|"
+    r"record|file|docket|claim|policy|account)(?:\b|_)"
 )
 
 # Field labels whose value is a postal address, across the languages these
 # documents actually appear in.
 ADDRESS_LABEL_RE = re.compile(
-    r"(?i)\b(?:address|addr|adresse|adres|direcci|indirizzo|anschrift|"
+    r"(?i)(?:\b|_)(?:address|addr|adresse|adres|direcci|indirizzo|anschrift|"
     r"endere|endereco|postal|residence)"
 )
 
@@ -61,7 +61,9 @@ NON_PERSON_NOUN_RE = re.compile(
     r"region|regions|standard|standards|cuisine|union|language|languages|"
     r"continent|economy|economies|subsidiary|headquarters|office|offices|"
     r"operation|operations|division|division|branch|branches|timezone|"
-    r"currency|currencies|law|laws|regulation|regulations)\b"
+    r"currency|currencies|law|laws|regulation|regulations|"
+    r"localization|localisation|contracts?|partners?|startups?|compan(?:y|ies)|"
+    r"teams?|expansions?|distributors?|nuance|regulators?)\b"
 )
 
 _WORD_RE = re.compile(r"[^\W\d_][\w'’-]*")
@@ -74,12 +76,48 @@ _IDENTIFIER_CHARS = frozenset("@._-/+:\\")
 # not a form field.
 MAX_FIELD_VALUE_CHARS = 48
 
+# Conversational openers that indicate spoken dialogue, not a form field value.
+_SPEAKER_PROSE_RE = re.compile(
+    r"^[ \t]*(?:"
+    r"I|We|You|He|She|They|It|Yes|No|Sure|Okay|Please|Thanks|Can|Could|Would|Should|Let|Let's|Sounds|Agreed|Great|Right|Good|Got|Done|Oof|Well|So|Actually|Honestly|Before"
+    r"|مرحباً|أهلاً|شكراً|نعم|لا|هل|حسناً|طيب|تمام|أكيد|يا|صباح|مساء|سلام|أنا|نحن|هو|هي|هم|أنتم|أنت|ما|إيه|عظيم|كيف|لو"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def _is_speaker_prose(remainder: str) -> bool:
+    if not remainder:
+        return False
+    if _SPEAKER_PROSE_RE.search(remainder):
+        return True
+    if any(p in remainder for p in ("?", "؟", "!", "،")):
+        return True
+    return False
+
 
 def _mean(values: list[int]) -> float:
     return sum(values) / len(values) if values else 0.0
 
 
 NON_NAME_POS = frozenset({"NOUN", "NUM", "ADJ", "VERB", "ADV", "ADP", "DET", "PRON", "AUX"})
+
+
+_ID_TOKEN_RE = re.compile(
+    r"(?<![\w-])[A-Za-z0-9]{2,}(?:[-_/][A-Za-z0-9]+)+(?![\w-])"
+)
+
+
+def _is_identifier_value(value: str) -> bool:
+    stripped = value.strip()
+    if not stripped:
+        return False
+    if not any(c.isspace() for c in stripped):
+        return any(c.isdigit() for c in stripped) or any(c in "-_/#:" for c in stripped)
+    tokens = stripped.split()
+    if len(tokens) <= 3 and any(c.isdigit() for c in stripped):
+        return True
+    return False
 
 
 @dataclass
@@ -164,6 +202,39 @@ class DocumentContext:
         line = self.text[start : len(self.text) if end == -1 else end]
         return not any(char.islower() for char in line)
 
+    def line_is_lowercase(self, offset: int) -> bool:
+        """True when the line holding ``offset`` has no uppercase letter.
+
+        The mirror image of ``line_is_uncased``, and the signal a lowercase
+        ASR transcription of a known name needs: a properly cased document
+        still writes capitals *somewhere* on a line that happens to contain
+        an ordinary word matching someone's first name, so casing there is
+        still evidence against a name. A line with no capitals at all carries
+        no casing information either way -- the transcript never capitalises
+        anything on that line, a name included -- so it cannot be held
+        against a name already confirmed by the roster.
+        """
+        start = self.text.rfind("\n", 0, offset) + 1
+        end = self.text.find("\n", offset)
+        line = self.text[start : len(self.text) if end == -1 else end]
+        return any(char.isalpha() for char in line) and not any(
+            char.isupper() for char in line
+        )
+
+    def is_sentence_initial(self, offset: int) -> bool:
+        """True when ``offset`` opens a sentence, a line, or the document.
+
+        A capitalised common word here is a grammar artefact -- "Will you
+        confirm?" opens with a modal verb, not a name -- rather than
+        evidence that this particular occurrence names somebody, however
+        confident the roster is that the word is also somebody's name
+        elsewhere in the document.
+        """
+        before = self.text[:offset].rstrip(" \t")
+        if not before or before[-1] == "\n":
+            return True
+        return before[-1] in ".!?:;"
+
     def appears_lowercase(self, word: str) -> bool:
         """True when this document also writes the word in lower case.
 
@@ -201,6 +272,49 @@ class DocumentContext:
 
     # -- structural evidence -----------------------------------------------
 
+    def _header_block_label_spans(self) -> set[tuple[int, int]]:
+        """Label spans that sit inside a header block of >= 3 distinct Label: lines."""
+        lines: list[tuple[int, int, str]] = []
+        offset = 0
+        for line in self.text.splitlines(keepends=True):
+            line_str = line.rstrip("\r\n")
+            lines.append((offset, offset + len(line_str), line_str))
+            offset += len(line)
+
+        header_spans: set[tuple[int, int]] = set()
+        current_block: list[tuple[str, int, int]] = []
+
+        for line_start, line_end, line_text in lines:
+            stripped = line_text.strip()
+            if not stripped:
+                if len(current_block) >= 3:
+                    labels = [item[0] for item in current_block]
+                    if len(set(labels)) == len(labels):
+                        header_spans.update((item[1], item[2]) for item in current_block)
+                current_block = []
+                continue
+
+            match = FIELD_LABEL_RE.match(line_text)
+            if match:
+                current_block.append((
+                    match.group("label").casefold(),
+                    line_start + match.start("label"),
+                    line_start + match.end("label"),
+                ))
+            else:
+                if len(current_block) >= 3:
+                    labels = [item[0] for item in current_block]
+                    if len(set(labels)) == len(labels):
+                        header_spans.update((item[1], item[2]) for item in current_block)
+                current_block = []
+
+        if len(current_block) >= 3:
+            labels = [item[0] for item in current_block]
+            if len(set(labels)) == len(labels):
+                header_spans.update((item[1], item[2]) for item in current_block)
+
+        return header_spans
+
     @cached_property
     def field_labels(self) -> tuple[tuple[int, int], ...]:
         """Character ranges of every ``Label:`` key at the start of a line.
@@ -210,25 +324,36 @@ class DocumentContext:
         person at every turn of the transcript, which is the highest-value PII
         position in the document.
 
-        What separates them is the value: a form field holds a short value on
-        the same line, a speaker label is followed by a sentence. Averaged over
-        every occurrence of the label, that is a reliable and computed
-        distinction requiring no list of field names.
+        Three independent acceptance paths classify a Label: as a field label:
+        1. It sits inside a header block (>= 3 consecutive lines with distinct Label:).
+        2. Its value does not match spoken prose patterns and its mean value length <= 48 chars.
         """
         remainders: dict[str, list[int]] = {}
+        raw_remainders: dict[str, list[str]] = {}
         matches = list(FIELD_LABEL_RE.finditer(self.text))
         for match in matches:
             line_end = self.text.find(chr(10), match.end())
             line_end = len(self.text) if line_end == -1 else line_end
-            remainders.setdefault(match.group("label").casefold(), []).append(
-                len(self.text[match.end() : line_end].strip())
-            )
+            val = self.text[match.end() : line_end].strip()
+            key = match.group("label").casefold()
+            remainders.setdefault(key, []).append(len(val))
+            raw_remainders.setdefault(key, []).append(val)
 
-        return tuple(
-            (match.start("label"), match.end("label"))
-            for match in matches
-            if _mean(remainders[match.group("label").casefold()]) <= MAX_FIELD_VALUE_CHARS
-        )
+        header_spans = self._header_block_label_spans()
+        result: list[tuple[int, int]] = []
+        for match in matches:
+            span = (match.start("label"), match.end("label"))
+            if span in header_spans:
+                result.append(span)
+                continue
+            key = match.group("label").casefold()
+            if (
+                not any(_is_speaker_prose(r) for r in raw_remainders.get(key, []))
+                and _mean(remainders[key]) <= MAX_FIELD_VALUE_CHARS
+            ):
+                result.append(span)
+
+        return tuple(result)
 
     @cached_property
     def id_field_values(self) -> tuple[tuple[int, int], ...]:
@@ -241,10 +366,16 @@ class DocumentContext:
             line_end = len(self.text) if line_end == -1 else line_end
             value = self.text[match.end() : line_end]
             stripped = value.strip()
-            if not stripped or len(stripped) > 64:
+            if not stripped or len(stripped) > 120:
                 continue
-            start = match.end() + (len(value) - len(value.lstrip()))
-            values.append((start, start + len(stripped)))
+            if _is_identifier_value(stripped):
+                start = match.end() + (len(value) - len(value.lstrip()))
+                values.append((start, start + len(stripped)))
+            else:
+                for submatch in _ID_TOKEN_RE.finditer(value):
+                    if any(char.isdigit() for char in submatch.group()):
+                        sub_start = match.end() + submatch.start()
+                        values.append((sub_start, match.end() + submatch.end()))
         return tuple(values)
 
     @cached_property
@@ -262,6 +393,19 @@ class DocumentContext:
                 continue
             start = match.end() + (len(value) - len(value.lstrip()))
             values.append((start, start + len(stripped)))
+
+        json_field_re = re.compile(
+            r'^[ \t]*"(?P<label>[\w-]+)"[ \t]*:[ \t]*"(?P<value>[^"\n]+)"',
+            re.MULTILINE,
+        )
+        for match in json_field_re.finditer(self.text):
+            if not ADDRESS_LABEL_RE.search(match.group("label")):
+                continue
+            val = match.group("value").strip()
+            if not val or len(val) > 160:
+                continue
+            values.append((match.start("value"), match.end("value")))
+
         return tuple(values)
 
     def releases_norp(self, start: int, end: int, window: int = 40) -> bool:
@@ -269,14 +413,13 @@ class DocumentContext:
 
         There is exactly one way to earn release: the mention modifies a noun
         that cannot be a person -- "the European market", "Finacle, version
-        10.2.18". Everything else stays redacted.
-
-        A part-of-speech test was tried here and removed: spaCy tags demonyms
-        as proper nouns, so "Rohingya refugees" and "Nationality: Nigerian"
-        were released as if they were product names. For Article 9 data the
-        only safe default is that an unrecognised construction stays masked.
+        10.2.18", or appears as the value of a Language/Languages field.
+        Everything else stays redacted.
         """
-        del start  # kept for call-site symmetry with the other span rules
+        line_start = self.text.rfind("\n", 0, start) + 1
+        line_prefix = self.text[line_start:start]
+        if re.search(r"(?i)^[ \t]*(?:languages?|idiomas?|langues?|sprachen?)[ \t]*:", line_prefix):
+            return True
         return NON_PERSON_NOUN_RE.match(self.text[end : end + window]) is not None
 
     def is_field_label(self, start: int, end: int) -> bool:

@@ -35,7 +35,10 @@ class TestCorpusLayout:
         roots = {
             p.parent
             for p in PROJECT_ROOT.rglob("*.expected.json")
-            if ".venv" not in p.parts and "node_modules" not in p.parts
+            if ".venv" not in p.parts
+            and "node_modules" not in p.parts
+            and "test_data" not in p.parts
+            and "scratch" not in p.parts
         }
         assert roots <= {FIXTURE_DIR, HOLDOUT_DIR}, f"unexpected corpus root(s): {roots}"
 

@@ -31,6 +31,7 @@ HONORIFICS = frozenset(
     """
     mr mrs ms miss mx dr prof professor sir madam lord lady rev father sister
     capt captain col colonel gen general lt sgt hon judge justice eng
+    يا السيد السيدة دكتور دكتورة أستاذ أستاذة مهندس مهندسة
     """.split()
 )
 
@@ -173,6 +174,37 @@ class EntityIndex:
                 ]
                 if len(longer) == 1:
                     self._merge(key, longer[0])
+
+            # "P. Raman" is short for "Priya Raman": the first token is a
+            # single-letter initial rather than a first name, so the first
+            # merge loop above never sees it -- it excludes initials when
+            # deciding who "owns" a token, and this entity has more than one
+            # token to begin with, so it looked like its own full name.
+            # Requires an exact match on every token after the first and a
+            # unique owner of both the initial and the surname, the same
+            # standard of evidence as every other merge here: "R. Pelletier"
+            # stays its own entity when "Rosalind Pelletier" and "Rupert
+            # Pelletier" are both in the document.
+            initial_forms = {
+                key: entity
+                for key, entity in full_names.items()
+                if _initial_only(key.split(":", 1)[1].split()[0])
+            }
+            for key in initial_forms:
+                if key not in self._entities:
+                    continue
+                tokens = key.split(":", 1)[1].split()
+                initial, rest = tokens[0][:1], tokens[1:]
+                candidates = [
+                    other
+                    for other in full_names
+                    if other in self._entities
+                    and other not in initial_forms
+                    and other.split(":", 1)[1].split()[1:] == rest
+                    and other.split(":", 1)[1].split()[0][:1] == initial
+                ]
+                if len(candidates) == 1:
+                    self._merge(key, candidates[0])
 
     def link_acronyms(self, text: str) -> None:
         """Fold "EMA" into "European Medicines Agency (EMA)".

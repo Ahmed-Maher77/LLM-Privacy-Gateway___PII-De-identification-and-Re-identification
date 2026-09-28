@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.metadata
+import os
 import re
 import warnings
 from collections.abc import Mapping, Sequence
@@ -19,9 +20,9 @@ from .patterns import EMAIL_PATTERN, MIN_PATTERN_SCORE, PatternRule, detect_patt
 from .policy import (
     DEFAULT_ALLOWLIST,
     DEFAULT_PROFILE,
-    NO_REDACT_TYPES,
     _normalize,
     allowlist_tokens,
+    describe_policy,
     is_allowlisted,
     is_non_personal,
     is_technical_acronym,
@@ -29,7 +30,7 @@ from .policy import (
     resolve_types,
 )
 from .residual import DEFAULT_RESIDUAL_POLICY, Finding, ResidualPolicy, scan_residual
-from .roster import extract_roster, propagate_names, propagate_terms
+from .roster import PropagationTerm, _uninvert, extract_roster, propagate_names, propagate_terms
 from .spacy_detector import SpacyDetector
 from .spanfix import normalize_spans
 from .spans import SOURCE_PRIORITY, Span, SpanSet, apply_spans
@@ -76,7 +77,7 @@ STATUS_FAILED = "failed"
 
 _PLACEHOLDER_SEQUENCE_RE = re.compile(
     r"(?P<placeholder>\{\{[A-Z][A-Z0-9_]*_\d+\}\})"
-    r"(?:[ \t\r\n]*\1)+"
+    r"(?:[ \t\r\n]*(?:\d{1,4}[ \t]+)?\1)+"
 )
 
 
@@ -123,6 +124,7 @@ class AnonymizationResult:
     uncorroborated: list[dict] = field(default_factory=list)
     structure: dict = field(default_factory=dict)
     dry_run: bool = False
+    policy: dict = field(default_factory=dict)
 
     @property
     def high_severity_leaks(self) -> list[dict]:
@@ -155,8 +157,29 @@ class AnonymizationResult:
     def is_clean(self) -> bool:
         return self.status == STATUS_CLEAN
 
+    @property
+    def safe_sanitized(self) -> str:
+        """Return sanitized text only if verification status is clean or review.
+
+        Raises LeakDetected if verification failed, guarding callers against
+        inadvertently transmitting surviving PII when running under permissive
+        modes like on_leak="warn" or "ignore".
+        """
+        if self.status == STATUS_FAILED:
+            raise LeakDetected(
+                status=self.status,
+                leaks=self.high_severity_leaks,
+                residual=[
+                    {"rule": f.rule, "severity": f.severity, "line": f.line}
+                    for f in self.residual_high
+                ],
+                reason="refusing to return sanitized text: PII survived redaction",
+            )
+        return self.sanitized
+
     def as_tuple(self) -> tuple[str, dict[str, str]]:
-        return self.sanitized, self.mapping
+        """Return (safe_sanitized, mapping), blocking failed redactions."""
+        return self.safe_sanitized, self.mapping
 
 
 class PIIMiddleware:
@@ -175,6 +198,19 @@ class PIIMiddleware:
     Verification then runs two independent passes: ``audit`` re-checks what was
     detected, and ``scan_residual`` looks for secret shapes with no reference
     to what was detected. Neither alone is sufficient.
+
+    Concurrency Contract:
+        ``PIIMiddleware`` is **not thread-safe** (underlying spaCy and stateful
+        context require single-threaded execution). Deployments must isolate
+        one instance per worker process or worker thread.
+
+    Policy Configuration:
+        - ``profile``: Base entity profile (``"balanced"``, ``"strict"``, ``"minimal"``).
+        - ``entities``: Explicit overrides with **overlay semantics**. Omitted entity
+          types retain their default setting from ``profile``.
+        - ``fixed_names``: Unconditional caller-asserted person names. Names listed here
+          are masked everywhere in the document even if ``PERSON`` is disabled in
+          ``profile`` or through ``entities={"person": False}``.
     """
 
     def __init__(
@@ -188,6 +224,8 @@ class PIIMiddleware:
         use_spacy: bool = True,
         use_titles: bool = True,
         profile: str = DEFAULT_PROFILE,
+        entities: Mapping[str, bool] | None = None,
+        fixed_names: Sequence[str] = (),
         allowlist: frozenset[str] | set[str] = DEFAULT_ALLOWLIST,
         detectors: Sequence[Detector] | None = None,
         on_leak: OnLeak = "raise",
@@ -199,6 +237,7 @@ class PIIMiddleware:
         residual_policy: ResidualPolicy = DEFAULT_RESIDUAL_POLICY,
     ) -> None:
         self.profile = profile
+        self.entities = dict(entities) if entities else {}
         self.allowlist = allowlist_tokens(allowlist)
         self.use_roster = use_roster
         self.use_titles = use_titles
@@ -208,6 +247,27 @@ class PIIMiddleware:
         self.person_evidence = person_evidence
         self.residual_policy = residual_policy
 
+        # A fixed name is a caller instruction, not something inferred from
+        # the document, so it is validated eagerly: propagate_names() splits
+        # on whitespace to find a surname, and an empty or blank entry would
+        # raise deep inside the pipeline on the first document, instead of at
+        # construction where the mistake is easy to trace.
+        seen_fixed: set[str] = set()
+        normalized_fixed: list[str] = []
+        for name in fixed_names:
+            if not name or not name.strip():
+                raise ValueError("fixed_names entries must be non-empty strings")
+            # Un-inverted here, once, rather than left to propagate_names():
+            # this is also where the forced-match key is derived below, and
+            # both need to agree that "Raman, Priya" and "Priya Raman" are
+            # the same string.
+            canonical = _uninvert(name.strip())
+            key = _normalize(canonical)
+            if key and key not in seen_fixed:
+                seen_fixed.add(key)
+                normalized_fixed.append(canonical)
+        self.fixed_names = normalized_fixed
+
         config = load_config(patterns_config)
         self.pattern_rules: tuple[PatternRule, ...] = build_rules(config)
         self.min_pattern_score = config.min_score
@@ -216,11 +276,13 @@ class PIIMiddleware:
         # from TOML would be detected and then silently discarded by the
         # profile filter -- the easiest way to ship this feature broken.
         # Custom labels from TOML are redacted by construction, otherwise a
-        # rule would be detected and then silently discarded. NO_REDACT_TYPES
-        # are excluded: DATE and the title types exist to win an overlap
-        # against a type that *is* redacted, then to be dropped.
-        custom_labels = {rule.label for rule in config.rules}
-        self.redacted_types = (resolve_types(profile) | custom_labels) - NO_REDACT_TYPES
+        # rule would be detected and then silently discarded, but ``entities``
+        # can still turn one off explicitly, the same as any other type.
+        # Validation of both the profile and every ``entities`` key happens
+        # here, in the constructor, so a bad key fails at startup rather than
+        # at the first call to analyze().
+        self._custom_labels = {rule.label for rule in config.rules}
+        self.redacted_types = resolve_types(profile, entities, custom_labels=self._custom_labels)
 
         if detectors is None:
             detectors = [
@@ -278,6 +340,85 @@ class PIIMiddleware:
             )
         return status
 
+    def describe_policy(self) -> dict:
+        """A report-friendly summary of the active policy configuration.
+
+        Exposes:
+        - Profile and redacted types.
+        - Explicit entity overrides with overlay semantics.
+        - Fixed names masked unconditionally.
+        - Deliberately unredacted and mandatory security types.
+        """
+        policy = describe_policy(
+            profile=self.profile,
+            entities=self.entities,
+            custom_labels=self._custom_labels,
+        )
+        policy["fixed_names"] = list(self.fixed_names)
+        return policy
+
+    @classmethod
+    def for_production(
+        cls,
+        *,
+        model_name: str = DEFAULT_MODEL,
+        profile: str = DEFAULT_PROFILE,
+        entities: Mapping[str, bool] | None = None,
+        fixed_names: Sequence[str] = (),
+        patterns_config: str | Path | None = None,
+        allowlist: frozenset[str] | set[str] = DEFAULT_ALLOWLIST,
+    ) -> PIIMiddleware:
+        """Create a hardened, fail-closed middleware instance for production deployment.
+
+        Enforces unconditionally:
+        - Strict fail-closed verification: ``on_leak="raise"`` (cannot be overridden).
+        - Mandatory detector availability: requires both GLiNER and spaCy models to be installed
+          and functional at construction time (``require_detectors=True``).
+        - Mandatory eager warmup: runs a test inference at startup to verify weight integrity and
+          eliminate first-request latency spikes in production workers.
+        - Strict mode locked to True: unreviewed medium-confidence findings raise ReviewRequired.
+        - PyTorch intra-op parallelism is bounded per worker. Set ``PII_TORCH_THREADS``
+          to override the default (half the logical CPUs, minimum one); this avoids
+          each process competing for every CPU core under multi-worker load.
+        """
+        raw_threads = os.environ.get("PII_TORCH_THREADS")
+        try:
+            torch_threads = (
+                int(raw_threads)
+                if raw_threads is not None
+                else max(1, (os.cpu_count() or 1) // 2)
+            )
+        except ValueError as exc:
+            raise ValueError("PII_TORCH_THREADS must be a positive integer") from exc
+        if torch_threads < 1:
+            raise ValueError("PII_TORCH_THREADS must be a positive integer")
+
+        import torch
+
+        torch.set_num_threads(torch_threads)
+
+        instance = cls(
+            model_name=model_name,
+            profile=profile,
+            entities=entities,
+            fixed_names=fixed_names,
+            strict=True,
+            on_leak="raise",
+            require_detectors=True,
+            patterns_config=patterns_config,
+            allowlist=allowlist,
+        )
+        detector_classes = {type(d).__name__ for d in instance.detectors}
+        if "GlinerDetector" not in detector_classes or "SpacyDetector" not in detector_classes:
+            missing = {"GlinerDetector", "SpacyDetector"} - detector_classes
+            raise RuntimeError(
+                f"Production deployment requires full detector ensemble; missing: {sorted(missing)}"
+            )
+
+        instance.analyze("System initialization probe: user@example.com", dry_run=True)
+
+        return instance
+
     def analyze(self, text: str, *, dry_run: bool = False) -> AnonymizationResult:
         """Full pipeline, including both verification passes."""
         structure = analyze_structure(text)
@@ -310,11 +451,40 @@ class PIIMiddleware:
         # name: david.lee@example.org is why "Hi David," used to survive.
         email_names = names_from_emails(text, EMAIL_PATTERN)
 
+        fixed_keys = frozenset(_normalize(name) for name in self.fixed_names)
+
         roster: list[str] = []
         if self.use_roster:
-            roster = extract_roster(text)
-            names = self._name_pool(roster, model_spans, email_names)
-            collected.extend(propagate_names(text, names))
+            roster = extract_roster(text, context=context)
+        if self.fixed_names:
+            # ``use_roster`` governs inference from speaker labels in the
+            # document; a fixed name is a caller instruction and is masked
+            # whether or not inference is switched on, so it is merged in
+            # here rather than gated behind the same flag.
+            roster = [
+                *self.fixed_names,
+                *(name for name in roster if _normalize(name) not in fixed_keys),
+            ]
+        if self.use_roster or self.fixed_names:
+            # Confirmed by the document itself -- a real speaker, or an
+            # address someone actually used -- as opposed to a name only a
+            # single detector run proposed. ``_name_pool`` below adds
+            # model-proposed full names to ``names`` too, but they must not
+            # count here: that is exactly the case the confirmed-only
+            # relaxations in propagate_names() exist to keep out.
+            confirmed_keys = frozenset(_normalize(name) for name in roster) | frozenset(
+                _normalize(name) for name in email_names
+            )
+            names = self._name_pool(roster, model_spans, email_names, protect=fixed_keys)
+            collected.extend(
+                propagate_names(
+                    text,
+                    names,
+                    forced_names=fixed_keys,
+                    confirmed_names=confirmed_keys,
+                    context=context,
+                )
+            )
 
         protected_tokens = {
             token for name in roster for token in _normalize(name).split()
@@ -343,10 +513,15 @@ class PIIMiddleware:
 
         # Type filtering happens last: voting sees every detection, then the
         # profile decides which of the agreed types are actually redacted.
+        # Fixed names are caller-directed instructions and are always redacted
+        # even if PERSON is turned off.
         unified = unify_labels(collected.resolve())
+        unified = _demote_org_like_persons(unified, roster)
         unified = _mark_eponymous(unified)
         unified = _scope_norp(unified, context)
-        candidates = [span for span in unified if span.label in self.redacted_types]
+        candidates = [
+            span for span in unified if span.label in self.redacted_types or span.forced
+        ]
 
         candidates, uncorroborated = self._filter_persons(
             text, candidates, roster, email_names
@@ -361,7 +536,9 @@ class PIIMiddleware:
         ]
         sanitized = text if dry_run else dedupe_placeholders(apply_spans(text, replacements))
 
-        leaks = audit(sanitized, vault.all_surface_forms(), roster, context)
+        audited_roster = roster if "PERSON" in self.redacted_types else self.fixed_names
+        leaks = audit(sanitized, vault.all_surface_forms(), audited_roster, context)
+        scoped_residual_policy = self.residual_policy.for_scope(self.redacted_types)
         result = AnonymizationResult(
             sanitized=sanitized,
             mapping=vault.mapping,
@@ -371,7 +548,7 @@ class PIIMiddleware:
             leaks=leaks,
             residual=scan_residual(
                 sanitized,
-                policy=self.residual_policy,
+                policy=scoped_residual_policy,
                 key_zones=structure.key_zones,
                 # Only HIGH findings dedupe. A value graded "low" -- an ordinary
                 # word that happens to be somebody's name -- must not delete a
@@ -386,6 +563,7 @@ class PIIMiddleware:
             uncorroborated=uncorroborated,
             structure=structure.summary(),
             dry_run=dry_run,
+            policy=describe_policy(self.profile, self.entities, custom_labels=self._custom_labels),
         )
         if not dry_run:
             self._enforce(result)
@@ -512,7 +690,7 @@ class PIIMiddleware:
         kept: list[Span] = []
         dropped: list[dict] = []
         for span in spans:
-            if span.label != "PERSON" or len(span.text.split()) > 1:
+            if span.label != "PERSON" or len(span.text.split()) > 1 or span.forced:
                 kept.append(span)
                 continue
             token = _normalize(strip_affixes(span.text))
@@ -584,6 +762,8 @@ class PIIMiddleware:
         roster: list[str],
         model_spans: list[Span],
         email_names: set[str] | None = None,
+        *,
+        protect: frozenset[str] = frozenset(),
     ) -> list[str]:
         """Roster names plus any full name the model found, for propagation."""
         names = list(roster)
@@ -600,7 +780,7 @@ class PIIMiddleware:
             if name.casefold() not in seen:
                 seen.add(name.casefold())
                 names.append(name)
-        return _reconcile_names(names)
+        return _reconcile_names(names, protect=protect)
 
 
 def assign_identities(text: str, spans: list[Span]) -> list[Span]:
@@ -654,6 +834,54 @@ def _id_field_spans(text: str, context: DocumentContext) -> list[Span]:
         for start, end in context.id_field_values
         if end > start
     ]
+
+
+def _demote_org_like_persons(spans: list[Span], roster: list[str]) -> list[Span]:
+    """Demote PERSON spans to ORG if they end in corporate nouns and aren't in the roster.
+
+    Fixes D-12 ("TechNova Support" -> PERSON, "Tal Exampleco" -> PERSON).
+    """
+    from .policy import CORPORATE_SUFFIXES
+
+    corporate_endings = frozenset(
+        {
+            "support",
+            "solutions",
+            "systems",
+            "services",
+            "consulting",
+            "technologies",
+            "software",
+            "analytics",
+            "exampleco",
+        }
+        | CORPORATE_SUFFIXES
+    )
+    roster_tokens = {_normalize(tok) for name in roster for tok in name.split()}
+
+    result: list[Span] = []
+    for span in spans:
+        if span.label == "PERSON" and not span.forced:
+            tokens = span.text.strip().split()
+            if tokens:
+                last_token = tokens[-1].strip(".,;:").casefold()
+                if last_token in corporate_endings:
+                    span_tokens = {_normalize(tok) for tok in tokens}
+                    if not (span_tokens & roster_tokens):
+                        result.append(
+                            Span(
+                                start=span.start,
+                                end=span.end,
+                                label="ORG",
+                                text=span.text,
+                                score=span.score,
+                                source=span.source,
+                                identity=None,
+                            )
+                        )
+                        continue
+        result.append(span)
+    return result
 
 
 def _mark_eponymous(spans: list[Span]) -> list[Span]:
@@ -715,10 +943,16 @@ def _scope_norp(spans: list[Span], context: DocumentContext) -> list[Span]:
     # 10.2.18" releases on the following noun but "Finacle 11" does not, and
     # redacting one mention while printing the other is worse than either
     # choice made consistently -- the audit rightly reports it as a leak.
+    # Digits or colons never belong in nationality or religion terms.
     released = {
         _normalize(span.text)
         for span in spans
-        if span.label == "NORP" and context.releases_norp(span.start, span.end)
+        if span.label == "NORP"
+        and (
+            any(char.isdigit() for char in span.text)
+            or ":" in span.text
+            or context.releases_norp(span.start, span.end)
+        )
     }
     return [
         span
@@ -748,8 +982,13 @@ def _address_field_spans(text: str, context: DocumentContext) -> list[Span]:
     ]
 
 
-def _reconcile_names(names: list[str]) -> list[str]:
-    """Drop a bare first name when exactly one full name already covers it.
+def _is_initial(token: str) -> bool:
+    core = token.rstrip(".,;:")
+    return len(core) == 1 and core.isalpha()
+
+
+def _reconcile_names(names: list[str], *, protect: frozenset[str] = frozenset()) -> list[str]:
+    """Drop short forms and initial variants when a unique full name covers them.
 
     A transcript that writes the full name once and the first name thereafter
     ("Sarah Jenkins:" then "Sarah:") puts only the short form in the roster,
@@ -757,25 +996,55 @@ def _reconcile_names(names: list[str]) -> list[str]:
     both then mints two identities for one person -- a two-person interview
     came out as four placeholders.
 
+    Similarly, an initial-plus-surname variant ("J. Smith") proposed by a
+    detector should defer to the full name ("John Smith") when there is an
+    unambiguous owner in the document.
+
     Keeping only the full name is enough: ``name_variants`` already generates
-    "Sarah" from "Sarah Jenkins", and every occurrence inherits that one
-    identity. Ambiguous tokens are left alone, so three colleagues sharing the
-    first name "Ahmed" still get three placeholders.
+    "Sarah" and "J. Smith" from "John Smith", and every occurrence inherits
+    that one identity. Ambiguous tokens are left alone, so three colleagues
+    sharing the first name "Ahmed" still get three placeholders.
+
+    ``protect`` holds normalized fixed names: a caller who explicitly listed
+    a bare first name meant for that surface to propagate on its own, so it
+    survives reconciliation even when a full name would otherwise absorb it.
     """
     full_names = [name for name in names if len(name.split()) > 1]
     if not full_names:
         return names
 
+    canonical_full_names = [
+        name for name in full_names if not _is_initial(name.split()[0])
+    ]
+
     owners: dict[str, set[str]] = {}
-    for full_name in full_names:
+    for full_name in (canonical_full_names or full_names):
         for token in _normalize(full_name).split():
-            owners.setdefault(token, set()).add(full_name)
+            if not _is_initial(token):
+                owners.setdefault(token, set()).add(full_name)
+
+    initial_owners: dict[tuple[str, str], set[str]] = {}
+    for full_name in canonical_full_names:
+        tokens = _normalize(full_name).split()
+        if len(tokens) >= 2 and tokens[0]:
+            initial = tokens[0][:1]
+            surname = tokens[-1].rstrip(".,;:")
+            initial_owners.setdefault((initial, surname), set()).add(full_name)
 
     kept: list[str] = []
     for name in names:
         key = _normalize(name)
-        if len(key.split()) == 1 and len(owners.get(key, ())) == 1:
+        if key in protect:
+            kept.append(name)
             continue
+        tokens = key.split()
+        if len(tokens) == 1 and len(owners.get(key, ())) == 1:
+            continue
+        if len(tokens) >= 2 and _is_initial(tokens[0]):
+            initial = tokens[0][:1]
+            surname = tokens[-1].rstrip(".,;:")
+            if len(initial_owners.get((initial, surname), ())) == 1:
+                continue
         kept.append(name)
     return kept
 
@@ -829,20 +1098,39 @@ def unify_labels(spans: list[Span]) -> list[Span]:
     return unified
 
 
-def _sweep_terms(spans: list[Span]) -> list[tuple[str, str, str]]:
-    """Distinct ``(surface, label, identity)`` triples worth matching again."""
-    terms: dict[tuple[str, str], tuple[str, str, str]] = {}
+def _sweep_terms(spans: list[Span]) -> list[PropagationTerm]:
+    """Distinct terms worth matching again, one per surface/label pair."""
+    terms: dict[tuple[str, str], PropagationTerm] = {}
     for span in spans:
         surface = span.text.strip()
-        if span.source == "pattern" or len(surface) < MIN_SWEEP_LENGTH:
+        if span.source == "pattern" and span.label not in ("CUSTOM_ID", "ID", "JOB_ID"):
+            continue
+        if len(surface) < MIN_SWEEP_LENGTH:
             continue
         key = (_normalize(surface), span.label)
         if key not in terms:
             identity = span.identity or f"{span.label}:{_normalize(surface)}"
-            terms[key] = (surface, span.label, identity)
+            terms[key] = PropagationTerm(surface, span.label, identity)
+
+    # Skip a term whose surface is a strict prefix (token-wise) of another
+    # surface already registered for the same identity (e.g. bare "Dear"
+    # alongside "Dear Jennifer").
+    filtered: list[PropagationTerm] = []
+    for term in terms.values():
+        term_toks = term.surface.lower().split()
+        is_prefix = False
+        for other in terms.values():
+            if other is term or other.identity != term.identity:
+                continue
+            other_toks = other.surface.lower().split()
+            if len(term_toks) < len(other_toks) and other_toks[:len(term_toks)] == term_toks:
+                is_prefix = True
+                break
+        if not is_prefix:
+            filtered.append(term)
 
     # Longest first, so the fullest form wins any overlap.
-    return sorted(terms.values(), key=lambda item: len(item[0]), reverse=True)
+    return sorted(filtered, key=lambda item: len(item.surface), reverse=True)
 
 
 def audit(

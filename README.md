@@ -51,13 +51,22 @@ Results carry a three-state `status`, not a boolean:
 | `failed` | PII survived; **do not transmit** | 3 |
 
 ```python
-result = middleware.analyze(text)     # raises LeakDetected by default
-response = llm.invoke(result.sanitized)
+from pii import PIIMiddleware
+
+# Hardened fail-closed production instance with eager warmup
+middleware = PIIMiddleware.for_production()
+
+result = middleware.analyze(text)
+# safe_sanitized raises LeakDetected if status == "failed", preventing transmission
+response = llm.invoke(result.safe_sanitized)
 final = middleware.restore_for(response.content, result)
 ```
 
 Enforcement lives in `analyze()`, not in callers — `on_leak` chooses the mode
-(`raise` / `warn` / `ignore`) but every caller is covered by default.
+(`raise` / `warn` / `ignore`) but every caller is covered by default. In production,
+`PIIMiddleware.for_production()` locks `on_leak="raise"`, `strict=True`, requires
+both GLiNER and spaCy models to be loaded, and executes an initial probe to eliminate
+first-request inference spikes.
 
 ## Evidence, not enumeration
 
@@ -186,6 +195,70 @@ this is what stops `PCI-DSS` being mangled into `{{ORG_5}}-DSS`. Allowlisting
 the word `SWIFT` does not suppress an actual BIC code, because pattern spans
 are exempt from the allowlist. Allowlisting `mac` never suppresses an actual MAC address, because
 pattern spans are exempt from the allowlist.
+
+`DURATION`, `TIME` and `AMOUNT` are detected (the pattern rules are unchanged)
+but redacted under **no** profile by default. "The call lasted 48 minutes" and
+"met at 9:32 AM" are not personal identifiers, and masking them under every
+profile was itself a defect -- see [Limitations](#limitations). Pass
+`entities={"duration": True}` (or `"time"`, `"amount"`) to restore the old
+behaviour for a workload where they matter.
+
+### Per-entity overrides
+
+```python
+PIIMiddleware(profile="balanced", entities={"url": False, "duration": True})
+```
+
+`entities` is a layer on top of the profile, not a replacement for it: a type
+left unmentioned keeps whatever the profile already says. Keys are matched
+case-insensitively against every type this package knows about (plus any
+custom pattern label), and an unrecognised key raises `ValueError` naming the
+closest match -- a typo here must fail at construction, not leak silently.
+`PLACEHOLDER_LITERAL`, `NORP` and `EPONYMOUS_ORG` cannot be turned off this
+way: they are the mandatory security handling described above, not a profile
+choice, and disabling `PLACEHOLDER_LITERAL` in particular would defeat the
+injection defence in `vault.py`.
+
+The verification gate (`scan_residual()`) automatically synchronizes with
+`entities`: disabling an entity (such as `entities={"email": False}`)
+disables the corresponding residual rule, so deliberate overrides never cause
+false leak failures under `on_leak="raise"`. Mandatory secret checks (JWTs,
+bearer tokens, API key assignments, high-entropy tokens) are preserved
+unconditionally and can never be disabled.
+
+### Fixed names
+
+```python
+PIIMiddleware(fixed_names=["Priya Raman", "Devesh Raman"])
+```
+
+Fixed names are **unconditional caller instructions**: a name on this list is
+masked wherever it appears -- even if `PERSON` is disabled in `profile="minimal"`
+or via `entities={"person": False}`. The caller has already asserted that this
+surface is a person, bypassing inference entirely. Every variant `name_variants()`
+produces (first name, surname, initials, the inverted "Surname, First" form) is
+masked case-insensitively, and audited at the verification gate. It applies
+whether or not `use_roster` is enabled, and composes with the roster rather than
+replacing it. Aliasing ("Bob" for "Robert Smith") is not supported; pass both
+forms explicitly if you need it.
+
+### Production deployment contract
+
+```python
+middleware = PIIMiddleware.for_production(strict=True)
+```
+
+For production workloads, `PIIMiddleware.for_production()` enforces a strict,
+fail-closed deployment contract:
+- **`on_leak="raise"` is mandatory**: output cannot be silently forwarded if
+  verification fails.
+- **Full detector ensemble required**: both GLiNER and spaCy models must be
+  installed and functional at startup; partial/degraded detector availability
+  raises an immediate error.
+- **Eager warmup**: models execute an initialization probe during construction to
+  verify checkpoint integrity and eliminate first-request latency spikes in worker processes.
+- **Full provenance**: detector availability, model IDs, package versions, and
+  entity policies are recorded in the audit trail.
 
 ## Security properties
 
@@ -346,9 +419,14 @@ fails if any pool value appears anywhere in `pii/`, and another regenerates the
 corpus at the committed seed and asserts byte-equality, so a failing document
 cannot be hand-edited into passing.
 
-It currently **fails seven checks** that the tuned corpus reports as clean, and
-they are reported rather than fixed -- editing against the holdout would
-destroy the measurement. See `docs/review-response.md` for the list.
+It currently **fails only one check out of 36 (35 passed, 97.2%)** that the tuned
+corpus reports as clean -- down from seven initially, and four in earlier
+revisions. The single surviving failure is `test_no_leaks[holdout_06_noisy_asr]`,
+where an entirely uncapitalized, unpunctuated ASR turn contains the name
+without any capitalization anchor or speaker roster to corroborate it, plus a
+phonetic split ("ayo delay" for "Ayodele"). This is reported and retained as an
+explicit limitation rather than tuned against. See `docs/review-response.md` §9
+for details.
 
 ## Limitations
 
@@ -360,8 +438,8 @@ Stated plainly, because these matter more than the numbers above.
   representative. Nothing here establishes real-world precision or recall.
 - **"Clean" means "these checks found no issue"**, not "contains no PII".
   `audit()` cannot find a MAC address no detector saw; `scan_residual()` cannot
-  find the name "Sarah" surviving in prose. Six of the seven holdout failures
-  occurred on documents reported as clean.
+  find the name "Sarah" surviving in prose. Most of the holdout failures ever
+  recorded occurred on documents the pipeline reported as clean.
 - **Precision is published as a lower bound** while any document lacks
   exhaustive gold.
 - **Not thread-safe.** See *Concurrency* below.
@@ -369,20 +447,32 @@ Stated plainly, because these matter more than the numbers above.
   back by design; the calling application controls who sees them.
 
 Before trusting this on a real workload: assemble a domain-representative
-labelled sample, have a human review redaction behaviour on it, and measure
-latency and concurrency on your own hardware.
+labelled sample (`tools/import_corpus.py` stages the documents;
+`docs/labelling-protocol.md` is the checklist for labelling them), have a
+human review redaction behaviour on it, and measure latency, throughput and
+memory on your own hardware (`tools/benchmark.py`).
 
 ## Concurrency
 
 `PIIMiddleware` is **one instance per worker**. `analyze()` is neither
 re-entrant nor thread-safe: a spaCy `Language` pipeline is not safe for
-concurrent `nlp()` calls, and the lazy model initialisers in `detector.py` and
-`spacy_detector.py` are unsynchronised, so two threads can both enter
-`from_pretrained` and load the weights twice.
+concurrent `nlp()` calls. The lazy model initialisers in `detector.py` and
+`spacy_detector.py` are behind a double-checked lock, so two threads racing
+the first call load the weights once, not twice -- that guards only the
+*load*, though, not `analyze()` itself, which still needs one instance per
+worker.
 
 No lock is placed around `analyze()` deliberately: it would serialise every
 call while *looking* concurrent, which hides the contract instead of stating
 it. Use process-level workers, or a `threading.local()` middleware factory.
+
+When deploying multi-worker processes on CPU, note that PyTorch defaults to using all
+logical CPU cores per worker process for GEMM operations (`torch.get_num_threads()`).
+Running multiple concurrent worker processes without limiting intra-op parallelism
+causes CPU thread contention and cache thrashing. Set `torch.set_num_threads(max(1, os.cpu_count() // num_workers))`
+or `OMP_NUM_THREADS=1` per worker to ensure linear multi-process throughput. Empirical
+cold start, latency by document size bucket, and worker memory metrics are tracked in
+[`reports/benchmark.md`](reports/benchmark.md).
 
 ## Data at rest
 

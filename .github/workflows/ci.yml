@@ -85,6 +85,17 @@ jobs:
       - name: Score the corpus
         run: uv run python tools/evaluate.py --show-fp 0 --report
 
+      - name: Benchmark (cold start, latency, throughput, memory)
+        # Kept small deliberately: a shared runner is not the hardware these
+        # numbers are for, and this job already downloads a gigabyte of
+        # weights. Run tools/benchmark.py with realistic sample sizes on the
+        # actual deployment hardware before trusting these for capacity
+        # planning.
+        run: >-
+          uv run python tools/benchmark.py
+          --cold-start-samples 1 --limit 5 --repeats 1
+          --workers 1,2 --rounds 1 --report
+
       - name: Score the held-out corpus
         # Reported, never gating: a holdout failure is information about
         # generalisation, and making it red invites someone to fix it by
@@ -110,4 +121,13 @@ jobs:
           path: |
             reports/evaluation_report.md
             reports/evaluation.json
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark
+          path: |
+            reports/benchmark.md
+            reports/benchmark.json
           retention-days: 30

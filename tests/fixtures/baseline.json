@@ -4,48 +4,46 @@
   "detectors": [
     {
       "name": "GlinerDetector",
-      "available": true
+      "available": true,
+      "model_id": "urchade/gliner_multi_pii-v1",
+      "package": "gliner",
+      "package_version": "0.2.24"
     },
     {
       "name": "SpacyDetector",
-      "available": true
+      "available": true,
+      "model_id": "en_core_web_lg",
+      "package": "spacy",
+      "package_version": "3.8.16"
     }
   ],
-  "init_seconds": 8.37,
+  "init_seconds": 7.244,
   "corpus": {
-    "documents": 31,
-    "gold_spans": 521,
-    "gold_complete": 0
+    "documents": 34,
+    "gold_spans": 540,
+    "gold_complete": 3
   },
   "micro": {
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0,
-    "tp": 521,
+    "tp": 540,
     "fp": 0,
     "fn": 0,
-    "unverified": 240
+    "unverified": 191
   },
   "macro": {
     "recall": 1.0,
-    "precision": 0.9862,
+    "precision": 1.0,
     "f1": 1.0
   },
-  "boundary_exact_rate": 0.858,
+  "boundary_exact_rate": 0.863,
   "by_label": {
     "ADDRESS": {
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
       "tp": 16,
-      "fp": 0,
-      "fn": 0
-    },
-    "AMOUNT": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "tp": 0,
       "fp": 0,
       "fn": 0
     },
@@ -105,14 +103,6 @@
       "fp": 0,
       "fn": 0
     },
-    "DURATION": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "tp": 0,
-      "fp": 0,
-      "fn": 0
-    },
     "EMAIL": {
       "precision": 1.0,
       "recall": 1.0,
@@ -157,7 +147,7 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 8,
+      "tp": 10,
       "fp": 0,
       "fn": 0
     },
@@ -165,7 +155,7 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 6,
+      "tp": 7,
       "fp": 0,
       "fn": 0
     },
@@ -197,7 +187,7 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 374,
+      "tp": 390,
       "fp": 0,
       "fn": 0
     },
@@ -233,14 +223,6 @@
       "fp": 0,
       "fn": 0
     },
-    "TIME": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "tp": 0,
-      "fp": 0,
-      "fn": 0
-    },
     "URL": {
       "precision": 1.0,
       "recall": 1.0,
@@ -252,6 +234,51 @@
   },
   "total_leaks": 0,
   "per_document": {
+    "dev_13_honorific_and_inverted_names": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 12,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 5,
+      "gold_complete": true,
+      "measured": true,
+      "status": "clean"
+    },
+    "dev_14_lowercase_asr_turns": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 1,
+      "gold_complete": true,
+      "measured": true,
+      "status": "clean"
+    },
+    "dev_15_network_config_no_pii": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "span_precision": 1.0,
+      "span_recall": 1.0,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "unverified": 0,
+      "entities": 3,
+      "gold_complete": true,
+      "measured": true,
+      "status": "clean"
+    },
     "prod_01_telehealth_clinical_soap": {
       "recall": 1.0,
       "precision": 1.0,
@@ -261,8 +288,8 @@
       "tp": 13,
       "fp": 0,
       "fn": 0,
-      "unverified": 3,
-      "entities": 9,
+      "unverified": 1,
+      "entities": 7,
       "gold_complete": false,
       "measured": true,
       "status": "review"
@@ -276,7 +303,7 @@
       "tp": 28,
       "fp": 0,
       "fn": 0,
-      "unverified": 3,
+      "unverified": 2,
       "entities": 15,
       "gold_complete": false,
       "measured": true,
@@ -307,7 +334,7 @@
       "fp": 0,
       "fn": 0,
       "unverified": 4,
-      "entities": 14,
+      "entities": 15,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -336,8 +363,8 @@
       "tp": 14,
       "fp": 0,
       "fn": 0,
-      "unverified": 4,
-      "entities": 11,
+      "unverified": 1,
+      "entities": 9,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -396,8 +423,8 @@
       "tp": 10,
       "fp": 0,
       "fn": 0,
-      "unverified": 2,
-      "entities": 7,
+      "unverified": 1,
+      "entities": 6,
       "gold_complete": false,
       "measured": true,
       "status": "failed"
@@ -412,7 +439,7 @@
       "fp": 0,
       "fn": 0,
       "unverified": 1,
-      "entities": 6,
+      "entities": 7,
       "gold_complete": false,
       "measured": true,
       "status": "review"
@@ -539,15 +566,15 @@
     },
     "scenario_08_noisy_asr": {
       "recall": 1.0,
-      "precision": 0.7143,
+      "precision": 1.0,
       "f1": 1.0,
       "span_precision": 1.0,
       "span_recall": 1.0,
       "tp": 5,
       "fp": 0,
       "fn": 0,
-      "unverified": 3,
-      "entities": 7,
+      "unverified": 0,
+      "entities": 5,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -569,15 +596,15 @@
     },
     "scenario_10_no_pii_control": {
       "recall": 1.0,
-      "precision": 0.8571,
+      "precision": 1.0,
       "f1": 1.0,
       "span_precision": 1.0,
       "span_recall": 1.0,
       "tp": 0,
       "fp": 0,
       "fn": 0,
-      "unverified": 1,
-      "entities": 1,
+      "unverified": 0,
+      "entities": 0,
       "gold_complete": false,
       "measured": false,
       "status": "clean"
@@ -591,8 +618,8 @@
       "tp": 26,
       "fp": 0,
       "fn": 0,
-      "unverified": 13,
-      "entities": 16,
+      "unverified": 11,
+      "entities": 14,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -606,8 +633,8 @@
       "tp": 42,
       "fp": 0,
       "fn": 0,
-      "unverified": 24,
-      "entities": 22,
+      "unverified": 20,
+      "entities": 18,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -621,8 +648,8 @@
       "tp": 45,
       "fp": 0,
       "fn": 0,
-      "unverified": 32,
-      "entities": 30,
+      "unverified": 27,
+      "entities": 26,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -636,8 +663,8 @@
       "tp": 39,
       "fp": 0,
       "fn": 0,
-      "unverified": 25,
-      "entities": 29,
+      "unverified": 18,
+      "entities": 22,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -651,8 +678,8 @@
       "tp": 34,
       "fp": 0,
       "fn": 0,
-      "unverified": 7,
-      "entities": 24,
+      "unverified": 5,
+      "entities": 22,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -666,8 +693,8 @@
       "tp": 37,
       "fp": 0,
       "fn": 0,
-      "unverified": 6,
-      "entities": 25,
+      "unverified": 5,
+      "entities": 24,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -681,8 +708,8 @@
       "tp": 29,
       "fp": 0,
       "fn": 0,
-      "unverified": 3,
-      "entities": 5,
+      "unverified": 0,
+      "entities": 2,
       "gold_complete": false,
       "measured": true,
       "status": "clean"
@@ -696,8 +723,8 @@
       "tp": 11,
       "fp": 0,
       "fn": 0,
-      "unverified": 33,
-      "entities": 20,
+      "unverified": 28,
+      "entities": 15,
       "gold_complete": false,
       "measured": true,
       "status": "failed"
@@ -711,8 +738,8 @@
       "tp": 24,
       "fp": 0,
       "fn": 0,
-      "unverified": 66,
-      "entities": 34,
+      "unverified": 57,
+      "entities": 25,
       "gold_complete": false,
       "measured": true,
       "status": "clean"

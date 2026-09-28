@@ -1,0 +1,185 @@
+{
+  "must_redact": [
+    "Imogen Thackeray",
+    "I. Thackeray",
+    "Thackeray, Imogen",
+    "Priya Raman",
+    "Devesh Raman",
+    "Ms. Raman",
+    "Mr. Raman"
+  ],
+  "must_keep": [
+    "Deposition transcript excerpt",
+    "the undersigned reporter",
+    "Exhibit 4",
+    "Q.",
+    "A.",
+    "the lead engineer",
+    "the roadmap",
+    "the budget section",
+    "the delivery timeline"
+  ],
+  "same_entity": [
+    [
+      "Imogen Thackeray",
+      "I. Thackeray",
+      "Thackeray, Imogen"
+    ]
+  ],
+  "schema": 2,
+  "gold_complete": true,
+  "gold_spans": [
+    {
+      "start": 71,
+      "end": 87,
+      "label": "PERSON",
+      "text": "Imogen Thackeray",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 100,
+      "end": 116,
+      "label": "PERSON",
+      "text": "Imogen Thackeray",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 162,
+      "end": 178,
+      "label": "PERSON",
+      "text": "Imogen Thackeray",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 351,
+      "end": 363,
+      "label": "PERSON",
+      "text": "I. Thackeray",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 451,
+      "end": 468,
+      "label": "PERSON",
+      "text": "Thackeray, Imogen",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 481,
+      "end": 492,
+      "label": "PERSON",
+      "text": "Priya Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 567,
+      "end": 578,
+      "label": "PERSON",
+      "text": "Priya Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 652,
+      "end": 664,
+      "label": "PERSON",
+      "text": "Devesh Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 736,
+      "end": 748,
+      "label": "PERSON",
+      "text": "Devesh Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 824,
+      "end": 833,
+      "label": "PERSON",
+      "text": "Ms. Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 876,
+      "end": 885,
+      "label": "PERSON",
+      "text": "Mr. Raman",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 912,
+      "end": 921,
+      "label": "PERSON",
+      "text": "Ms. Raman",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 0,
+      "end": 29,
+      "text": "Deposition transcript excerpt",
+      "reason": "must_keep"
+    },
+    {
+      "start": 44,
+      "end": 68,
+      "text": "the undersigned reporter",
+      "reason": "must_keep"
+    },
+    {
+      "start": 308,
+      "end": 317,
+      "text": "Exhibit 4",
+      "reason": "must_keep"
+    },
+    {
+      "start": 246,
+      "end": 248,
+      "text": "Q.",
+      "reason": "must_keep"
+    },
+    {
+      "start": 334,
+      "end": 336,
+      "text": "A.",
+      "reason": "must_keep"
+    },
+    {
+      "start": 127,
+      "end": 144,
+      "text": "the lead engineer",
+      "reason": "must_keep"
+    },
+    {
+      "start": 535,
+      "end": 546,
+      "text": "the roadmap",
+      "reason": "must_keep"
+    },
+    {
+      "start": 772,
+      "end": 790,
+      "text": "the budget section",
+      "reason": "must_keep"
+    },
+    {
+      "start": 972,
+      "end": 993,
+      "text": "the delivery timeline",
+      "reason": "must_keep"
+    }
+  ]
+}

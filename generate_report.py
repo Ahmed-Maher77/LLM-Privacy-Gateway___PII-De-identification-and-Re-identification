@@ -7,6 +7,7 @@ import json
 import sys
 import time
 import warnings
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -44,6 +45,8 @@ def generate_report(
     model_name: str,
     *,
     profile: str = DEFAULT_PROFILE,
+    entities: Mapping[str, bool] | None = None,
+    fixed_names: Sequence[str] = (),
     skip_llm: bool = False,
     on_leak: str = "raise",
     strict: bool = False,
@@ -54,7 +57,13 @@ def generate_report(
     input_text = input_path.read_text(encoding="utf-8")
     # "warn" so the artefact still gets written for triage; the exit code and
     # the LLM gate below are what actually enforce the policy.
-    middleware = PIIMiddleware(profile=profile, on_leak="warn", strict=strict)
+    middleware = PIIMiddleware(
+        profile=profile,
+        entities=entities,
+        fixed_names=fixed_names,
+        on_leak="warn",
+        strict=strict,
+    )
 
     start_total = time.perf_counter()
     start_anonymize = time.perf_counter()
@@ -184,6 +193,20 @@ def generate_report(
     )
 
 
+def _entity_override(raw: str) -> tuple[str, bool]:
+    """Parse "KEY=true"/"KEY=false" for --entity.
+
+    Key validation is left to ``PIIMiddleware`` itself, so a typo raises the
+    same error and lists the same candidates whether it came from a CLI flag
+    or a Python caller.
+    """
+    key, sep, value = raw.partition("=")
+    normalized = value.strip().casefold()
+    if not sep or normalized not in {"true", "false"}:
+        raise argparse.ArgumentTypeError(f"expected KEY=true|false, got {raw!r}")
+    return key.strip(), normalized == "true"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate a PII workflow report.",
@@ -197,6 +220,25 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=None)
     parser.add_argument("--model", default="gpt-oss:120b-cloud")
     parser.add_argument("--profile", default=DEFAULT_PROFILE)
+    parser.add_argument(
+        "--entity",
+        action="append",
+        type=_entity_override,
+        default=[],
+        dest="entities",
+        metavar="KEY=true|false",
+        help="Override one entity type's redaction, independent of --profile "
+        "(repeatable), e.g. --entity duration=true --entity url=false.",
+    )
+    parser.add_argument(
+        "--fixed-name",
+        action="append",
+        default=[],
+        dest="fixed_names",
+        metavar="NAME",
+        help="Mask this name wherever it appears, independent of detection "
+        "(repeatable).",
+    )
     parser.add_argument("--sanitized-out", type=Path, default=None)
     parser.add_argument(
         "--skip-llm",
@@ -237,6 +279,8 @@ def main() -> int:
             report_path,
             args.model,
             profile=args.profile,
+            entities=dict(args.entities),
+            fixed_names=args.fixed_names,
             skip_llm=args.skip_llm,
             strict=args.strict,
             include_secrets=args.include_secrets,
@@ -246,6 +290,12 @@ def main() -> int:
     except PIIError as exc:
         print(str(exc), file=sys.stderr)
         return exc.exit_code
+    except ValueError as exc:
+        # An unrecognised --entity key, or a blank --fixed-name: a
+        # construction-time mistake in the caller's own input, not a
+        # detection-time PIIError, but still a usage error, not a crash.
+        print(str(exc), file=sys.stderr)
+        return EXIT_USAGE
 
     print(f"Report saved to {outcome.path}  [status={outcome.status}]")
     return outcome.exit_code

@@ -118,6 +118,20 @@ def build_markdown(scores: Sequence, summary: dict, *, include_secrets: bool) ->
             "",
         ]
 
+    policy = summary.get("policy")
+    if policy:
+        lines += [
+            "## Policy",
+            "",
+            f"- **Profile**: `{policy.get('profile')}`",
+            f"- **Redacted**: {', '.join(f'`{t}`' for t in policy.get('redacted', []))}",
+            f"- **Not redacted**: {', '.join(f'`{t}`' for t in policy.get('not_redacted', []))}",
+        ]
+        if policy.get("overrides"):
+            overrides = ", ".join(f"`{k}={v}`" for k, v in policy["overrides"].items())
+            lines.append(f"- **Overrides**: {overrides}")
+        lines.append("")
+
     lines += ["## Detectors", ""]
     for detector in summary.get("detectors", []):
         state = "available" if detector.get("available") else f"MISSING ({detector.get('reason')})"

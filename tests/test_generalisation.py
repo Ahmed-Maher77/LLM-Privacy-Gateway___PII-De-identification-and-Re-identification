@@ -56,6 +56,25 @@ class TestCorpus:
         }
         assert not regressions, regressions
 
+    def test_baseline_covers_every_fixture(self, scores):
+        """A fixture the baseline has never seen is silently exempt above.
+
+        `test_no_precision_regression` only checks documents present in
+        `baseline["per_document"]` -- it was reading the corpus this way
+        when the twelve `prod_*` fixtures were added and absent from the
+        baseline, and adding a fixture opted it out of the precision gate
+        instead of failing until `--baseline` was rerun. This closes that
+        hole from the other side: every fixture the corpus loader finds must
+        already be in the baseline, or this fails loudly and says which one
+        is missing, rather than quietly measuring nothing for it.
+        """
+        baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+        missing = sorted(s.name for s in scores if s.name not in baseline["per_document"])
+        assert not missing, (
+            f"{missing} not in baseline.json -- run `uv run python tools/evaluate.py "
+            "--baseline` after adding a fixture"
+        )
+
     def test_one_placeholder_per_entity(self, scores):
         """The Oncology cascade bound two real values to one placeholder."""
         split = {s.name: s.split_entities for s in scores if s.split_entities}

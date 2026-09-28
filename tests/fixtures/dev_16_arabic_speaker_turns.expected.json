@@ -1,0 +1,145 @@
+{
+  "must_redact": [
+    "طارق منصور",
+    "فاطمة حسن",
+    "يوسف كامل",
+    "طارق",
+    "فاطمة",
+    "يوسف"
+  ],
+  "must_keep": [
+    "مرحباً بالجميع",
+    "سنبدأ مراجعة الخطة اليوم",
+    "قمت بإعداد التقرير المالي الكامل",
+    "هل يمكن أن نراجع الأرقام مع",
+    "قبل الإرسال",
+    "هذا اقتراح ممتاز",
+    "حسناً سأشارك الشاشة معكم الآن"
+  ],
+  "same_entity": [
+    [
+      "طارق منصور",
+      "طارق"
+    ],
+    [
+      "فاطمة حسن",
+      "فاطمة"
+    ],
+    [
+      "يوسف كامل",
+      "يوسف"
+    ]
+  ],
+  "schema": 2,
+  "gold_complete": true,
+  "gold_spans": [
+    {
+      "start": 0,
+      "end": 10,
+      "label": "PERSON",
+      "text": "طارق منصور",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 54,
+      "end": 63,
+      "label": "PERSON",
+      "text": "فاطمة حسن",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 71,
+      "end": 75,
+      "label": "PERSON",
+      "text": "طارق",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 111,
+      "end": 120,
+      "label": "PERSON",
+      "text": "يوسف كامل",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 150,
+      "end": 155,
+      "label": "PERSON",
+      "text": "فاطمة",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 169,
+      "end": 179,
+      "label": "PERSON",
+      "text": "طارق منصور",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 188,
+      "end": 192,
+      "label": "PERSON",
+      "text": "يوسف",
+      "entity": "e3",
+      "origin": "derived"
+    },
+    {
+      "start": 212,
+      "end": 221,
+      "label": "PERSON",
+      "text": "فاطمة حسن",
+      "entity": "e2",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 12,
+      "end": 26,
+      "text": "مرحباً بالجميع",
+      "reason": "must_keep"
+    },
+    {
+      "start": 28,
+      "end": 52,
+      "text": "سنبدأ مراجعة الخطة اليوم",
+      "reason": "must_keep"
+    },
+    {
+      "start": 77,
+      "end": 109,
+      "text": "قمت بإعداد التقرير المالي الكامل",
+      "reason": "must_keep"
+    },
+    {
+      "start": 122,
+      "end": 149,
+      "text": "هل يمكن أن نراجع الأرقام مع",
+      "reason": "must_keep"
+    },
+    {
+      "start": 156,
+      "end": 167,
+      "text": "قبل الإرسال",
+      "reason": "must_keep"
+    },
+    {
+      "start": 194,
+      "end": 210,
+      "text": "هذا اقتراح ممتاز",
+      "reason": "must_keep"
+    },
+    {
+      "start": 223,
+      "end": 252,
+      "text": "حسناً سأشارك الشاشة معكم الآن",
+      "reason": "must_keep"
+    }
+  ]
+}

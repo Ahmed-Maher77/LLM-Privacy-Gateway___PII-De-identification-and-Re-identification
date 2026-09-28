@@ -1,0 +1,180 @@
+{
+  "must_redact": [
+    "Karim Samir",
+    "Layla Nabil",
+    "كريم سمير",
+    "ليلى نبيل",
+    "Ziad Fathy",
+    "ليلى",
+    "كريم"
+  ],
+  "must_keep": [
+    "صباح الخير يا شباب",
+    "سنبدأ الاجتماع الآن",
+    "أهلاً، شكراً للزميل",
+    "على المتابعة، وسأراجع مع",
+    "التفاصيل الفنية",
+    "هل تأكدت",
+    "من تحديث الواجهة الخلفية",
+    "نعم، راجع ذلك",
+    "معها أمس",
+    "شكراً يا شباب، سأبدأ في التنفيذ مباشرة"
+  ],
+  "same_entity": [
+    [
+      "Karim Samir"
+    ],
+    [
+      "كريم سمير",
+      "كريم"
+    ],
+    [
+      "Layla Nabil"
+    ],
+    [
+      "ليلى نبيل",
+      "ليلى"
+    ],
+    [
+      "Ziad Fathy"
+    ]
+  ],
+  "schema": 2,
+  "gold_complete": true,
+  "gold_spans": [
+    {
+      "start": 0,
+      "end": 11,
+      "label": "PII",
+      "text": "Karim Samir",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 54,
+      "end": 65,
+      "label": "PII",
+      "text": "Layla Nabil",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 87,
+      "end": 96,
+      "label": "PERSON",
+      "text": "كريم سمير",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 122,
+      "end": 131,
+      "label": "PERSON",
+      "text": "ليلى نبيل",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 149,
+      "end": 159,
+      "label": "PII",
+      "text": "Ziad Fathy",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 173,
+      "end": 177,
+      "label": "PERSON",
+      "text": "ليلى",
+      "entity": "e2",
+      "origin": "derived"
+    },
+    {
+      "start": 204,
+      "end": 215,
+      "label": "PII",
+      "text": "Karim Samir",
+      "entity": "",
+      "origin": "derived"
+    },
+    {
+      "start": 231,
+      "end": 235,
+      "label": "PERSON",
+      "text": "كريم",
+      "entity": "e1",
+      "origin": "derived"
+    },
+    {
+      "start": 246,
+      "end": 257,
+      "label": "PII",
+      "text": "Layla Nabil",
+      "entity": "",
+      "origin": "derived"
+    }
+  ],
+  "gold_negatives": [
+    {
+      "start": 13,
+      "end": 31,
+      "text": "صباح الخير يا شباب",
+      "reason": "must_keep"
+    },
+    {
+      "start": 33,
+      "end": 52,
+      "text": "سنبدأ الاجتماع الآن",
+      "reason": "must_keep"
+    },
+    {
+      "start": 67,
+      "end": 86,
+      "text": "أهلاً، شكراً للزميل",
+      "reason": "must_keep"
+    },
+    {
+      "start": 97,
+      "end": 121,
+      "text": "على المتابعة، وسأراجع مع",
+      "reason": "must_keep"
+    },
+    {
+      "start": 132,
+      "end": 147,
+      "text": "التفاصيل الفنية",
+      "reason": "must_keep"
+    },
+    {
+      "start": 161,
+      "end": 169,
+      "text": "هل تأكدت",
+      "reason": "must_keep"
+    },
+    {
+      "start": 178,
+      "end": 202,
+      "text": "من تحديث الواجهة الخلفية",
+      "reason": "must_keep"
+    },
+    {
+      "start": 217,
+      "end": 230,
+      "text": "نعم، راجع ذلك",
+      "reason": "must_keep"
+    },
+    {
+      "start": 236,
+      "end": 244,
+      "text": "معها أمس",
+      "reason": "must_keep"
+    },
+    {
+      "start": 259,
+      "end": 297,
+      "text": "شكراً يا شباب، سأبدأ في التنفيذ مباشرة",
+      "reason": "must_keep"
+    }
+  ]
+}
