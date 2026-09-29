@@ -1,0 +1,33 @@
+# Presidio sidecar. Verified live 2026-09-29.
+#
+#   npm run presidio:up
+#
+# Images are pinned by digest: `:latest` would silently change recognizer
+# behaviour (and therefore redaction output) on the next pull. To upgrade,
+# pull, check `npm run dev` output on test_data/, then update the digest.
+#
+# PRESIDIO_ANALYZER_WORKERS: gunicorn workers, one request each at a time.
+# Each loads en_core_web_lg (~1.6 GB measured with en+fr; less with en
+# only). Keep it >= src/vscode-webview://0aqtvavu117vr677fkpp2p7tjohip97abodscn1ivd0pgiuqvbmn/src/pii/policy.tspii/redact.ts's DEFAULT_CONCURRENCY.
+
+services:
+    analyzer:
+        image: ghcr.io/data-privacy-stack/presidio-analyzer@sha256:ae8f6f111ac2f04e3fec552f7f80edd0dcbfa2dd69ee1b9e030475be31669885
+        ports:
+            - "5002:3000"
+        environment:
+            WORKERS: ${PRESIDIO_ANALYZER_WORKERS:-4}
+            RECOGNIZER_REGISTRY_CONF_FILE: /conf/recognizers.yml
+            NLP_CONF_FILE: /conf/nlp.yml
+            ANALYZER_CONF_FILE: /conf/analyzer.yml
+        volumes:
+            - ./analyzer.yml:/conf/analyzer.yml:ro
+            - ./recognizers.yml:/conf/recognizers.yml:ro
+            - ./nlp.yml:/conf/nlp.yml:ro
+        healthcheck:
+            test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3000/health')"]
+            interval: 15s
+            timeout: 5s
+            retries: 5
+            start_period: 120s
+        restart: unless-stopped

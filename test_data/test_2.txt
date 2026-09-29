@@ -1,0 +1,143 @@
+Meeting Details
+
+Title: Core Services Security & Architecture Review — Incident Post-Mortem & PII Pipeline Benchmarking
+
+Platform: Microsoft Teams
+
+Participants:
+
+Tarek (Host): Staff AI Architect / Tech Lead
+
+Omar: Senior Backend & Platform Engineer (NestJS / DevOps)
+
+Salma: Senior Frontend Engineer (Angular / UI Lead)
+
+Nour: Product Manager
+
+Part 1: Morning Check-in & Personal Updates
+Tarek: Good morning everyone! Can you hear me clearly? I switched to my new USB headset today because my old Bluetooth one kept dropping during calls.
+
+Omar: Morning Tarek! Audio is crisp, zero echo. Good morning guys.
+
+Salma: Good morning Tarek, good morning team! Perfect audio quality.
+
+Nour: Morning everyone! Glad we’re all here. How is everyone doing after yesterday’s deployment sprint?
+
+Omar: Honestly, pretty exhausted, Nour! I was monitoring logs until almost 2 AM. On top of that, my apartment building in New Cairo had a power maintenance cycle this morning, so I had to sprint to a nearby workspace in Fifth Settlement just to grab high-speed fiber before this call.
+
+Salma: Oh no, Omar! Power cuts during a deployment morning are the absolute worst. But glad you found a quiet spot!
+
+Omar: Yeah, thank God for local co-working spaces. How was your evening, Salma? Did your family manage to take your mom to her doctor’s appointment yesterday?
+
+Salma: Yes, elhamdulillah! My sister and I took her to the clinic in Heliopolis. Her lab results came back completely clear, so everyone in the house is relieved. We actually celebrated by grabbing dinner together in Korba afterwards.
+
+Tarek: That’s fantastic news, Salma! Give her our warmest regards. Family health coming back clear is the best feeling.
+
+Salma: Thanks so much, Tarek! How about you? Did you manage to finalize your flight booking for the Dubai conference next month?
+
+Tarek: Almost! My wife and I were comparing EgyptAir and Emirates flights last night. We decided to extend the stay by two days so we can visit some old university friends who moved to Dubai Marina three years ago. We haven’t seen them in person since 2023, so the kids are super excited.
+
+Nour: That sounds like a wonderful trip, Tarek! You definitely deserve a short break after this quarter’s security overhaul.
+
+Part 2: Staging Incident Review & False Positive Analysis
+Tarek: Absolutely. Speaking of security overhauls, let's dive straight into today’s technical agenda. We have three main items:
+
+Reviewing yesterday's staging incident where valid user names were getting over-redacted.
+
+Assessing the performance of our pre-defined dictionary lookup layer versus the findNames rule engine.
+
+Aligning on our deduplication loop and Unicode regex updates.
+
+Omar, do you want to start by explaining what happened on staging yesterday around 4 PM?
+
+Omar: Sure. During our automated integration tests on staging, we ingested a batch of synthetic customer transcripts containing Arabic and English mixed names, like "Dr. Sarah Johnson visited Cairo Bank" and "Will you call May tomorrow?".
+
+Salma: Right, and the frontend live-preview was showing whole non-PII sentences getting turned into [REDACTED].
+
+Omar: Exactly. We identified two separate bugs in our pipeline layers:
+First, in our static predefined-list.json layer, someone added single-token entries like "May" and "Will". Because detectPredefined matches literal terms without context evaluation, it redacted normal English verbs and month names across the entire document!
+
+Nour: Ah! So because "Will" was in the JSON list, "Will you send the report?" became "[REDACTED] you send the report?"?
+
+Omar: Precisely, Nour. That’s why detectPredefined must strictly be reserved for multi-token full names (like "Sarah Johnson") or explicit customer IDs and account emails, where literal matching carries zero risk of generic word collision.
+
+Tarek: Right. And the second issue was inside our dynamic findNames dictionary engine. Salma, do you remember how findNames evaluates single names vs full names?
+
+Part 3: Deep Dive into findNames Heuristics & Boundary Logic
+Salma: Yes! findNames uses lists.given as an initial anchor. But if a word like "May" or "Will" passes isGiven(), the function checks isEnglishWord(first). If isEnglishWord returns true, it immediately aborts redacting it as a standalone single name.
+
+Tarek: Exactly. But yesterday, someone passed a full name containing an unlisted Arabic surname particle: "Omar el Hamed". The engine successfully recognized "Omar" as a listed given name, allowed the lowercase particle "el", but then failed on "Hamed" because the custom dictionary missed the entry.
+
+Omar: Right! So we modified the look-ahead loop inside findNames:
+
+TypeScript
+for (let j = i + 1; j < ws.length && j - i < 6; j++) {
+  if (!adjacent(text, ws[j - 1], ws[j])) break;
+  const w = ws[j].text;
+  if (PARTICLES.has(w.toLowerCase()) && !isCapitalised(w)) continue; // Allows "el", "bin", "van"
+  if (!isNameShaped(w) || !isCapitalised(w) || isAllCaps(w)) break;
+  if (!(isSurnameLike(w, l) || !isEnglishWord(w))) break;
+  last = j;
+}
+Salma: Ah! So even if "Hamed" isn't in surnames.txt, because it is capitalized, name-shaped, and not a standard English dictionary word, the look-ahead window attaches it to "Omar" to capture the complete full span "Omar el Hamed".
+
+Tarek: Spot on, Salma. That’s the crucial difference: detectPredefined is a deterministic exact matcher, whereas findNames uses dictionary lookups as an anchor to dynamically scan and attach unlisted surnames.
+
+Part 4: Regex Unicode Boundaries & Span Sorting Deduplication
+Nour: Tarek, from a compliance view, how do we guarantee that when we combine matches from detectPredefined, findNames, WinkNLP, and Presidio, we don't end up with overlapping spans or corrupted character offsets?
+
+Tarek: That comes down to two specific modules: our Unicode Boundary Regex and our Span Deduplication Loop.
+
+Omar, explain how we construct the dynamic pattern in loadPatterns().
+
+Omar: Right. When building dynamic regular expressions from our lists, we sort terms by length descending (b.length - a.length) so "Sarah Johnson" always evaluates before "Sarah". Then we wrap the pattern in Unicode lookarounds instead of standard \b:
+
+JavaScript
+new RegExp(`(?<![\\p{L}\\p{N}_])(?:${alternatives.join("|")})(?![\\p{L}\\p{N}_])`, "giu")
+Salma: Because standard \b only recognizes ASCII English letters, right?
+
+Omar: Exactly! Standard \b fails completely on non-English characters or accented names like "José" or "سارة". By using \p{L} (Unicode Letter) and \p{N} (Unicode Number) inside lookbehinds (?<!...) and lookaheads (?!...), we ensure that "Sarah" matches in "Hello Sarah." but never inside "Sarahville".
+
+Tarek: And once all layers emit their raw spans, we pass them through our 3-tier sorting comparator:
+
+JavaScript
+const sorted = [...spans].sort(
+  (a, b) =>
+    a.start - b.start ||
+    (b.end - b.start) - (a.end - a.start) ||
+    LAYER_ORDER.indexOf(a.source) - LAYER_ORDER.indexOf(b.source)
+);
+Salma: Let me double-check my understanding of those tie-breakers:
+
+a.start - b.start: Orders spans from left to right across the document.
+
+(b.end - b.start) - (a.end - a.start): If two spans start at the exact same character index (like "John" at [0, 4] and "John Smith" at [0, 10]), the longer span wins and comes first.
+
+LAYER_ORDER: If start and length are identical across two engines, the most trusted layer (e.g., predefined over wink) wins.
+
+Tarek: Perfect summary! And right after sorting, our merging loop iterates over sorted. If span.start < last.end (an overlap), it merges them by taking Math.max(last.end, span.end) and slicing the exact updated text from the raw document. Zero character drift, zero double-redaction bugs.
+
+Part 5: Action Items & Wrap-Up
+Nour: Excellent. This gives us complete confidence for our enterprise compliance audit next week. Let me write down the immediate action items:
+
+Omar: Clean up predefined-list.json to strip single-word English dictionary entries like "May" or "Will", keeping only verified multi-token entities.
+
+Salma: Update the Angular UI live-preview editor to handle merged span character overlays without re-triggering component re-renders.
+
+Tarek: Run the updated benchmark suite against 100+ pages of mixed Arabic/English meeting transcripts to confirm zero latency regressions.
+
+Tarek: Sounds like a solid plan. Any last questions before we jump off?
+
+Salma: All clear from my end!
+
+Omar: All good here. Time for me to grab another coffee and start working on the PR.
+
+Nour: Thanks everyone! Great sync today.
+
+Tarek: Thanks team! Have a productive day, stay safe, and talk soon on Slack. Bye!
+
+Salma: Bye guys!
+
+Omar: Salam!
+
+[Call Ended — 00:10:05]

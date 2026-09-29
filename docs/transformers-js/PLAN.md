@@ -1,0 +1,109 @@
+# Plan: replace Presidio with Transformers.js
+
+The target design is in [DESIGN.md](DESIGN.md). This file covers the order of
+work, what "done" means for each phase, and the decisions still open.
+
+## Scope
+
+**In scope:** replace Presidio's name detection with a local Transformers.js
+model, cover in `regex.ts` the few values only Presidio caught, and remove
+Presidio completely.
+
+**Not in scope:** new entity types, Arabic, an HTTP service, and changes to the
+output format or to the `redact()` / `detect()` API.
+
+**Done when:**
+
+1. `npm install`, `npm run fetch:model` and `npm run dev -- <file>` work with
+   Docker not installed and the network off (after the one-time fetch).
+2. Searching `src/`, `scripts/` and `package.json` for "presidio" (case
+   ignored) finds nothing.
+3. On the labelled `test_data/`, compared with the Presidio-era reference
+   (Phase 0):
+   - PERSON recall is no lower on normally cased files
+   - fewer name characters leak in `asr_sample.txt`
+   - no other type loses recall
+4. A 6 KB file takes at most ~1.5 s end to end, model load included. Measure
+   229 KB too.
+5. README.md, ARCHITECTURE.md and LIMITATIONS.md describe the new pipeline,
+   with new measured numbers.
+
+## Phase 0: evaluation first (no model yet)
+
+Without a way to score output we can't pick a model or a threshold. There are
+no labelled sets in the repo and `test_data/expected/` doesn't exist.
+
+| # | Task | Output |
+| --- | --- | --- |
+| 0.1 | Run `git init` and commit the current state, so every later change can be diffed and reverted | first commit |
+| 0.2 | Label each `test_data/*.txt`: the PII values per type, e.g. `{ "PERSON": ["Kofi Mensah", "kofi", "Priya"], "CREDIT_CARD": ["4539 1488 0343 6467"] }`. Claude drafts, a person reviews | `test_data/labels/<name>.json` |
+| 0.3 | `scripts/evaluate.ts` (`npm run eval`): for each file and type, report recall (labelled occurrences fully masked), leaked characters, and precision (detected spans that overlap a labelled value) | a table per file and in total |
+| 0.4 | Score the saved Presidio-era outputs in `reports/*__sanitized.txt` for recall and leaked characters only, since there are no spans for precision. They predate some rule changes, so treat them as a rough reference | reference numbers kept in this file |
+
+**Exit:** `npm run eval` prints the reference numbers.
+
+## Phase 1: build the NER layer
+
+| # | Task |
+| --- | --- |
+| 1.1 | `npm install @huggingface/transformers@4.3.0 --save-exact`. Check that it imports and typechecks in this CommonJS / `node16` project; the package ships `dist/transformers.node.cjs`. If types don't resolve, fix it here before writing anything else |
+| 1.2 | `scripts/fetch-model.ts`: download the files for a pinned model **revision** (commit hash) into `models/<org>/<name>/`, check their SHA-256, and lay them out as Transformers.js expects. Start with `gravitee-io/bert-small-pii-detection` |
+| 1.3 | `src/pii/layers/ner.ts` as in DESIGN.md: loading, pieces, windows, label grouping, moved filters, offset assertion, `ModelLoadError` |
+| 1.4 | Wire `detectNer()` into `redact.ts` in place of `detectPresidio()`; update `types.ts` and `index.ts` |
+| 1.5 | Offset test inputs: emoji and other characters outside the BMP, CRLF line endings, a name right at a window boundary, a 229 KB file. Every span must equal `text.slice(start, end)` |
+
+**Exit:** with Docker stopped, `npm run dev` runs on every `test_data` file
+and `npm run eval` scores it.
+
+## Phase 2: choose the model and tune it
+
+| # | Task |
+| --- | --- |
+| 2.1 | Score each candidate in DESIGN.md: gravitee first, then `Xenova/bert-base-NER`, then the multilingual ones |
+| 2.2 | For the best one or two, sweep `NER_MIN_SCORE` (e.g. 0.3–0.9) and `NER_WINDOW_TOKENS` (128 / 256 / 384) |
+| 2.3 | Re-check each moved filter (`looksLikePerson`, `trimName`, IPv4) by running with and without it, and keep only those that help |
+| 2.4 | Decide which model labels to use: PERSON only, or also types the regex layer already covers (as a safety net, if precision holds) |
+| 2.5 | Measure speed (6 KB and 229 KB, cold and warm) and peak memory |
+| 2.6 | Record the choice, threshold and numbers in DESIGN.md; set the defaults in `ner.ts` |
+
+**Exit:** criteria 3 and 4 of "Done when" are met. If no candidate meets
+them, stop and decide with the team (for example, fine-tune on our own
+transcripts) before going on.
+
+## Phase 3: regex gaps
+
+The three items in DESIGN.md "Regex additions": `libphonenumber-js` for
+international phone numbers, the passport shape with the keyword on the same
+line, and invalid-SSN filtering. Label an example of each in `test_data/`.
+
+**Exit:** `+33 6 12 34 56 78` and `A38291049` from the saved reports are
+masked again, and `npm run eval` shows no other type losing recall.
+
+## Phase 4: remove Presidio and update the docs
+
+| # | Task |
+| --- | --- |
+| 4.1 | Delete `src/pii/client.ts`, `src/pii/layers/presidio.ts` and `presidio/`; remove the `presidio:*` scripts and `PRESIDIO_*` variables |
+| 4.2 | Replace README.md, ARCHITECTURE.md and LIMITATIONS.md with the new pipeline (using DESIGN.md as the source), then delete or archive this folder |
+| 4.3 | `npm run check -- --update` after reading the diff of every file, and commit `test_data/expected/` |
+| 4.4 | `npm run typecheck`, `npm run check` and `npm run eval` all pass; the "presidio" search is clean |
+
+## Open decisions
+
+| Decision | Options | Suggestion |
+| --- | --- | --- |
+| Where the model lives | Fetch with `npm run fetch:model` (git-ignored), or commit it (29–279 MB, Git LFS) | Fetch, pinned by revision and checksum. Commit it only if runs must work on machines that never had network |
+| Types taken from the model | PERSON only, or more | Decide on the Phase 2 numbers |
+| Who reviews the labels | — | Someone who knows the transcripts. Labels decide every later choice |
+| Arabic | Now or later | Later. Picking a multilingual model in Phase 2 keeps the door open |
+
+## Risks
+
+| Risk | Effect | Mitigation |
+| --- | --- | --- |
+| The new model finds fewer names than spaCy | More names leak | Phase 0 scoring, the "Done when" criteria, and the stop point in Phase 2 |
+| More false-positive names | The every-occurrence rule masks the same wrong word everywhere | Precision in `npm run eval`, and a word-by-word read of the check diffs |
+| Only 7 small labelled files | The chosen threshold may not carry over to real transcripts | Add a few real, anonymised transcripts to `test_data/` if possible |
+| Transformers.js 4.x API changes | Code breaks on upgrade | Pinned exact version; upgrade on purpose, re-running `eval` |
+| `onnxruntime-node` native binary | Install trouble on some machines or CI | Check on every OS we run on during Phase 1 |
+| Model download at install time | Setup fails offline | The model is fetched once; a missing model fails closed with a clear message |

@@ -1,0 +1,29 @@
+# NLP engine config — loaded via NLP_CONF_FILE.
+#
+# English only (2026-09-29 product decision). The French model was removed:
+# each loaded spaCy "lg" model costs memory in EVERY gunicorn worker, and
+# the fr pass it enabled cost ~45% of detection time for no in-scope recall.
+#
+# Arabic, if added: spaCy has no official Arabic pipeline, so it needs
+# Presidio's `transformers` engine with a HuggingFace Arabic NER checkpoint
+# and a custom analyzer image (the image ships Dockerfile.transformers).
+
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+
+ner_model_configuration:
+  labels_to_ignore:
+    - CARDINAL
+    - ORDINAL
+    - QUANTITY
+    - PERCENT
+    - MONEY
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    ORG: ORGANIZATION
+    GPE: LOCATION
+    LOC: LOCATION
+    NORP: NRP
