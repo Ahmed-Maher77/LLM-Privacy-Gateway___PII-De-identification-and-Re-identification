@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "check": "tsx scripts/check.ts",
+    "eval": "tsx scripts/evaluate.ts",
     "typecheck": "tsc --noEmit",
     "presidio:up": "docker compose -f presidio/docker-compose.yml up -d",
     "presidio:down": "docker compose -f presidio/docker-compose.yml down",

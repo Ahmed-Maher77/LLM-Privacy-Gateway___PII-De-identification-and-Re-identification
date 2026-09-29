@@ -1,0 +1,99 @@
+Meeting Details
+
+Title: Healthcare Mobile Portal — Patient Health Records (EHR) Integration & HIPAA Compliance Audit
+
+Platform: Zoom Video Communications
+
+Participants:
+
+Dr. <PERSON_1> (Host): Chief Medical Information Officer (CMIO)
+
+<PERSON_2>: Lead Mobile Engineer (React Native)
+
+<PERSON_3>: Security & Compliance Consultant (HIPAA / GDPR)
+
+<PERSON_4>: Backend & Integration Lead (FHIR / GraphQL)
+
+Part 1: Kickoff & Regulatory Requirements
+Dr. <PERSON_1>: Good afternoon everyone. Thank you for joining. Today we’re focusing on the upcoming release of our patient portal mobile app, specifically how we integrate Electronic Health Records (EHR) while strictly adhering to HIPAA data privacy guidelines.
+
+<PERSON_3>: Thanks Dr. <PERSON_1>. From a compliance perspective, our primary mandate for this release is ensuring that Protected Health Information (PHI)—like diagnoses, lab results, and prescription histories—is encrypted both at rest on the mobile device and in transit over public networks.
+
+<PERSON_2>: On the React Native side, we’ve already disabled local unencrypted storage like AsyncStorage for any medical payloads. Everything cached on device now goes through encrypted secure enclaves.
+
+<PERSON_4>: And on the backend, we wrapped our legacy hospital database with a modern HL7 FHIR (Fast Healthcare Interoperability Resources) API layer using GraphQL.
+
+Part 2: Architectural Data Flow — FHIR & Encrypted Local Caching
+Dr. <PERSON_1>: <PERSON_4>, can you clarify how patient lab results are fetched when a user logs in? Are we storing historical records permanently on their phone?
+
+<PERSON_4>: No, Dr. <PERSON_1>. When a patient opens their diagnostic dashboard, the flow works as follows:
+
+[ React Native App ] ──► (OAuth2 / mTLS) ──► [ GraphQL API Gateway ]
+        │                                           │
+        ▼ (Biometric Key)                           ▼
+[ Encrypted Realm / Keychain ] ◄── (FHIR JSON) ── [ Hospital EHR Database ]
+The app authenticates using OAuth 2.0 with PKCE combined with hardware-backed biometric verification (FaceID / Fingerprint).
+
+The GraphQL gateway queries our FHIR server for the specific Observation resource (e.g., blood panel results).
+
+The response payload is delivered over TLS 1.3 and stored temporarily in an encrypted sqlite database using <PERSON_5>.
+
+<PERSON_2>: And the encryption key for that local database is generated dynamically in the device's Secure Enclave. If a user disables screen lock or attempts to jailbreak their phone, the app automatically wipes the local key.
+
+Part 3: Sensitive Data Masking & Push Notification Privacy
+<PERSON_3>: That addresses local storage, but what about push notifications? Last month we flagged an issue where notification banners were exposing full medication names on locked phone screens.
+
+<PERSON_2>: Great point, <PERSON_3>. We refactored our notification payload structure to completely sanitize alert content:
+
+JSON
+// OLD (HIPAA Violation):
+{
+  "title": "Prescription Ready",
+  "body": "Your Amoxicillin 500mg prescription is ready for pickup at Main Pharmacy."
+}
+
+// NEW (Compliant):
+{
+  "title": "Health Portal Update",
+  "body": "You have a new update regarding your prescription. Tap to view safely.",
+  "data": { "type": "PRESCRIPTION_UPDATE", "id": "rx_89421" }
+}
+Dr. <PERSON_1>: That's much better. The patient still gets notified instantly, but surrounding people won't see confidential medical details on an unattended lock screen.
+
+Part 4: Audit Trails & Role-Based Access Control (RBAC)
+<PERSON_4>: <PERSON_3>, how should we log API access for auditing purposes? Every time a doctor or patient accesses a health record, HIPAA requires an immutable audit trail.
+
+<PERSON_3>: Every single read or write request touching a PHI resource must generate an audit event containing:
+
+User ID (Patient or Practitioner)
+
+Action Type (READ, UPDATE, EXPORT)
+
+Resource ID (FHIR Patient or Observation ID)
+
+Timestamp & IP Address
+
+These logs must be written directly to a append-only, tamper-proof storage bucket (like AWS S3 Object Lock) and retained for a minimum of 6 years.
+
+<PERSON_4>: Got it. We can attach an asynchronous audit middleware to our GraphQL resolvers. It will pipe log events to Amazon Kinesis Firehose without adding overhead to API response times.
+
+Part 5: Sprint Deliverables & Target Release Date
+Dr. <PERSON_1>: Excellent. Let's summarize our commitments before we submit the build to the third-party security auditor:
+
+<PERSON_2>: Complete the jailbreak detection hook in React Native and finalize the biometric re-authentication prompt for viewing lab results.
+
+<PERSON_4>: Deploy the GraphQL FHIR audit log middleware to our staging cluster.
+
+<PERSON_3>: Conduct a final penetration test and complete the Business Associate Agreement (BAA) documentation for our cloud provider.
+
+<PERSON_2>: I'll have the updated React Native build ready for internal testing by Thursday morning.
+
+<PERSON_4>: Backend changes will be pushed to staging tonight.
+
+Dr. <PERSON_1>: Thank you all for your hard work! Keeping patient data safe is our top priority. Have a great rest of your day!
+
+<PERSON_3>: Thanks everyone!
+
+<PERSON_2>: Bye team!
+
+[Call Ended — 00:05:05]

@@ -1,0 +1,143 @@
+Meeting Details
+
+Title: Core Services Security & Architecture Review — Incident Post-Mortem & PII Pipeline Benchmarking
+
+Platform: Microsoft Teams
+
+Participants:
+
+<PERSON_1> (Host): Staff AI Architect / Tech Lead
+
+<PERSON_2>: Senior Backend & Platform Engineer (NestJS / DevOps)
+
+<PERSON_3>: Senior Frontend Engineer (Angular / UI Lead)
+
+<PERSON_4>: Product Manager
+
+Part 1: Morning Check-in & Personal Updates
+<PERSON_1>: Good morning everyone! Can you hear me clearly? I switched to my new USB headset today because my old <PERSON_5> one kept dropping during calls.
+
+<PERSON_2>: Morning <PERSON_1>! Audio is crisp, zero echo. Good morning guys.
+
+<PERSON_3>: Good morning <PERSON_1>, good morning team! Perfect audio quality.
+
+<PERSON_4>: Morning everyone! Glad we’re all here. How is everyone doing after yesterday’s deployment sprint?
+
+<PERSON_2>: Honestly, pretty exhausted, <PERSON_4>! I was monitoring logs until almost 2 AM. On top of that, my apartment building in New Cairo had a power maintenance cycle this morning, so I had to sprint to a nearby workspace in Fifth Settlement just to grab high-speed fiber before this call.
+
+<PERSON_3>: Oh no, <PERSON_2>! Power cuts during a deployment morning are the absolute worst. But glad you found a quiet spot!
+
+<PERSON_2>: Yeah, thank God for local co-working spaces. How was your evening, <PERSON_3>? Did your family manage to take your mom to her doctor’s appointment yesterday?
+
+<PERSON_3>: Yes, elhamdulillah! My sister and I took her to the clinic in Heliopolis. Her lab results came back completely clear, so everyone in the house is relieved. We actually celebrated by grabbing dinner together in Korba afterwards.
+
+<PERSON_1>: That’s fantastic news, <PERSON_3>! Give her our warmest regards. Family health coming back clear is the best feeling.
+
+<PERSON_3>: Thanks so much, <PERSON_1>! How about you? Did you manage to finalize your flight booking for the Dubai conference next month?
+
+<PERSON_1>: Almost! My wife and I were comparing EgyptAir and Emirates flights last night. We decided to extend the stay by two days so we can visit some old university friends who moved to Dubai Marina three years ago. We haven’t seen them in person since 2023, so the kids are super excited.
+
+<PERSON_4>: That sounds like a wonderful trip, <PERSON_1>! You definitely deserve a short break after this quarter’s security overhaul.
+
+Part 2: Staging Incident Review & False Positive Analysis
+<PERSON_1>: Absolutely. Speaking of security overhauls, let's dive straight into today’s technical agenda. We have three main items:
+
+Reviewing yesterday's staging incident where valid user names were getting over-redacted.
+
+Assessing the performance of our pre-defined dictionary lookup layer versus the findNames rule engine.
+
+Aligning on our deduplication loop and Unicode regex updates.
+
+<PERSON_2>, do you want to start by explaining what happened on staging yesterday around 4 PM?
+
+<PERSON_2>: Sure. During our automated integration tests on staging, we ingested a batch of synthetic customer transcripts containing Arabic and English mixed names, like "Dr. <PERSON_6> visited Cairo Bank" and "Will you call May tomorrow?".
+
+<PERSON_3>: Right, and the frontend live-preview was showing whole non-PII sentences getting turned into [REDACTED].
+
+<PERSON_2>: Exactly. We identified two separate bugs in our pipeline layers:
+First, in our static predefined-list.json layer, someone added single-token entries like "May" and "Will". Because detectPredefined matches literal terms without context evaluation, it redacted normal English verbs and month names across the entire document!
+
+<PERSON_4>: Ah! So because "Will" was in the JSON list, "Will you send the report?" became "[REDACTED] you send the report?"?
+
+<PERSON_2>: Precisely, <PERSON_4>. That’s why detectPredefined must strictly be reserved for multi-token full names (like "<PERSON_6>") or explicit customer IDs and account emails, where literal matching carries zero risk of generic word collision.
+
+<PERSON_1>: Right. And the second issue was inside our dynamic findNames dictionary engine. <PERSON_3>, do you remember how findNames evaluates single names vs full names?
+
+Part 3: <PERSON_7> into findNames Heuristics & Boundary Logic
+<PERSON_3>: Yes! findNames uses lists.given as an initial anchor. But if a word like "May" or "Will" passes isGiven(), the function checks isEnglishWord(first). If isEnglishWord returns true, it immediately aborts redacting it as a standalone single name.
+
+<PERSON_1>: Exactly. But yesterday, someone passed a full name containing an unlisted Arabic surname particle: "<PERSON_8>". The engine successfully recognized "<PERSON_2>" as a listed given name, allowed the lowercase particle "el", but then failed on "<PERSON_9>" because the custom dictionary missed the entry.
+
+<PERSON_2>: Right! So we modified the look-ahead loop inside findNames:
+
+TypeScript
+for (let j = i + 1; j < ws.length && j - i < 6; j++) {
+  if (!adjacent(text, ws[j - 1], ws[j])) break;
+  const w = ws[j].text;
+  if (PARTICLES.has(w.toLowerCase()) && !isCapitalised(w)) continue; // Allows "el", "bin", "van"
+  if (!isNameShaped(w) || !isCapitalised(w) || isAllCaps(w)) break;
+  if (!(isSurnameLike(w, l) || !isEnglishWord(w))) break;
+  last = j;
+}
+<PERSON_3>: Ah! So even if "<PERSON_9>" isn't in surnames.txt, because it is capitalized, name-shaped, and not a standard English dictionary word, the look-ahead window attaches it to "<PERSON_2>" to capture the complete full span "<PERSON_8>".
+
+<PERSON_1>: Spot on, <PERSON_3>. That’s the crucial difference: detectPredefined is a deterministic exact matcher, whereas findNames uses dictionary lookups as an anchor to dynamically scan and attach unlisted surnames.
+
+Part 4: Regex Unicode Boundaries & Span Sorting Deduplication
+<PERSON_4>: <PERSON_1>, from a compliance view, how do we guarantee that when we combine matches from detectPredefined, findNames, WinkNLP, and Presidio, we don't end up with overlapping spans or corrupted character offsets?
+
+<PERSON_1>: That comes down to two specific modules: our Unicode Boundary Regex and our Span Deduplication Loop.
+
+<PERSON_2>, explain how we construct the dynamic pattern in loadPatterns().
+
+<PERSON_2>: Right. When building dynamic regular expressions from our lists, we sort terms by length descending (b.length - a.length) so "<PERSON_6>" always evaluates before "<PERSON_10>". Then we wrap the pattern in Unicode lookarounds instead of standard \b:
+
+JavaScript
+new RegExp(`(?<![\\p{L}\\p{N}_])(?:${alternatives.join("|")})(?![\\p{L}\\p{N}_])`, "giu")
+<PERSON_3>: Because standard \b only recognizes ASCII English letters, right?
+
+<PERSON_2>: Exactly! Standard \b fails completely on non-English characters or accented names like "<PERSON_11>" or "سارة". By using \p{L} (Unicode Letter) and \p{N} (Unicode Number) inside lookbehinds (?<!...) and lookaheads (?!...), we ensure that "<PERSON_10>" matches in "Hello <PERSON_10>." but never inside "Sarahville".
+
+<PERSON_1>: And once all layers emit their raw spans, we pass them through our 3-tier sorting comparator:
+
+JavaScript
+const sorted = [...spans].sort(
+  (a, b) =>
+    a.start - b.start ||
+    (b.end - b.start) - (a.end - a.start) ||
+    LAYER_ORDER.indexOf(a.source) - LAYER_ORDER.indexOf(b.source)
+);
+<PERSON_3>: Let me double-check my understanding of those tie-breakers:
+
+a.start - b.start: Orders spans from left to right across the document.
+
+(b.end - b.start) - (a.end - a.start): If two spans start at the exact same character index (like "<PERSON_12>" at [0, 4] and "<PERSON_13>" at [0, 10]), the longer span wins and comes first.
+
+LAYER_ORDER: If start and length are identical across two engines, the most trusted layer (e.g., predefined over wink) wins.
+
+<PERSON_1>: Perfect summary! And right after sorting, our merging loop iterates over sorted. If span.start < last.end (an overlap), it merges them by taking Math.max(last.end, span.end) and slicing the exact updated text from the raw document. Zero character drift, zero double-redaction bugs.
+
+Part 5: Action Items & Wrap-Up
+<PERSON_4>: Excellent. This gives us complete confidence for our enterprise compliance audit next week. Let me write down the immediate action items:
+
+<PERSON_2>: Clean up predefined-list.json to strip single-word English dictionary entries like "May" or "Will", keeping only verified multi-token entities.
+
+<PERSON_3>: Update the Angular UI live-preview editor to handle merged span character overlays without re-triggering component re-renders.
+
+<PERSON_1>: Run the updated benchmark suite against 100+ pages of mixed Arabic/English meeting transcripts to confirm zero latency regressions.
+
+<PERSON_1>: Sounds like a solid plan. Any last questions before we jump off?
+
+<PERSON_3>: All clear from my end!
+
+<PERSON_2>: All good here. Time for me to grab another coffee and start working on the PR.
+
+<PERSON_4>: Thanks everyone! Great sync today.
+
+<PERSON_1>: Thanks team! Have a productive day, stay safe, and talk soon on Slack. Bye!
+
+<PERSON_3>: Bye guys!
+
+<PERSON_2>: Salam!
+
+[Call Ended — 00:10:05]

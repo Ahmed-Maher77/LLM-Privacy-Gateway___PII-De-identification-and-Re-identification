@@ -1,0 +1,17 @@
+{
+  "PERSON": [
+    "Tarek",
+    "Omar",
+    "Salma",
+    "Nour",
+    "Sarah Johnson",
+    "Sarah",
+    "Omar el Hamed",
+    "Hamed",
+    "John Smith",
+    "John",
+    "José",
+    { "value": "سارة", "hard": true },
+    { "value": "May", "in": "call May tomorrow" }
+  ]
+}

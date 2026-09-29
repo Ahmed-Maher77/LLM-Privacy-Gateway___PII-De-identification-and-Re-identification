@@ -36,11 +36,49 @@ no labelled sets in the repo and `test_data/expected/` doesn't exist.
 | # | Task | Output |
 | --- | --- | --- |
 | 0.1 | Run `git init` and commit the current state, so every later change can be diffed and reverted | first commit |
-| 0.2 | Label each `test_data/*.txt`: the PII values per type, e.g. `{ "PERSON": ["Kofi Mensah", "kofi", "Priya"], "CREDIT_CARD": ["4539 1488 0343 6467"] }`. Claude drafts, a person reviews | `test_data/labels/<name>.json` |
+| 0.2 | Label each `test_data/*.txt`: the PII values per type, e.g. `{ "PERSON": ["Kofi Mensah", "kofi", "Priya"], "CREDIT_CARD": ["4539 1488 0343 6467"] }`. Claude drafts, a person reviews. Format (context-only matches, `hard`, `ignore`) in `scripts/eval/labels.ts` | `test_data/labels/<name>.json` |
 | 0.3 | `scripts/evaluate.ts` (`npm run eval`): for each file and type, report recall (labelled occurrences fully masked), leaked characters, and precision (detected spans that overlap a labelled value) | a table per file and in total |
-| 0.4 | Score the saved Presidio-era outputs in `reports/*__sanitized.txt` for recall and leaked characters only, since there are no spans for precision. They predate some rule changes, so treat them as a rough reference | reference numbers kept in this file |
+| 0.4 | Score the saved Presidio-era outputs. They are copied unchanged to `test_data/reference/`, since `npm run dev` overwrites `reports/`. Their spans are recovered by aligning each placeholder with the original, so precision is scored too. They predate some rule changes, so treat them as a rough reference | reference numbers below |
 
-**Exit:** `npm run eval` prints the reference numbers.
+**Exit:** `npm run eval -- --reference` prints the reference numbers;
+`npm run eval` scores the current pipeline and compares it with them.
+
+### Reference numbers (Presidio era, 2026-09-30)
+
+From `npm run eval -- --reference`, 7 files. Leaked characters leave out
+whitespace. Hard labels (spelled or spoken forms, Arabic script,
+checksum-failing card and IBAN) are counted apart.
+
+| Type | Labelled | Recall | Leaked chars | Precision |
+| --- | --- | --- | --- | --- |
+| PERSON | 332 | 98.5% | 21 / 2394 (0.9%) | 97.9% (7 FP) |
+| ORGANIZATION | 2 | 100% | 0 / 21 | 11.1% (16 FP) |
+| EMAIL_ADDRESS | 11 | 100% | 0 / 273 | 100% |
+| PHONE_NUMBER | 10 | 100% | 0 / 136 | 100% |
+| CREDIT_CARD | 3 | 100% | 0 / 48 | 100% |
+| IBAN_CODE | 2 | 100% | 0 / 54 | 100% |
+| DATE_TIME | 6 | 83.3% | 27 / 65 (41.5%) | 100% |
+| US_SSN | 4 | 100% | 0 / 44 | 100% |
+| US_PASSPORT | 5 | 100% | 0 / 45 | 100% |
+| US_DRIVER_LICENSE | 2 | 100% | 0 / 24 | 100% |
+| **All types** | **377** | **98.4%** | **48 / 3100 (1.5%)** | **94.2% (23 FP)** |
+| Hard (apart) | 9 | 0% | 105 / 139 (75.5%) | — |
+
+The "Done when" criteria against this reference:
+
+- PERSON recall on normally cased files: **318 / 319 (99.7%)**. The one miss
+  is "May" in *call May tomorrow* (test_2).
+- PERSON characters leaked in `asr_sample.txt`: **18 / 74 (24.3%)**, from
+  "grace" ×2, "will" and "will mensah".
+
+Notes:
+
+- The 16 ORGANIZATION false positives (Redis, RabbitMQ, Datadog, … in test_3)
+  come from before companies were taken only from the pre-defined list. Today's
+  rules would not produce them, so don't count them in the comparison.
+- The one DATE_TIME miss is the spoken birth date in `asr_sample.txt`.
+- Of the hard labels, the checksum-failing card in test_5 was partly masked
+  (as a phone number); none was fully masked.
 
 ## Phase 1: build the NER layer
 

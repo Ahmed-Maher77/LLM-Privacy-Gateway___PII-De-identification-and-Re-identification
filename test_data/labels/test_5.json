@@ -1,0 +1,11 @@
+{
+  "PERSON": ["Mona", "Hassan", "Eman", "Kareem", "David", "Robert Charles Miller", "Robert", "Miller"],
+  "ORGANIZATION": ["Exampleco"],
+  "EMAIL_ADDRESS": ["robert.miller88@gmail.com"],
+  "PHONE_NUMBER": ["+1 (617) 555-0142"],
+  "CREDIT_CARD": [{ "value": "4532 0192 8472 9104", "hard": true }],
+  "IBAN_CODE": [{ "value": "US3300010001234567890123", "hard": true }],
+  "DATE_TIME": ["08/27"],
+  "US_SSN": ["482-91-0394"],
+  "US_PASSPORT": ["A38291049"]
+}

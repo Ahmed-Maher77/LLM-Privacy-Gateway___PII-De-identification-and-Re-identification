@@ -1,0 +1,21 @@
+{
+  "PERSON": [
+    "priya",
+    "kofi mensah",
+    "kofi",
+    "mensah",
+    { "value": "k o f i", "hard": true },
+    { "value": "m e n s a h", "hard": true },
+    "will mensah",
+    { "value": "will", "in": "my brother will might" },
+    { "value": "grace", "in": "my wife grace she" },
+    { "value": "grace", "in": "need grace to call" }
+  ],
+  "EMAIL_ADDRESS": [
+    "kofi.mensah82@gmail.com",
+    { "value": "kofi dot mensah eight two at gmail dot com", "hard": true }
+  ],
+  "PHONE_NUMBER": ["617 555 0142", "857-555-0193"],
+  "CREDIT_CARD": ["4539 1488 0343 6467"],
+  "DATE_TIME": ["march third nineteen eighty two"]
+}
