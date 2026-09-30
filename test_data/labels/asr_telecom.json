@@ -1,0 +1,12 @@
+{
+  "PERSON": [
+    "fatima",
+    "youssef el sayed",
+    "el sayed",
+    { "value": "youssef", "in": "mister youssef salam" },
+    { "value": "y o u s s e f", "hard": true },
+    "mariam abdelrahman",
+    "mariam"
+  ],
+  "ignore": ["youssef"]
+}

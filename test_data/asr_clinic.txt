@@ -1,0 +1,21 @@
+agent: riverside clinic appointments this is grace speaking
+caller: hi grace um i need to move my appointment with doctor mark hughes
+agent: sure can i have your name
+caller: thandiwe dlamini
+agent: can you spell the last name for me
+caller: d l a m i n i
+agent: thanks miss dlamini and your date of birth
+caller: 09/22/1990
+agent: and your social security number for the insurance
+caller: it's 512-83-4471
+agent: thank you i see your appointment on the fifth of may at ten thirty
+caller: yes can we do the week after i will be travelling with my brother chidi
+agent: of course dr hughes has a slot on 05/12/2026 at two
+caller: that works and will the bill go to my insurance again
+agent: yes the bill goes to the same insurer as last time
+caller: great my husband will okonkwo might also call to confirm
+agent: will okonkwo sure i'll add him as a contact
+caller: and if it helps his number is +27 82 555 0147
+agent: thanks i've added it
+caller: thank you grace you've been a great help
+agent: my pleasure take care

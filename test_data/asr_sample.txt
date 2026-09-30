@@ -1,0 +1,30 @@
+agent: thank you for calling first harbor bank um my name is priya how can i help you today
+caller: hi yeah uh hi my name is kofi mensah i i'm calling about a charge on my card
+agent: okay i can help with that can i get you to spell your first name for me
+caller: sure that's k o f i and the last name is m e n s a h
+agent: thank you mister mensah and um can you verify your date of birth
+caller: yeah it's march third nineteen eighty two
+agent: perfect and the card number you're calling about
+caller: it's uh 4539 1488 0343 6467
+agent: okay i see it here so what's the charge you you don't recognize
+caller: there's like a two hundred and forty dollar charge from some place in austin texas and i've never been to austin texas i was uh i was home the whole week
+agent: okay okay i understand um let me just [inaudible] one moment
+caller: uh huh
+agent: alright so i will mark it as disputed and we'll issue a provisional credit within ten business days
+caller: okay i hope so because my phone bill is due friday and i i need that money
+agent: of course and you know there's a grace period on your account so you won't get a late fee for this
+caller: oh good good um also my wife grace she has a card on the same account can you check hers too
+agent: i'd need grace to call in herself or be on the line to authorize that
+caller: right right okay she's at work till like six i'll tell her
+agent: no problem is the best number to reach you still 617 555 0142
+caller: no it changed it's 857-555-0193 now
+agent: got it i've updated that and um do you want the replacement card sent to the same address
+caller: yes please the jordan river apartments one unit twelve
+agent: okay and to be frank mister mensah i'd also recommend setting up text alerts
+caller: sure sure can you send them to my email too it's kofi.mensah82@gmail.com
+agent: yep kofi dot mensah eight two at gmail dot com got it
+caller: yeah that's it
+agent: and is there anything else i can help with today
+caller: uh my brother will might call about his account he's will mensah too but a different account
+agent: that's fine he'll just need to verify himself when he calls thanks for calling first harbor kofi have a good day
+caller: thanks priya bye

@@ -1,0 +1,12 @@
+{
+  "PERSON": [
+    "grace",
+    "mark hughes",
+    "hughes",
+    "thandiwe dlamini",
+    "dlamini",
+    { "value": "d l a m i n i", "hard": true },
+    "chidi",
+    "will okonkwo"
+  ]
+}

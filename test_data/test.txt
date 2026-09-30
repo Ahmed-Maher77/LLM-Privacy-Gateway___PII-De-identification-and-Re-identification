@@ -1,0 +1,59 @@
+Date: October 24, 2023
+Location: Virtual Meeting (Zoom)
+Subject: SME Interview – Security Awareness Training Content
+
+Participants:
+
+Sarah (Project Manager): Facilitator.
+
+Mike (Instructional Designer): Note-taker and content architect.
+
+David (SME): Director of Information Security (15 years experience).
+
+Sarah: Thanks for joining us, David. We know you’re busy, so we’ll dive right in. Our goal today is to gather the core content for the new "Security Awareness" module for general staff. We don’t want to make it too technical, but we want it to be effective. Does that align with your expectations?
+
+David: Absolutely. I’ve seen too many trainings that are just walls of text. The staff tunes out. We need them to understand why they are targets, not just read a policy.
+
+Mike: That’s great to hear. We want to focus on behaviors. If you had to pick the top three vulnerabilities you see in the company right now, what would they be?
+
+David: Number one is definitely Phishing. Specifically, "Spear Phishing." It’s not just the Nigerian Prince emails anymore. These are emails that look like they come from our CEO asking for a wire transfer, or from HR asking to update direct deposit info. It looks real.
+
+Mike: When you say "looks real," what are the specific red flags they should look for? What gives it away for you?
+
+David: It’s usually a combination of things. Urgency is the big one. "Do this in the next 10 minutes or your account will be locked." Also, look at the sender's address. It might say "CEO John Smith" but the email address is john.smith@gmail.com instead of our corporate domain. And finally, hover over links. If the text says www.chase.com but the actual link goes to www.chase-secure-login.xyz, that’s a red flag.
+
+Sarah: So, we need a section on "Anatomy of a Phishing Email." Got it. What’s number two?
+
+David: Password Hygiene. I still see people using "Password123" or sharing passwords with their assistants. The biggest issue is credential reuse—using the same password for their corporate email that they use for their personal Amazon account.
+
+Mike: How do we convince them to use a Password Manager? There’s usually resistance to that.
+
+David: We have to frame it as convenience, not a chore. If they use the manager, they only have to remember one strong passphrase. I’d suggest a demo video showing how autofill works. Also, we need to explain MFA (Multi-Factor Authentication) fatigue. If they get a push notification on their phone they didn't initiate, they need to report it, not just hit "Approve" to make it stop.
+
+Sarah: That’s a great point. "MFA Fatigue" is a very current topic. What is the third area?
+
+David: Data Handling. Specifically, working remotely. People are working at coffee shops. They are looking at confidential contracts on their laptops, and people are walking behind them. Or they leave their laptop unlocked when they go to the bathroom.
+
+Mike: So, physical security translates to digital security?
+
+David: Exactly. A clean desk policy is part of it. If you print a sensitive document, don’t leave it on the printer tray. If you are on a Zoom call in public, use headphones. It sounds like common sense, but when people are stressed or rushing, they forget.
+
+Sarah: Okay, we have Phishing, Passwords/MFA, and Data Handling. If you had to give the learners one piece of advice that sums up the whole course, what would it be?
+
+David: "Slow down."
+
+Mike: Slow down?
+
+David: Yes. Every major breach we’ve had or prevented usually comes down to a moment where someone felt rushed. They clicked the link because they were late for a meeting. They approved the MFA because they were in the middle of a task. If they just take five seconds to look at the sender or think about the request, they stop 90% of attacks.
+
+Mike: "Stop, Look, and Think." That’s a good slogan.
+
+David: I like that. Use that.
+
+Sarah: David, this has been incredibly helpful. We’re going to draft a storyboard based on these three pillars. Can we send it to you for a technical review next week?
+
+David: Send it over. I’m happy to poke holes in it.
+
+Sarah: Thanks, David. We’ll let you get back to it.
+
+David: Anytime. Stay safe.

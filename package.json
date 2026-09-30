@@ -1,0 +1,23 @@
+{
+  "name": "pii-redaction",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "fetch:model": "tsx scripts/fetch-model.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.3.0",
+    "dotenv": "^18.0.4"
+  }
+}

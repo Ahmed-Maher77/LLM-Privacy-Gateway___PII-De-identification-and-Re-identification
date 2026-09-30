@@ -1,0 +1,14 @@
+{
+  "PERSON": [
+    { "value": "hope", "in": "my name is hope how" },
+    { "value": "hope", "in": "thanks hope bye" },
+    "kwame asante",
+    "asante",
+    "mark asante",
+    { "value": "mark", "in": "my son mark he" },
+    "abena",
+    { "value": "bill", "in": "my brother bill might" },
+    { "value": "bill", "in": "bill would need" }
+  ],
+  "ignore": ["kwame"]
+}

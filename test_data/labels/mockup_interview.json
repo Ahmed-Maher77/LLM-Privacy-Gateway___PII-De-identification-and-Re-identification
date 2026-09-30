@@ -1,0 +1,15 @@
+{
+  "PERSON": [
+    "Aisha Al-Rashid",
+    "Jean-Luc Picard",
+    "J.L. Picard",
+    "Jean-Luc",
+    "Picard",
+    { "value": "P-I-C-A-R-D", "hard": true },
+    "Yvette Picard",
+    "Beverly Crusher",
+    "Daniel Okafor",
+    "Priya Raman",
+    "Priya"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "PERSON": [
+    "Dana Whitfield",
+    "Dana",
+    "Marcus Whitfield",
+    "Marcus",
+    "Priya Raghunathan",
+    "Priya",
+    "Tom Okafor",
+    "Tom",
+    "Elena Vasquez",
+    "Elena",
+    "Rosa Delgado",
+    "Rosa",
+    "Luis Delgado",
+    "Luis",
+    "Kwame Boateng",
+    "Sophie Lindqvist",
+    "Tyler Ng",
+    "Tyler",
+    "Bill Hargrove Jr",
+    "Denise Park",
+    "Sven Larsson",
+    "Angela Osei",
+    "Angela",
+    "Gerald Locke",
+    "Eleanor Whitfield"
+  ],
+  "ignore": ["Whitfield", "Hargrove", "Brennan", "Locke", "dana", "marcus", "priya", "tom", "denise", "sven", "angela", "svenlarsson", "dwhitfield78"]
+}

@@ -1,0 +1,365 @@
+RECORDING TRANSCRIPT
+Session ID: HC-INT-2025-0304-C
+Duration: 62:18
+Interviewer: [MODERATOR]
+Subject: Practice Manager — Multi-site Family Medicine
+Date: March 4, 2025
+Transcription: Human-verified (Tier 2) — timestamps approximate
+Note: Speaker labels normalized post-session. Overlap segments flagged [OVL].
+
+---
+
+[00:00:00]
+MODERATOR: —testing, testing. Okay. We're live. 
+Thanks for joining, and apologies again for the reschedule.
+
+[00:00:07]
+SUBJECT: No worries. I had a patient escalation, 
+so honestly you did me a favor.
+
+[00:00:13]
+MODERATOR: Understood. Before we begin — 
+can you confirm you consent to recording and transcription?
+
+[00:00:19]
+SUBJECT: I do. I'm Miriam Castellanos. 
+I'm the practice manager at Northside Family Medicine. 
+We run three locations. 
+I'll give you the details as we go. 
+My direct line is 415-555-0117, 
+email m.castellanos@northsidefamilymed.org.
+
+[00:00:41]
+MODERATOR: Perfect. Let's start with the org structure.
+
+[00:00:45]
+SUBJECT: So the practice was founded in 2009 by 
+Dr. Alan Prescott. He's still the medical director. 
+His NP is Dr. — sorry, she's an NP, not a doctor — 
+Beatriz Ochoa. 
+Everyone calls her Bea. 
+Her extension is 214. 
+The main clinic line is 415-555-0100. 
+Location one is 2200 Mission Bay Blvd, 
+San Francisco, CA 94158. 
+Location two is in Daly City — 
+88 Serramonte Center, Suite 210, 
+Daly City, CA 94014. 
+Third one is newer, it's in Oakland. 
+4400 Telegraph Ave, Oakland, CA 94609.
+
+[00:01:38]
+MODERATOR: Three sites, that's a lot of coordination.
+
+[00:01:42]
+SUBJECT: You have no idea. Each site has its own 
+front desk lead. Mission Bay is Tanya Brooks. 
+Her cell is 415-555-0133. 
+Daly City is Hector Ruiz — 650-555-0148. 
+Oakland is brand new, that's Jasmine Okonkwo, 
+she's 510-555-0192. 
+Jasmine's still in her 90-day probation, 
+so if you need anything from Oakland, 
+loop me in first.
+
+[00:02:19]
+MODERATOR: Noted. What about your clinical staff?
+
+[00:02:23]
+SUBJECT: Let me think. We have four physicians, 
+two NPs, and about eleven MAs across the three sites. 
+I won't name all the MAs — that's a lot. 
+But the physicians are Dr. Prescott, 
+Dr. Anjali Mehta, Dr. Robert Kim — 
+he goes by Bobby — and Dr. Fatima El-Sayed. 
+Dr. El-Sayed just joined in January, 
+she came from a practice in Sacramento. 
+Her NPI is 1234567893 if you need it for 
+credentialing context.
+
+[00:03:05]
+MODERATOR: Probably don't, but good to know it exists.
+
+[00:03:08]
+SUBJECT: [laughs] Right. Actually the whole group's 
+NPIs are in our credentialing spreadsheet. 
+Mine's not an NPI, I'm not clinical, 
+but my employee ID is NCFM-0042.
+
+[00:03:23]
+MODERATOR: Okay. Let's talk about the operational side. 
+What's your biggest pressure right now?
+
+[00:03:30]
+SUBJECT: Staffing, always staffing. 
+And prior authorizations. 
+The PA volume has probably doubled 
+in eighteen months. 
+We use a service — it's called 
+ClearPath Medical Admin — 
+our account rep is Denise Whitaker. 
+d.whitaker@clearpathmedadmin.com, 
+1-800-555-0176, extension 3302.
+
+[00:04:02]
+MODERATOR: Do they have a portal or is it all email?
+
+[00:04:06]
+SUBJECT: Both. Portal's fine, but their 
+escalation email is urgent@clearpathmedadmin.com. 
+That goes to a queue, not a person, 
+so don't expect a fast reply.
+
+[00:04:21]
+MODERATOR: Got it. Billing and payer mix?
+
+[00:04:25]
+SUBJECT: We're about 60% commercial, 
+30% Medicare, 10% Medi-Cal. 
+Our billing is outsourced to 
+Ridgeline Billing Partners. 
+Account manager is Stanley Park — 
+no relation to the park in Seattle, 
+he gets that joke a lot. 
+Stanley's email is spark@ridgelinebilling.com. 
+Their main line is 206-555-0155.
+
+[00:04:58]
+MODERATOR: Do you handle credentialing in-house?
+
+[00:05:01]
+SUBJECT: Mostly. We have a contractor, 
+her name is Yolanda Freitas, 
+she's a 1099. 
+Her email is yolanda@freitascredentialing.com, 
+phone 510-555-0181. 
+She's great. She's also retiring next year, 
+which is a problem I'm choosing not to think about.
+
+[00:05:28]
+MODERATOR: Fair. Let's shift to patients — 
+obviously no names, but can you talk 
+about the patient population generally?
+
+[00:05:36]
+SUBJECT: Sure. We serve a lot of families, 
+a lot of immigrants, a lot of folks 
+who are underinsured. 
+The Mission Bay site has a big 
+Spanish-speaking population, 
+so we have two bilingual MAs there. 
+One of them — I'll just say her first name, 
+Rosa — she's been with us nine years.
+
+[00:06:02]
+MODERATOR: And I assume you have EHR, 
+compliance, that whole stack.
+
+[00:06:07]
+SUBJECT: Yep. EHR is Epic. 
+Our instance is hosted, 
+so most of the PHI sits with them, 
+but we still have local backups. 
+Compliance officer is a guy named 
+Gordon Pham. 
+He's part-time, he's actually a lawyer 
+at a firm downtown — 
+Pham & Sorenson. 
+His work email is gpham@phamsorenson.com.
+
+[00:06:39]
+MODERATOR: And your HIPAA training vendor?
+
+[00:06:42]
+SUBJECT: That's through a platform called 
+CareCourse. 
+Our admin contact there is 
+someone named — hold on, 
+let me check my notes. 
+
+[00:06:55]
+SUBJECT: Okay, it's Deirdre Halloran. 
+d.halloran@carecourse.example. 
+I always forget her first name.
+
+[00:07:04]
+MODERATOR: No problem. Let's talk about 
+the incident you mentioned earlier — 
+the patient escalation. 
+Only if you're comfortable.
+
+[00:07:11]
+SUBJECT: Yeah, I can talk about it in general terms. 
+A patient at the Daly City site 
+was unhappy about a wait time, 
+and it escalated to the point where 
+Hector had to call 911. 
+Nobody was hurt. 
+The patient's name — I'm not going to say. 
+But I will say she's a longtime patient, 
+she's in her late 70s, 
+and she lives alone. 
+The responding officer's card 
+is in our incident file — 
+Officer M. Delacroix, badge 4471, 
+Daly City PD. 
+Incident report number is DCPD-2025-00817.
+
+[00:08:02]
+MODERATOR: Did that change any of your 
+front-desk protocols?
+
+[00:08:06]
+SUBJECT: Yes. We now have a 
+de-escalation script, 
+and Hector and Tanya both 
+did a training in February. 
+The trainer was from a company 
+called Calm Response — 
+contact is a woman named 
+Ingrid Solberg. 
+ingrid@calmresponse.io, 
+415-555-0164.
+
+[00:08:33]
+MODERATOR: Good. Let's talk about 
+insurance and malpractice.
+
+[00:08:38]
+SUBJECT: Malpractice is through 
+Mutual Assurance Group. 
+Our broker is a guy named 
+Terrence Okafor — 
+different Okafor than anyone else, 
+I think. 
+His email is tokafor@mutualassurance.com, 
+phone 800-555-0199. 
+Policy number is MAG-MED-2024-55183. 
+Our general liability is separate, 
+that's through Hartford, 
+policy GL-2024-77812. 
+And our cyber policy — 
+we added it after the CareCourse 
+breach scare in 2023 — 
+is through Chubb, 
+policy CYB-2023-44102.
+
+[00:09:26]
+MODERATOR: Wait — you said CareCourse breach scare?
+
+[00:09:30]
+SUBJECT: Oh, not a breach of ours. 
+A breach of theirs. 
+Or a suspected one. 
+We got a notification letter 
+in November 2023 
+signed by their then-CISO, 
+a guy named — I want to say 
+Rajiv Menon. 
+The letter came from 
+compliance@carecourse.example. 
+Turned out to be nothing, 
+but we still added the cyber policy.
+
+[00:10:01]
+MODERATOR: Smart. Let's talk about 
+your own background briefly.
+
+[00:10:06]
+SUBJECT: Sure. I've been in practice management 
+fifteen years. 
+Before this I was at a clinic in Berkeley — 
+that's where I met my husband, actually. 
+He's a physician there, 
+Dr. Nathan Castellanos. 
+We got married in 2016. 
+We live in El Cerrito. 
+I'd rather not give the address.
+
+[00:10:32]
+MODERATOR: Completely fine.
+
+[00:10:34]
+SUBJECT: Our kids are at a school in 
+Albany — I won't say which one. 
+One's in 4th grade, 
+one's in 7th. 
+Honestly the school pickup 
+is the hardest part of my day.
+
+[00:10:52]
+MODERATOR: [laughs] I believe it. 
+Anything on the technology side 
+you want to flag?
+
+[00:10:58]
+SUBJECT: Our IT is a small MSP, 
+they're called Bayline Tech. 
+Owner is a guy named 
+Wes Tran. 
+wes@baylinetech.com, 
+415-555-0129. 
+He's responsive. 
+He's also the only person 
+who understands our phone system, 
+which is a little terrifying.
+
+[00:11:23]
+MODERATOR: And the phone system is...?
+
+[00:11:25]
+SUBJECT: It's an old on-prem Avaya. 
+We've been meaning to migrate 
+for three years. 
+Every time we get close, 
+something else breaks.
+
+[00:11:36]
+MODERATOR: Classic. 
+Okay — before we wrap, 
+is there anyone else I should 
+talk to for the operations piece?
+
+[00:11:44]
+SUBJECT: You should talk to Tanya. 
+She's the most organized person 
+I've ever met. 
+Her email is t.brooks@northsidefamilymed.org. 
+And actually, if you want the 
+financial picture, 
+Stanley at Ridgeline is the 
+one who sees it clearest. 
+spark@ridgelinebilling.com, 
+already mentioned.
+
+[00:12:07]
+MODERATOR: Great. Any final thoughts?
+
+[00:12:10]
+SUBJECT: Just — if this gets published, 
+please don't include 
+my husband's name, 
+my kids' school, 
+our home city, 
+or the officer's badge number. 
+The rest is fine.
+
+[00:12:24]
+MODERATOR: Understood. We'll 
+run it through review.
+
+[00:12:28]
+SUBJECT: Oh — and don't publish 
+the patient's age. 
+She'd be identifiable in a small 
+practice like ours. 
+That's the thing people 
+always get wrong about 
+de-identification. 
+It's not just names.
+
+[00:12:44]
+MODERATOR: That's a really good point. 
+We're stopping the recording now.
+
+[END OF TRANSCRIPT]
