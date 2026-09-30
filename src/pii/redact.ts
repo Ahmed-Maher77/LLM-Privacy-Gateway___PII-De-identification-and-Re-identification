@@ -5,7 +5,7 @@
 //   1. pre-defined lists  layers/predefined.ts   values you always want masked
 //                         layers/dictionary.ts   name / organisation registries (data/lists/)
 //   2. regex              layers/regex.ts        fixed formats, checksums
-//   3. Presidio           layers/presidio.ts     names (spaCy NER) and its recognizers
+//   3. NER model          layers/ner.ts          names (local ONNX model, Transformers.js)
 //   4. wink-nlp           layers/wink.ts         emails, natural-language dates
 // Overlapping spans are then merged into one span covering all of them, so
 // no part of anything a layer found stays visible.
@@ -13,12 +13,12 @@
 import { detectPredefined } from "./layers/predefined";
 import { detectDictionary } from "./layers/dictionary";
 import { detectRegex } from "./layers/regex";
-import { detectPresidio } from "./layers/presidio";
+import { detectNer } from "./layers/ner";
 import { detectWink, isEnglishWord } from "./layers/wink";
 import { Placeholders } from "./policy";
 import type { DetectionMetrics, PIISpan, RedactResult } from "./types";
 
-/** ~2 MB: guards the analyzer against accidental whole-dataset inputs. */
+/** ~2 MB: guards against accidental whole-dataset inputs. */
 const MAX_CHARS = 2_000_000;
 
 /** Tie-break when two overlapping spans are equally long: earlier layer wins. */
@@ -26,7 +26,7 @@ const LAYER_ORDER: PIISpan["source"][] = [
     "predefined",
     "dictionary",
     "regex",
-    "presidio",
+    "ner",
     "wink",
     "repeat",
 ];
@@ -153,22 +153,22 @@ async function detectWithMetrics(text: string): Promise<DetectionRun> {
         layerCounts[name] = Array.isArray(result) ? result.length : 0;
         return result;
     };
-    const presidioStarted = performance.now();
-    const presidio = detectPresidio(text); // network: runs while the local layers work
+    const nerStarted = performance.now();
+    const ner = detectNer(text); // loads the model while the other layers work
     const predefined = measure("predefined", () => detectPredefined(text));
     const dictionary = measure("dictionary", () => detectDictionary(text));
     const regex = measure("regex", () => detectRegex(text));
     const wink = measure("wink", () => detectWink(text));
-    const presidioSpans = await presidio;
-    layerCounts.presidio = presidioSpans.length;
-    layerTimingsMs.presidio = performance.now() - presidioStarted;
+    const nerSpans = await ner;
+    layerCounts.ner = nerSpans.length;
+    layerTimingsMs.ner = performance.now() - nerStarted;
 
     const spans = [
         ...predefined,
         ...dictionary,
         ...regex,
         ...wink,
-        ...presidioSpans,
+        ...nerSpans,
     ];
     const repeated = measure("repeat", () => everyOccurrence(text, spans));
     const merged = measure("merge", () => merge(text, [...spans, ...repeated]));

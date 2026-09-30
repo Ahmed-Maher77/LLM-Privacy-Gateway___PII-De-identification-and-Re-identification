@@ -96,6 +96,31 @@ Notes:
 **Exit:** with Docker stopped, `npm run dev` runs on every `test_data` file
 and `npm run eval` scores it.
 
+### Phase 1 results (gravitee, untuned, 2026-09-30)
+
+`NER_MIN_SCORE` 0.5, window 256, batch 8; all our types but ORGANIZATION
+taken from the model. `npm run check:offsets` passes.
+
+| | Current | Reference |
+| --- | --- | --- |
+| PERSON recall, normally cased files | 318 / 319 (99.7%) | 318 / 319 (99.7%) |
+| PERSON characters leaked, `asr_sample.txt` | 8 / 74 (10.8%) | 18 / 74 (24.3%) |
+| PERSON false positives | **30** | 7 |
+| All types: recall / leaked / precision | 99.2% / 0.3% / 65.5% | 98.7% / 0.7% / 94.2% |
+| Hard labels found | 4 / 10 | 0 / 10 |
+
+Every type keeps 100% recall except PERSON (99.1%, reference 98.5%). The
+precision losses are listed in DESIGN.md "Found while building".
+
+Speed (`redact()`, median of 3 fresh processes):
+
+| File | Cold (model load included) | Warm |
+| --- | --- | --- |
+| 5.9 KB (`mockup_interview.txt`) | 1.7 s | 0.27 s |
+| 229 KB (test_data repeated) | 10.4 s | 9.0 s |
+
+Criterion 4 (≤ ~1.5 s cold for 6 KB) is not met yet; that is Phase 2.5.
+
 ## Phase 2: choose the model and tune it
 
 | # | Task |

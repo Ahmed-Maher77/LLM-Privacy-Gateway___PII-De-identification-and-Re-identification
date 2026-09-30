@@ -1,5 +1,5 @@
 // CLI entry point => npm run dev <file>
-// Detects and redacts PII in <file> via the Presidio-backed pipeline   ==> Requires the sidecar in presidio/docker-compose.yml
+// Detects and redacts PII in <file>, fully in-process   ==> Requires the NER model: npm run fetch:model
 
 // output contract => REDACTED text goes to reports/<name>__sanitized<ext>
 
@@ -8,7 +8,7 @@ import { writeSanitizedReport } from "./pii/generate_reports/writeSanitizedRepor
 import { writeJsonReport } from "./pii/generate_reports/writeJsonReport";
 import "dotenv/config";
 import { redact, InputTooLargeError } from "./pii/redact";
-import { PresidioUnavailableError } from "./pii/client";
+import { ModelLoadError } from "./pii/layers/ner";
 
 
 // ========== Main entry point ==========
@@ -56,13 +56,13 @@ async function main() {
         );
         console.error(`JSON report -> ${jsonReport}`);
     } catch (err) {
-        // if Presidio is down
-        if (err instanceof PresidioUnavailableError) {
+        // if the NER model is missing or won't load
+        if (err instanceof ModelLoadError) {
             console.error(`\n${err.message}`);
             process.exit(2);
         }
 
-        // if the input text is too large for Presidio to handle
+        // if the input text is over the size limit
         if (err instanceof InputTooLargeError) {
             console.error(`\n${err.message}`);
             process.exit(1);

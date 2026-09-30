@@ -26,11 +26,13 @@ export interface PIISpan {
         | "predefined"
         | "dictionary"
         | "regex"
-        | "presidio"
+        | "ner"
+        | "presidio" // removed with layers/presidio.ts (PLAN.md 4.1)
         | "wink"
         | "repeat"; // Which layer found it (for debugging)
 }
 
+// Used only by layers/presidio.ts and client.ts, removed with them (PLAN.md 4.1)
 export interface PresidioRecognizerResult {
     start: number;
     end: number;

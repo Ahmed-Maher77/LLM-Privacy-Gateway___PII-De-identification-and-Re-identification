@@ -1,9 +1,11 @@
 # NER layer design: Transformers.js
 
-**Status: target design, not built yet.** It replaces the Presidio layer
-(`src/pii/layers/presidio.ts`, `src/pii/client.ts`, `presidio/`). Until the
-switch is done, README.md and ARCHITECTURE.md describe the current,
-Presidio-based pipeline. The steps are in [PLAN.md](PLAN.md).
+**Status: built (PLAN.md Phase 1), not tuned yet.** It replaces the Presidio
+layer (`src/pii/layers/presidio.ts`, `src/pii/client.ts`, `presidio/`), which
+stays in the repo, unused, until Phase 4. Until then README.md and
+ARCHITECTURE.md describe the Presidio-based pipeline. The steps are in
+[PLAN.md](PLAN.md); what Phase 1 changed in this design is under "Found while
+building" at the end.
 
 ## Goal
 
@@ -32,14 +34,16 @@ file ─▶ src/index.ts ─▶ redact() ─▶ detect()
 | File | Change |
 | --- | --- |
 | `src/pii/layers/ner.ts` | **New.** Loads the model and returns spans (sections below) |
+| `src/pii/layers/ner_models.ts` | **New.** Per model: pinned revision, files with SHA-256, label map. Shared by `ner.ts` and `fetch-model.ts` |
 | `src/pii/layers/presidio.ts` | Deleted. `trimName`, `looksLikePerson` and the IPv4 filter move to `ner.ts` |
 | `src/pii/client.ts`, `presidio/` | Deleted |
 | `src/pii/redact.ts` | Call `detectNer()` instead of `detectPresidio()`; `"presidio"` in `LAYER_ORDER` becomes `"ner"` |
-| `src/pii/types.ts` | `PIISpan.source`: `"presidio"` becomes `"ner"`. Remove `PresidioRecognizerResult` and `AnalyzeRequest` |
+| `src/pii/types.ts` | `PIISpan.source` gets `"ner"`. `"presidio"`, `PresidioRecognizerResult` and `AnalyzeRequest` stay until Phase 4, since `presidio.ts` and `client.ts` still use them |
 | `src/index.ts` | `PresidioUnavailableError` becomes `ModelLoadError`, still exit code 2 |
 | `src/pii/layers/regex.ts` | Covers what only Presidio caught (see "Regex additions") |
 | `scripts/fetch-model.ts` | **New.** `npm run fetch:model` downloads the pinned model into `models/` |
-| `package.json` | Add `@huggingface/transformers` (pinned exact) and `fetch:model`; remove `presidio:up` / `presidio:down` |
+| `scripts/check-offsets.ts` | **New.** `npm run check:offsets`: the offset tests of PLAN.md 1.5 |
+| `package.json` | Add `@huggingface/transformers` (pinned exact) and `fetch:model`; remove `presidio:up` / `presidio:down` (Phase 4) |
 | `.gitignore` | Add `models/` (unless we decide to commit the model, see PLAN.md) |
 
 ## Why we don't use `pipeline("token-classification")`
@@ -61,15 +65,25 @@ directly and works out the offsets itself.
 ### 1. Loading (once per process)
 
 ```ts
-import { env, AutoTokenizer, AutoModelForTokenClassification } from "@huggingface/transformers";
+import type { PreTrainedModel, PreTrainedTokenizer } from "@huggingface/transformers" with { "resolution-mode": "import" };
 
+const { env, AutoTokenizer, AutoModelForTokenClassification, Tensor } = await import("@huggingface/transformers");
 env.allowRemoteModels = false;             // never download at run time
-env.localModelPath = path.resolve(__dirname, "../../../models");
+env.localModelPath = MODELS_DIR;           // models/
 // tokenizer + model loaded once and kept in a module-level promise
 ```
 
+The package is an ES module (`"type": "module"`). A static `import` from this
+CommonJS project runs under tsx but fails `tsc` with TS1479, so values come
+from a dynamic `import()` and types from `import type` with
+`resolution-mode: "import"`.
+
 - The model loads lazily on the first call, and every later call reuses the
   same promise.
+- `[CLS]` / `[SEP]` come from `tokenizer.encode("")`, the model's own
+  template: `tokenizer.cls_token_id` is `undefined` in 4.3.0. The model is
+  called with `input_ids` and `attention_mask` only; the ONNX graph has no
+  `token_type_ids` input.
 - Use the quantized weights (`dtype: "q8"`, file `onnx/model_quantized.onnx`)
   on the CPU (`onnxruntime-node`).
 - If any file is missing or doesn't load, throw `ModelLoadError` ("Run `npm run
@@ -84,11 +98,15 @@ The text is split into **pieces**, each with its exact UTF-16 `start`/`end`:
 const PIECE_RE = /[^\s\p{P}\p{S}]+|[\p{P}\p{S}]/gu;  // runs of letters/digits, or one punctuation mark
 ```
 
-This is the same split BERT's own pre-tokenizer makes (whitespace, then
-punctuation), so the model sees the same input as usual. Each piece is
+This is close to the split BERT's own pre-tokenizer makes (whitespace, then
+punctuation), so the model sees nearly the same input as usual. One
+difference: BERT counts only ASCII symbols as punctuation, so it keeps an emoji
+or "©" attached to the word next to it, where we split it off. That never
+splits a name. Each piece is
 tokenized on its own (`tokenizer.encode(piece, { add_special_tokens: false })`)
 into one or more sub-tokens. Results are cached by piece string, since
-transcripts repeat words a lot.
+transcripts repeat words a lot. A piece that tokenizes to nothing (a lone
+zero-width character) is skipped: it is not labelled and doesn't end a span.
 
 **The model never gives offsets.** It labels pieces, and a piece's offsets are
 the ones our regex found. Before returning, assert `span.text ===
@@ -109,13 +127,16 @@ sub-token's softmax probability as the score.
   (default 256, hard maximum 510, plus `[CLS]`/`[SEP]`).
 - Consecutive windows overlap by 64 sub-tokens.
 - A piece that appears in two windows takes the label from the window where
-  it is further from the edge, since it has more context there.
+  it is further from a **cut** edge, since it has more context there. The
+  start of the first window and the end of the last are the text's own ends,
+  not cuts, so they don't count as edges.
 - Windows run in padded batches of `NER_BATCH_SIZE` (default 8) with an
   `attention_mask`.
 - A single piece longer than a window (a base64 blob, say) is labelled `O`.
   It is not a name, and regex still sees it.
 
 Every piece gets exactly one label, so nothing past token 512 goes unread.
+`ner.ts` checks this and throws if any piece was left unlabelled.
 
 ### 4. Labels to spans
 
@@ -187,3 +208,23 @@ layer. `regex.ts` has to cover them before Presidio is gone:
   2,000,000 characters, the run stops with no output.
 - **Merging favours masking.** When layers disagree about where a value ends,
   the union is masked.
+
+## Found while building (Phase 1)
+
+Measured with gravitee, `NER_MIN_SCORE` 0.5 (provisional), window 256,
+batch 8, on a 16-thread Windows machine. Phase 2 tunes all of this.
+
+- **The model sometimes tags each word of a name `B-`** ("kofi mensah" →
+  `B-PERSON B-PERSON`; "sarah johnson" → `B-PERSON I-PERSON`). Grouping follows
+  the rule above, so these become two adjacent spans. Nothing leaks, but the
+  output reads `<PERSON_1> <PERSON_2>` where Presidio gave one placeholder.
+  Phase 2 should decide whether adjacent same-type spans on one line are joined.
+- **Initials can split around the dot.** In `mockup_interview.txt` "J.L.
+  Picard" comes out as "J" and "L. Picard", leaving the "." visible.
+- **Types other than PERSON cost precision.** Phase 1 takes every one of our
+  types except ORGANIZATION, as Presidio was asked for. DATE_TIME alone adds
+  153 false positives (times, durations, "today"), and US_SSN / US_PASSPORT
+  tag keyword phrases ("US Passport number"). This is the PLAN.md 2.4 decision.
+- **Speed is the model's own compute.** About 90% of the time on 229 KB is in
+  `onnxruntime`'s `session.run`; tokenizing takes under 0.1 s. The 64-token
+  overlap adds about a third more tokens at window 256.
