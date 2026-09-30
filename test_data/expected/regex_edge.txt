@@ -1,0 +1,10 @@
+Support ticket — identity check (synthetic)
+
+Agent: For the record, which passport do you travel on?
+Customer: A US one. The passport I renewed last year is <US_PASSPORT_1>, and my old one was <US_PASSPORT_2>.
+Agent: And your social security number?
+Customer: It's <US_SSN_1>.
+Agent: The form lists 000-12-3456, 666-45-1234, 912-34-5678, 123-00-4567 and 123-45-0000 as examples; those are never issued.
+Agent: What's the best number to reach you?
+Customer: My mobile is <PHONE_NUMBER_1>, or the Berlin office on <PHONE_NUMBER_2>.
+Agent: Thanks, that's all I need.

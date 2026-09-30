@@ -13,8 +13,6 @@
     "eval": "tsx scripts/evaluate.ts",
     "fetch:model": "tsx scripts/fetch-model.ts",
     "typecheck": "tsc --noEmit",
-    "presidio:up": "docker compose -f presidio/docker-compose.yml up -d",
-    "presidio:down": "docker compose -f presidio/docker-compose.yml down",
     "build:lists": "tsx scripts/build-lists.ts"
   },
   "devDependencies": {

@@ -1,10 +1,11 @@
 # PII Detection & Redaction Pipeline
 
-English-language PII redaction for support transcripts. Four detection
-layers — pre-defined lists (yours, plus name registries), regex,
-Presidio (spaCy NER) and wink-nlp — each find values; their results are
-merged and masked. How it works:
-[ARCHITECTURE.md](ARCHITECTURE.md). Known drawbacks: [LIMITATIONS.md](LIMITATIONS.md).
+English-language PII redaction for support transcripts, fully in-process: no
+Docker, no service, no network at run time. Four detection layers —
+pre-defined lists (yours, plus name registries), regex, a local NER model
+(Transformers.js) and wink-nlp — each find values; their results are merged
+and masked. How it works: [ARCHITECTURE.md](ARCHITECTURE.md). Known drawbacks:
+[LIMITATIONS.md](LIMITATIONS.md).
 
 ## What gets redacted
 
@@ -42,16 +43,16 @@ Values you always want masked, whatever the detectors think, go in
 
 Matching is case-insensitive and whole-word. This is the most reliable way to
 cover names you know in advance (customers, staff), especially in lowercase
-speech-to-text, where spaCy misses many names.
+speech-to-text, where names that are also English words ("will", "grace") are
+easy to miss.
 
 **Companies are masked only from this list.** Automatic company detection
-(spaCy, company-name patterns, company registries) mostly flagged products,
-acronyms and headings, so it was removed: a company is masked if and only if
-it is listed here. Add your clients, partners and your own company. An entry
-with a legal suffix also covers the short name: `"Exampleco Inc"` masks
-"Exampleco" and "EXAMPLECO" too. The short name matches only capitalised or
-in capitals, so the ordinary word "exampleco" is left alone; list other
-short forms or abbreviations explicitly.
+mostly flagged products, acronyms and headings, so it is not used: a company
+is masked if and only if it is listed here. Add your clients, partners and
+your own company. An entry with a legal suffix also covers the short name:
+`"Exampleco Inc"` masks "Exampleco" and "EXAMPLECO" too. The short name
+matches only capitalised or in capitals, so the ordinary word "exampleco" is
+left alone; list other short forms or abbreviations explicitly.
 
 ## Name lists
 
@@ -68,17 +69,28 @@ Sources: [Wikidata](https://www.wikidata.org) (CC0) via the
 names, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 See ARCHITECTURE.md for how list entries are matched.
 
+## NER model
+
+Names are also found by
+[`gravitee-io/bert-small-pii-detection`](https://huggingface.co/gravitee-io/bert-small-pii-detection)
+(Apache-2.0, 29 MB quantized ONNX), run on the CPU through
+[Transformers.js](https://huggingface.co/docs/transformers.js). Only its
+PERSON labels are used. The model is **not** part of this repository:
+`npm run fetch:model` downloads it once from Hugging Face into `models/`
+(git-ignored), pinned to one revision and checked by SHA-256.
+
 ## Running it
 
 ```bash
 npm install
-npm run presidio:up            # analyzer on :5002 (pinned image)
+npm run fetch:model            # once: the pinned NER model into models/ (needs internet)
 npm run dev -- <file>          # writes reports/<name>__sanitized<ext>
-npm run presidio:down
 ```
 
-The CLI writes only the **redacted** text and never prints original values.
-Exit codes: 1 bad input, 2 Presidio down, 3 unexpected error.
+After the fetch, runs need no network. The CLI writes only the **redacted**
+text and never prints original values. Exit codes: 1 bad input, 2 NER model
+missing or failed to load (run `npm run fetch:model`), 3 unexpected error. On
+any error nothing is written.
 
 ## Checking a change
 
@@ -86,18 +98,25 @@ Exit codes: 1 bad input, 2 Presidio down, 3 unexpected error.
 npm run typecheck
 npm run check                  # redacts test_data/*.txt, compares with test_data/expected/
 npm run check -- --update      # after reviewing a difference, save it as expected
+npm run eval                   # recall, leaked characters and precision against test_data/labels/
+npm run check:offsets          # every span equals its slice of the text (emoji, CRLF, windows, 229 KB)
 ```
 
 There are no unit tests. `npm run check` fails (exit 1) on any difference and
-shows the first changed line of each file, so a rule change that starts leaking
-a name shows up immediately. It needs Presidio running.
+shows the first changed line of each file. `npm run eval` scores the output
+against hand-reviewed labels and compares it with the previous pipeline's
+saved output (`test_data/reference/`); see ARCHITECTURE.md.
 
 ## Configuration
 
+Read once at startup; `.env` is loaded and git-ignored.
+
 | Variable | Default | Notes |
 | --- | --- | --- |
-| `PRESIDIO_ANALYZER_URL` | `http://localhost:5002` | read once at startup; `.env` is loaded and git-ignored |
-| `PRESIDIO_ANALYZER_WORKERS` | `4` | Docker Compose only; ~0.8 GB per worker |
+| `NER_MODEL` | `gravitee-io/bert-small-pii-detection` | must be listed in `src/pii/layers/ner_models.ts` and fetched |
+| `NER_MIN_SCORE` | `0.5` | name spans scored below it are dropped |
+| `NER_WINDOW_TOKENS` | `384` | model window in sub-tokens, at most 510 |
+| `NER_THREADS` | half the logical CPUs | onnxruntime threads |
 
 ## Library use
 
@@ -109,12 +128,34 @@ const { text, spans } = await redact(input);
 
 `detect()` returns the spans only: absolute UTF-16 offsets, sorted and
 non-overlapping. Inputs over 2,000,000 characters throw `InputTooLargeError`;
-an unreachable analyzer throws `PresidioUnavailableError`.
+a missing or broken model throws `ModelLoadError`. The model loads on the
+first call and is reused, so later calls in the same process are much faster.
 
-## Last measured numbers (2026-09-29)
+## Measured numbers (2026-09-30)
 
-On 8 synthetic held-out documents: 96.7% of all PII found, 96.4% of names,
-1.9% of name characters leaked. Lowercase speech-to-text is much weaker (about
-37% of name characters leaked); see [LIMITATIONS.md](LIMITATIONS.md). The
-labelled sets are no longer in the repo, so these can't be re-run. Loading the
-lists adds ~1 s per run: a 6 KB transcript takes ~1.4 s, 229 KB ~3.8 s.
+On the 8 labelled files in `test_data/` (`npm run eval`):
+
+| | This pipeline | Previous pipeline (spaCy NER) |
+| --- | --- | --- |
+| All PII found / characters leaked / precision | 99.2% / 0.4% / 98.4% | 98.7% / 0.7% / 94.2% |
+| Names found / characters leaked / precision | 99.1% / 0.5% / 98.2% | 98.5% / 0.9% / 97.9% |
+| Name characters leaked, lowercase speech-to-text | 10.8% | 24.3% |
+
+The previous pipeline's figures are from its saved output on 7 of the files
+(the 8th was added later). Every type other than PERSON is at 100% found and
+100% precision. The set is small; see [LIMITATIONS.md](LIMITATIONS.md).
+
+Speed on an 8-core laptop (median of 5; *cold* = the first call in a new
+process, as in one CLI run, including loading the lists and the model; *warm*
+= a later call in the same process, as in library use):
+
+| Input | Cold | Warm |
+| --- | --- | --- |
+| 6 KB | 1.4 s | 0.19 s |
+| 60 KB | 2.8 s | 1.6 s |
+| 229 KB | 8.6 s | 7.0 s |
+
+These were measured with other apps using ~30% of the CPU; large files vary
+most (229 KB warm ranged 6.1–11.8 s, and took 5.2 s in quieter tuning runs).
+`npm run dev` adds about 1.7 s of `npm` and `tsx` start-up on top of *cold*.
+Peak memory is about 0.46 GB (6 KB) to about 0.5 GB (229 KB).

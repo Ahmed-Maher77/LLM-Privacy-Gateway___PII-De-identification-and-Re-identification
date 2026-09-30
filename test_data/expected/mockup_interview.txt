@@ -1,0 +1,160 @@
+Scenario
+You've been asked to build a PII detection/redaction pipeline for a fintech customer support platform. The transcript below is a merged export from chat, email, and voice-to-text, containing overlapping identities, aliases, international formats, and obfuscated PII.
+
+Test Case ID: SME-PII-ULT-001
+Environment: Staging
+Sources merged: Live Chat, Email Thread, Call Transcript (ASR)
+Language: Mixed (EN, AR, FR)
+
+[START OF TRANSCRIPT]
+🟦 CHAT LOG — Ticket #48213
+Agent: Hi, this is <PERSON_1> from NovaPay support. How can I help?
+
+Customer: hey — I'm trying to recover my account. name is <PERSON_2> but I signed up as <PERSON_3>.
+
+Agent: Thanks, Mr. <PERSON_4>. Can you confirm your DOB?
+Customer: <DATE_TIME_1> (yes, leap year 😅)
+
+Agent: And the email on file?
+Customer: try <EMAIL_ADDRESS_1> — my old one was <EMAIL_ADDRESS_2>
+
+Agent: Got it. What's your phone?
+Customer: <PHONE_NUMBER_1> (France) or <PHONE_NUMBER_2> (US backup)
+
+🟨 EMAIL THREAD — Re: Account Recovery
+From: <EMAIL_ADDRESS_1>
+To: <EMAIL_ADDRESS_3>
+Subject: Re: [Ticket #48213] — URGENT
+
+Hi team,
+
+Following up. My SSN is <US_SSN_1> (US account) and my French NIR is 1 85 02 75 116 001 42.
+
+Billing address:
+12 Rue de la Paix
+75002 Paris, France
+
+US address (for the backup card):
+1600 Amphitheatre Parkway, Mountain View, CA 94043
+
+Card details (for verification):
+Visa <CREDIT_CARD_1>, exp <DATE_TIME_2>, CVV 331
+IBAN: <IBAN_CODE_1>
+
+Also, my mother <PERSON_5> is the beneficiary. Her contact is <EMAIL_ADDRESS_4>.
+
+— <PERSON_6>
+
+🟥 CALL TRANSCRIPT (ASR) — 00:04:12
+Agent: Thank you for holding. Can you spell your last name?
+Customer: P-I-C-A-R-D.
+Agent: And your employee ID with us?
+Customer: NP-EMP-0093847.
+Agent: I see a note about a passport. Can you confirm?
+Customer: Passport #<US_PASSPORT_1>, issued in Marseille.
+Agent: And your IP during the last login?
+Customer: I think it was 192.168.14.22 — wait no, that's my home router. The public one was 203.0.113.45.
+Agent: Do you have a driver's license on file?
+Customer: DL-<US_DRIVER_LICENSE_1>, California.
+
+🟩 SYSTEM METADATA
+text
+user_id:        8842-xk-991
+device_id:      iPhone14,5 / iOS 17.2
+session_token:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy.payload
+last_login_ip:  203.0.113.45
+geo:            48.8566° N, 2.3522° E
+cookies:        _ga=GA1.2.998877665.1699999999
+🟪 AGENT NOTES (free text)
+Spoke with customer again. He mentioned his crypto wallet address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Also his Twitter handle @captain_picard and GitHub github.com/jlpicard-enterprise.
+
+His emergency contact: Dr. <PERSON_7>, phone <PHONE_NUMBER_3>, email <EMAIL_ADDRESS_5>.
+
+Note: Customer is an EU resident — GDPR applies. Verify before sharing with US team.
+
+[END OF TRANSCRIPT]
+
+=========================================
+
+Company: Bluepeak Financial Services
+Date: <DATE_TIME_3>
+Duration: 9m 18s
+
+Agent (<PERSON_8>): Thank you for calling Bluepeak Financial Services, my name is <PERSON_8>. May I have your name, please?
+
+Customer (<PERSON_9>): Hi, yes, it's <PERSON_9>.
+
+<PERSON_8>: Thanks, <PERSON_10>. How can I help you today?
+
+<PERSON_9>: I'm calling because there's a charge on my statement I don't recognize. It's for $249.99 and I never made that purchase.
+
+<PERSON_8>: I'm sorry to hear that. That's definitely something we can look into. Let me pull up your account. Could you verify your email address for me?
+
+<PERSON_9>: Sure, it's <EMAIL_ADDRESS_6>.
+
+<PERSON_8>: Got it. And for security, can you confirm the last four digits of the phone number on file?
+
+<PERSON_9>: Yes, it's 7-3-0-6.
+
+<PERSON_8>: Perfect, thank you. I can see your account here. I do see a pending charge for $249.99 dated <DATE_TIME_4>. Do you recognize the merchant name "TechHarbor Electronics"?
+
+<PERSON_9>: No, I've never heard of them. I haven't bought any electronics recently.
+
+<PERSON_8>: Understood. Have you shared your card details with anyone recently, or used it on any unfamiliar websites?
+
+<PERSON_9>: Not that I can think of. I only use it for groceries, gas, and my streaming subscriptions.
+
+<PERSON_8>: Okay. I'm going to flag this charge as unauthorized and open a dispute on your behalf. This will take about two minutes. Is that alright?
+
+<PERSON_9>: Yes, please go ahead.
+
+(Brief pause)
+
+<PERSON_8>: Alright, <PERSON_10>, I've submitted the dispute. You'll receive a provisional credit of $249.99 within 24 to 48 hours while we investigate. The case reference number is BPS-4471-2025.
+
+<PERSON_9>: Okay, and how long does the investigation usually take?
+
+<PERSON_8>: Typically 7 to 10 business days. We'll email you the outcome, and if we need anything else from you, we'll reach out at <EMAIL_ADDRESS_6>.
+
+<PERSON_9>: Got it. Should I cancel my card just in case?
+
+<PERSON_8>: That's a good idea given the circumstances. I can transfer you to our card services team to issue a replacement, or I can note your account and they'll call you back within the hour.
+
+<PERSON_9>: Let's just have them call me back. I'm at work right now.
+
+<PERSON_8>: No problem, I've noted that. Is there anything else I can help you with today?
+
+<PERSON_9>: No, that covers it. Thank you for your help.
+
+<PERSON_8>: You're welcome, <PERSON_10>. Thanks for calling Bluepeak Financial Services, and have a great rest of your day.
+
+<PERSON_9>: You too. Bye.
+
+<PERSON_8>: Goodbye.
+
+
+=====================
+
+<PHONE_NUMBER_1>
+
+<PHONE_NUMBER_2>
+
+<PHONE_NUMBER_3>
+
+<US_SSN_1>
+
+1 85 02 75 116 001 42
+
+DL-<US_DRIVER_LICENSE_1>
+
+12 Rue de la Paix, 75002 Paris, France
+
+<CREDIT_CARD_1>
+
+<IBAN_CODE_1>
+
+NP-EMP-0093847
+
+192.168.14.22
+
+8842-xk-991

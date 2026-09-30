@@ -1,8 +1,8 @@
 // Scoring => npm run eval
 //   Runs detect() on every test_data/*.txt and scores it against
 //   test_data/labels/<name>.json, per file, per type and in total, then
-//   compares the totals with the reference (the Presidio-era output saved in
-//   test_data/reference/). Definitions are in scripts/eval/score.ts.
+//   compares the totals with the reference (the previous pipeline's output,
+//   saved in test_data/reference/). Definitions are in scripts/eval/score.ts.
 //
 //   npm run eval -- --reference   score only the saved reference
 //   npm run eval -- --details     also list missed labels and false positives
