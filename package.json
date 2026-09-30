@@ -25,6 +25,7 @@
   "dependencies": {
     "@huggingface/transformers": "4.3.0",
     "dotenv": "^18.0.4",
+    "libphonenumber-js": "1.13.14",
     "wink-eng-lite-web-model": "^1.8.1",
     "wink-nlp": "^2.4.0"
   }

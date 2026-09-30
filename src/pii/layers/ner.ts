@@ -4,29 +4,33 @@
   // are its pieces' offsets. Design and choices: docs/transformers-js/DESIGN.md
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import type { PreTrainedModel, PreTrainedTokenizer, Tensor } from "@huggingface/transformers" with { "resolution-mode": "import" };
-import type { EntityType, PIISpan } from "../types";
+import type { PIISpan } from "../types";
 import { isListedGivenName } from "./dictionary";
-import { lineOf } from "./dictionary_helpers";
-import { DEFAULT_NER_MODEL, MODELS_DIR, NER_MODELS, type NerModel } from "./ner_models";
+import { isAllCaps, lineOf, NEVER_NAMES, TITLES } from "./dictionary_helpers";
+import { DEFAULT_NER_MODEL, MODELS_DIR, NER_MODELS } from "./ner_models";
 import { isEnglishWord } from "./wink";
 
 function numberFromEnv(name: string, fallback: number): number {
   const value = Number(process.env[name] ?? fallback);
-  if (!Number.isFinite(value) || value < 0) throw new Error(`${name} must be a non-negative number.`);
+  if (!Number.isFinite(value) || value <= 0) throw new Error(`${name} must be a positive number.`);
   return value;
 }
 
 const MODEL_ID = process.env.NER_MODEL ?? DEFAULT_NER_MODEL;
-const MIN_SCORE = numberFromEnv("NER_MIN_SCORE", 0.5); // provisional, tuned in PLAN.md 2.2
-const WINDOW_TOKENS = Math.min(numberFromEnv("NER_WINDOW_TOKENS", 256), 510); // + [CLS] and [SEP] <= 512
-const BATCH_SIZE = Math.max(1, numberFromEnv("NER_BATCH_SIZE", 8));
-const OVERLAP_TOKENS = 64;
+const MIN_SCORE = numberFromEnv("NER_MIN_SCORE", 0.5);
+const WINDOW_TOKENS = Math.min(numberFromEnv("NER_WINDOW_TOKENS", 384), 510); // + [CLS] and [SEP] <= 512
+const OVERLAP_TOKENS = 32;
+// onnxruntime's own default ran like 2 threads here; one per physical core was fastest
+const THREADS = numberFromEnv("NER_THREADS", Math.max(1, Math.floor(os.availableParallelism() / 2)));
 
-// Runs of letters/digits, or one punctuation mark or symbol: the split BERT's own pre-tokenizer makes
+// Runs of letters/digits, or one punctuation mark or symbol: close to the split BERT's own pre-tokenizer makes
 const PIECE_RE = /[^\s\p{P}\p{S}]+|[\p{P}\p{S}]/gu;
-const IPV4_RE = /^\d{1,3}(?:\.\d{1,3}){3}$/;
+const LABEL_RE = /^(?:([BI])-)?(.+)$/; // "B-PERSON" -> B, PERSON
+const LETTERS_RE = /^[\p{L}\p{M}]+$/u;
+const JOINER_RE = /^[.'’-]$/;
 
 export class ModelLoadError extends Error {
   constructor(message: string, readonly cause?: unknown) {
@@ -38,12 +42,11 @@ export class ModelLoadError extends Error {
 interface Loaded {
   tokenizer: PreTrainedTokenizer;
   model: PreTrainedModel;
-  makeTensor: (data: BigInt64Array, dims: number[]) => Tensor;
+  makeTensor: (data: BigInt64Array) => Tensor;
   cls: number;
   sep: number;
-  pad: number;
   id2label: Record<number, string>;
-  info: NerModel;
+  person: string;
 }
 
 interface Piece {
@@ -69,24 +72,23 @@ async function loadModel(): Promise<Loaded> {
   const info = NER_MODELS[MODEL_ID];
   if (!info) throw new ModelLoadError(`Unknown NER_MODEL "${MODEL_ID}". Known: ${Object.keys(NER_MODELS).join(", ")}.`);
   const dir = path.join(MODELS_DIR, MODEL_ID);
-  const missing = info.files.map((f) => f.to ?? f.from).filter((f) => !fs.existsSync(path.join(dir, f)));
-  if (missing.length > 0) throw new ModelLoadError(`The NER model ${MODEL_ID} is not in ${dir}. Run \`npm run fetch:model\`.`);
+  if (info.files.some((f) => !fs.existsSync(path.join(dir, f.to ?? f.from)))) {
+    throw new ModelLoadError(`The NER model ${MODEL_ID} is not in ${dir}. Run \`npm run fetch:model\`.`);
+  }
 
   try {
     // An ES module: `import()` works from CommonJS where a static import does not typecheck
     const { env, AutoTokenizer, AutoModelForTokenClassification, Tensor } = await import("@huggingface/transformers");
     env.allowRemoteModels = false; // never download at run time
-    env.allowLocalModels = true;
     env.localModelPath = MODELS_DIR;
     const [tokenizer, model] = await Promise.all([
       AutoTokenizer.from_pretrained(MODEL_ID),
-      AutoModelForTokenClassification.from_pretrained(MODEL_ID, { dtype: "q8", device: "cpu" }),
+      AutoModelForTokenClassification.from_pretrained(MODEL_ID, { dtype: "q8", device: "cpu", session_options: { intraOpNumThreads: THREADS } }),
     ]);
     const [cls, sep] = tokenizer.encode(""); // the model's own [CLS] [SEP] template
-    const pad = tokenizer.pad_token_id ?? 0;
     const id2label = (model.config as unknown as { id2label: Record<number, string> }).id2label;
-    const makeTensor = (data: BigInt64Array, dims: number[]) => new Tensor("int64", data, dims);
-    return { tokenizer, model, makeTensor, cls, sep, pad, id2label, info };
+    const makeTensor = (data: BigInt64Array) => new Tensor("int64", data, [1, data.length]);
+    return { tokenizer, model, makeTensor, cls, sep, id2label, person: info.person };
   } catch (err) {
     throw new ModelLoadError(`The NER model ${MODEL_ID} in ${dir} could not be loaded. Run \`npm run fetch:model\`.`, err);
   }
@@ -121,108 +123,125 @@ function windows(ps: Piece[]): Window[] {
   return out;
 }
 
-// ======== Run one padded batch of windows, labelling each piece by its first sub-token =========
-async function labelBatch(batch: Window[], m: Loaded): Promise<void> {
-  const rows = batch.map((w) => [m.cls, ...w.pieces.flatMap((p) => p.ids), m.sep]);
-  const width = Math.max(...rows.map((r) => r.length));
-  const ids = new BigInt64Array(batch.length * width).fill(BigInt(m.pad));
-  const mask = new BigInt64Array(batch.length * width);
-  rows.forEach((r, b) => r.forEach((id, t) => ((ids[b * width + t] = BigInt(id)), (mask[b * width + t] = 1n))));
-
+// ======== Run the model on one window, labelling each piece by its first sub-token =========
+// One window per call: batching padded windows was slower on the CPU.
+async function labelWindow(w: Window, m: Loaded): Promise<void> {
+  const row = [m.cls, ...w.pieces.flatMap((p) => p.ids), m.sep];
   const { logits } = await m.model({
-    input_ids: m.makeTensor(ids, [batch.length, width]),
-    attention_mask: m.makeTensor(mask, [batch.length, width]),
+    input_ids: m.makeTensor(BigInt64Array.from(row, BigInt)),
+    attention_mask: m.makeTensor(new BigInt64Array(row.length).fill(1n)),
   });
-  const [, tokens, classes] = logits.dims as number[];
+  const classes = (logits.dims as number[])[2];
   const data = logits.data as Float32Array;
 
-  batch.forEach((w, b) => {
-    const total = rows[b].length - 2;
-    let t = 1; // after [CLS]
-    for (const p of w.pieces) {
-      const off = (b * tokens + t) * classes;
-      let best = 0;
-      for (let c = 1; c < classes; c++) if (data[off + c] > data[off + best]) best = c;
-      let sum = 0;
-      for (let c = 0; c < classes; c++) sum += Math.exp(data[off + c] - data[off + best]);
-      const before = w.cutStart ? t - 1 : Infinity;
-      const after = w.cutEnd ? total - (t - 1 + p.ids.length) : Infinity;
-      const edge = Math.min(before, after);
-      // A piece seen in two windows keeps the label from the one where it has more context
-      if (p.edge === undefined || edge > p.edge) Object.assign(p, { label: m.id2label[best], score: 1 / sum, edge });
-      t += p.ids.length;
-    }
-  });
+  const total = row.length - 2;
+  let t = 1; // after [CLS]
+  for (const p of w.pieces) {
+    const off = t * classes;
+    let best = 0;
+    for (let c = 1; c < classes; c++) if (data[off + c] > data[off + best]) best = c;
+    let sum = 0;
+    for (let c = 0; c < classes; c++) sum += Math.exp(data[off + c] - data[off + best]);
+    const before = w.cutStart ? t - 1 : Infinity;
+    const after = w.cutEnd ? total - (t - 1 + p.ids.length) : Infinity;
+    const edge = Math.min(before, after);
+    // A piece seen in two windows keeps the label from the one where it has more context
+    if (p.edge === undefined || edge > p.edge) Object.assign(p, { label: m.id2label[best], score: 1 / sum, edge });
+    t += p.ids.length;
+  }
 }
 
-// ======== Group labelled pieces into spans (B- starts, I- continues, O / type change / line break ends) =========
+// ======== Group labelled pieces into name spans =========
+// B- starts a span, I- continues it. A span is made of letter pieces and may
+// continue across the joiners . ' ’ - ("Al-Rashid", "O'Brien"); anything else
+// (O, other punctuation, a digit, a line break) ends it.
 function group(text: string, ps: Piece[], m: Loaded): PIISpan[] {
   const spans: PIISpan[] = [];
-  let open: { type: EntityType; first: Piece; last: Piece; scores: number[] } | undefined;
+  let open: { start: number; end: number; scores: number[] } | undefined;
   const close = () => {
     if (!open) return;
     const score = open.scores.reduce((a, b) => a + b, 0) / open.scores.length;
-    const { start } = open.first;
-    const { end } = open.last;
-    if (score >= MIN_SCORE) spans.push({ start, end, type: open.type, text: text.slice(start, end), score, source: "ner" });
+    spans.push({ start: open.start, end: open.end, type: "PERSON", text: text.slice(open.start, open.end), score, source: "ner" });
     open = undefined;
   };
 
   for (const p of ps) {
     if (p.ids.length === 0) continue; // nothing for the model to see (e.g. a lone zero-width character)
-    const [, prefix, name] = /^(?:([BI])-)?(.+)$/.exec(p.label ?? "O")!;
-    const type = name === "O" ? undefined : m.info.labels[name];
-    const lineBreak = open !== undefined && /[\r\n]/.test(text.slice(open.last.end, p.start));
-    if (!type) {
-      close();
-    } else if (open && prefix !== "B" && open.type === type && !lineBreak) {
-      open.last = p;
-      open.scores.push(p.score!);
-    } else {
-      close();
-      open = { type, first: p, last: p, scores: [p.score!] };
+    const [, prefix, name] = LABEL_RE.exec(p.label ?? "O")!;
+    const value = text.slice(p.start, p.end);
+    const letters = LETTERS_RE.test(value);
+    if (open && name === m.person && prefix !== "B" && !/[\r\n]/.test(text.slice(open.end, p.start))) {
+      if (JOINER_RE.test(value)) continue; // kept only if a letter piece follows
+      if (letters) {
+        open.end = p.end;
+        open.scores.push(p.score!);
+        continue;
+      }
     }
+    close();
+    if (name === m.person && letters) open = { start: p.start, end: p.end, scores: [p.score!] };
   }
   close();
   return spans;
 }
 
-// ====== Check if a PERSON span looks like a real person name, not a random capitalized word or acronym ======
+// ======== Join name spans on one line separated only by spaces/tabs or a single "." ("kofi mensah", "J.L. Picard") =========
+// The model often tags each word of a name B-; joined, the name gets one placeholder,
+// and is kept or dropped as a whole: it takes its stronger part's score.
+function join(text: string, spans: PIISpan[]): PIISpan[] {
+  const out: PIISpan[] = [];
+  for (const s of spans) {
+    const last = out[out.length - 1];
+    if (last && /^(?:[ \t]+|\.)$/.test(text.slice(last.end, s.start))) {
+      out[out.length - 1] = { ...last, end: s.end, text: text.slice(last.start, s.end), score: Math.max(last.score!, s.score!) };
+    } else {
+      out.push(s);
+    }
+  }
+  return out;
+}
+
+// ====== Trim titles at both edges ("Mr", "Dr."), and leading English words that aren't given names ("Agent David") ======
+// A span with nothing left ("Mr", "Audio") is dropped; "Grace" and "Will" stay because they are listed given names.
+function trimEdges(span: PIISpan, text: string): PIISpan | undefined {
+  const words = [...span.text.matchAll(/\S+/g)];
+  const title = (w: string) => TITLES.has(w.replace(/\.$/, "").toLowerCase());
+  let first = 0;
+  let last = words.length - 1;
+  while (first <= last && (title(words[first][0]) || (isEnglishWord(words[first][0]) && !isListedGivenName(words[first][0])))) first++;
+  while (last >= first && title(words[last][0])) last--;
+  if (first > last) return undefined;
+  const start = span.start + words[first].index;
+  const end = span.start + words[last].index + words[last][0].length;
+  return { ...span, start, end, text: text.slice(start, end) };
+}
+
+// ====== Check if a PERSON span looks like a real person name, not a greeting or an acronym ======
 function looksLikePerson(span: PIISpan, text: string): boolean {
   const words = span.text.split(/\s+/);
-  if (!/\p{L}/u.test(span.text)) return false;
-  if (words.every((w) => isEnglishWord(w)) && !words.some((w) => isListedGivenName(w))) return false;
-  return /\p{Lu}/u.test(span.text) || !/\p{Lu}/u.test(lineOf(text, span.start));
+  const line = lineOf(text, span.start);
+  if (words.every((w) => NEVER_NAMES.has(w.toLowerCase()))) return false; // "Salam"
+  // "FHIR", "AA": acronyms, unless the rest of the line is in capitals too
+  const rest = line.replace(span.text, "");
+  if (words.every(isAllCaps) && !(/\p{Lu}/u.test(rest) && !/\p{Ll}/u.test(rest))) return false;
+  return /\p{Lu}/u.test(span.text) || !/\p{Lu}/u.test(line); // a lowercase name only on an all-lowercase line
 }
 
-// ====== Trim a name to remove trailing whitespace and digits ======
-function trimName(span: PIISpan, text: string): PIISpan | undefined {
-  if (span.type !== "PERSON") return span;
-  let value = span.text.split(/[\r\n]/)[0];
-  value = value.replace(/\s*\S*\d[\s\S]*$/, "");
-  value = value.replace(/[\s,.:;!?]+$/, "");
-  if (!/\p{L}/u.test(value)) return undefined;
-  return { ...span, end: span.start + value.length, text: text.slice(span.start, span.start + value.length) };
-}
-
-// =========== Detect PII in text with the local NER model =========
+// =========== Detect names in text with the local NER model =========
 export async function detectNer(text: string): Promise<PIISpan[]> {
   const m = await (loading ??= loadModel());
   const ps = pieces(text, m);
 
   // A piece longer than a window (a base64 blob, say) is left as O; regex still sees it
   const seen = ps.filter((p) => p.ids.length > 0 && p.ids.length <= WINDOW_TOKENS);
-  const ws = windows(seen);
-  for (let i = 0; i < ws.length; i += BATCH_SIZE) await labelBatch(ws.slice(i, i + BATCH_SIZE), m);
+  for (const w of windows(seen)) await labelWindow(w, m);
   // No truncation: a piece the model never looked at would be a quiet leak
   if (seen.some((p) => p.label === undefined)) throw new Error("NER left a piece of the input unlabelled.");
 
-  const spans = group(text, ps, m)
-    .map((s) => trimName(s, text))
-    .filter((s): s is PIISpan => s !== undefined)
-    // A phone label can land on an IPv4 address ("192.168.14.22")
-    .filter((s) => !(s.type === "PHONE_NUMBER" && IPV4_RE.test(s.text)))
-    .filter((s) => s.type !== "PERSON" || looksLikePerson(s, text));
+  const spans = join(text, group(text, ps, m))
+    .filter((s) => s.score! >= MIN_SCORE)
+    .map((s) => trimEdges(s, text))
+    .filter((s): s is PIISpan => s !== undefined && looksLikePerson(s, text));
 
   // Offsets come from our pieces; if one ever drifted, every mask would be wrong
   for (const s of spans) {

@@ -1,6 +1,7 @@
 // Layer 2 — regex => fixed-format values, independent of any model (cards, IBANs, passports, driver's licences, phone numbers, dates)
 
 
+import { isValidPhoneNumber } from "libphonenumber-js";
 import type { EntityType, PIISpan } from "../types";
 
 interface Rule {
@@ -62,6 +63,9 @@ const RULES: Rule[] = [
 
   // +1 (617) 555-0142, 617-555-0142, 617.555.0142, +44 20 7946 0958
   { type: "PHONE_NUMBER", pattern: /(?<![\w+.-])(?:\+\d{1,3}[ .-]?)?(?:\(\d{2,4}\)[ .-]?|\d{2,4}[ .-])\d{3,4}[ .-]\d{3,4}(?![\w-]|[ .]\d)/g },
+
+  // International numbers in any grouping (+33 6 12 34 56 78), checked against libphonenumber-js metadata
+  { type: "PHONE_NUMBER", pattern: /(?<![\w+])\+\d{1,3}(?:[ .-]?(?:\(\d{1,4}\)|\d{1,4})){2,7}(?!\d)/g, valid: isValidPhoneNumber },
 
   // 03/14/1985, 14.03.1985, 1985-03-14, and card expiry 08/27
   { type: "DATE_TIME", pattern: /\b(?:\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}|\d{4}-\d{2}-\d{2}|(?:0[1-9]|1[0-2])\/\d{2})\b(?![/.-]\d)/g },

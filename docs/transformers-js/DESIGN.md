@@ -1,11 +1,11 @@
 # NER layer design: Transformers.js
 
-**Status: built (PLAN.md Phase 1), not tuned yet.** It replaces the Presidio
+**Status: built and tuned (PLAN.md Phases 1–2).** It replaces the Presidio
 layer (`src/pii/layers/presidio.ts`, `src/pii/client.ts`, `presidio/`), which
 stays in the repo, unused, until Phase 4. Until then README.md and
 ARCHITECTURE.md describe the Presidio-based pipeline. The steps are in
-[PLAN.md](PLAN.md); what Phase 1 changed in this design is under "Found while
-building" at the end.
+[PLAN.md](PLAN.md); the chosen model, settings and numbers are in "Choice and
+numbers" at the end.
 
 ## Goal
 
@@ -34,13 +34,13 @@ file ─▶ src/index.ts ─▶ redact() ─▶ detect()
 | File | Change |
 | --- | --- |
 | `src/pii/layers/ner.ts` | **New.** Loads the model and returns spans (sections below) |
-| `src/pii/layers/ner_models.ts` | **New.** Per model: pinned revision, files with SHA-256, label map. Shared by `ner.ts` and `fetch-model.ts` |
-| `src/pii/layers/presidio.ts` | Deleted. `trimName`, `looksLikePerson` and the IPv4 filter move to `ner.ts` |
+| `src/pii/layers/ner_models.ts` | **New.** Per model: pinned revision, files with SHA-256, the label that means PERSON. Shared by `ner.ts` and `fetch-model.ts` |
+| `src/pii/layers/presidio.ts` | Deleted. `looksLikePerson` moves to `ner.ts`; `trimName` and the IPv4 filter are no longer needed (sections 4–5) |
 | `src/pii/client.ts`, `presidio/` | Deleted |
 | `src/pii/redact.ts` | Call `detectNer()` instead of `detectPresidio()`; `"presidio"` in `LAYER_ORDER` becomes `"ner"` |
 | `src/pii/types.ts` | `PIISpan.source` gets `"ner"`. `"presidio"`, `PresidioRecognizerResult` and `AnalyzeRequest` stay until Phase 4, since `presidio.ts` and `client.ts` still use them |
 | `src/index.ts` | `PresidioUnavailableError` becomes `ModelLoadError`, still exit code 2 |
-| `src/pii/layers/regex.ts` | Covers what only Presidio caught (see "Regex additions") |
+| `src/pii/layers/regex.ts` | Covers what only Presidio caught (see "Regex additions"); `libphonenumber-js` validates international numbers |
 | `scripts/fetch-model.ts` | **New.** `npm run fetch:model` downloads the pinned model into `models/` |
 | `scripts/check-offsets.ts` | **New.** `npm run check:offsets`: the offset tests of PLAN.md 1.5 |
 | `package.json` | Add `@huggingface/transformers` (pinned exact) and `fetch:model`; remove `presidio:up` / `presidio:down` (Phase 4) |
@@ -85,7 +85,10 @@ from a dynamic `import()` and types from `import type` with
   called with `input_ids` and `attention_mask` only; the ONNX graph has no
   `token_type_ids` input.
 - Use the quantized weights (`dtype: "q8"`, file `onnx/model_quantized.onnx`)
-  on the CPU (`onnxruntime-node`).
+  on the CPU (`onnxruntime-node`). The fp32 model was slower here, and 4× larger.
+- Set onnxruntime's intra-op threads explicitly (`NER_THREADS`, default half
+  the logical CPUs, i.e. one per physical core with hyper-threading). Its own
+  default ran about as fast as 2 threads on an 8-core / 16-thread machine.
 - If any file is missing or doesn't load, throw `ModelLoadError` ("Run `npm run
   fetch:model`"). The CLI exits with code 2 and writes nothing, as it does for
   Presidio today.
@@ -124,14 +127,14 @@ sub-token's softmax probability as the score.
 ### 3. Windows: no truncation
 
 - Pieces are packed into windows of at most `NER_WINDOW_TOKENS` sub-tokens
-  (default 256, hard maximum 510, plus `[CLS]`/`[SEP]`).
-- Consecutive windows overlap by 64 sub-tokens.
+  (default 384, hard maximum 510, plus `[CLS]`/`[SEP]`).
+- Consecutive windows overlap by 32 sub-tokens.
 - A piece that appears in two windows takes the label from the window where
   it is further from a **cut** edge, since it has more context there. The
   start of the first window and the end of the last are the text's own ends,
   not cuts, so they don't count as edges.
-- Windows run in padded batches of `NER_BATCH_SIZE` (default 8) with an
-  `attention_mask`.
+- One window per model call, with no padding: batching padded windows was
+  slower on the CPU.
 - A single piece longer than a window (a base64 blob, say) is labelled `O`.
   It is not a name, and regex still sees it.
 
@@ -140,40 +143,64 @@ Every piece gets exactly one label, so nothing past token 512 goes unread.
 
 ### 4. Labels to spans
 
+**Only PERSON is taken from the model.** Regex covers every other type with
+100% recall on the labelled set, and the model's other types cost precision
+(its DATE_TIME alone added 153 false positives: times, durations, "today").
+Each model's PERSON label is in `ner_models.ts` (`PERSON` for gravitee).
+
 Walk the labelled pieces in order:
 
-- `B-X` starts a span of type X. `I-X` continues an open span of type X, or
-  starts one if none is open (models do emit a stray `I-`).
-- A span ends at `O`, at a change of type, or at a **line break** between two
-  pieces. That keeps today's rule that names end at the first line break.
-- A span's score is the mean of its pieces' scores; spans under
-  `NER_MIN_SCORE` are dropped.
-- Model labels are mapped to our `EntityType` by a per-model table in
-  `ner.ts`. Labels not in the table (LOCATION, AGE, URL, …) are ignored.
-  **ORGANIZATION is always ignored**: companies come only from the pre-defined
-  list, as today.
+- `B-PERSON` starts a span; `I-PERSON` continues an open span, or starts one
+  if none is open (models do emit a stray `I-`).
+- A span is made of **letter pieces**, and may continue across the joiners
+  `.` `'` `’` `-` ("Al-Rashid", "O'Brien", "L. Picard"). Anything else ends it:
+  `O`, other punctuation, a piece with a digit, or a **line break**. A span
+  never ends on a joiner.
+- A span's score is the mean of its letter pieces' scores.
+- **Adjacent spans are joined** when they are on one line and separated only
+  by spaces/tabs or a single `.`. The model often tags each word of a name
+  `B-` ("kofi mensah" → `B-PERSON B-PERSON`); joined, the name gets one
+  placeholder, and initials leave nothing visible ("J" + "." + "L. Picard").
+  A joined span takes its stronger part's score.
+- Spans under `NER_MIN_SCORE` are dropped, **after** joining, so a name is kept
+  or dropped as a whole: a surname scored 0.49 next to a first name scored 0.94
+  stays masked.
 
-### 5. Filters kept from `presidio.ts`
+### 5. Filters
 
-These are applied unchanged after grouping:
+Applied after joining and the score check, in `ner.ts`, reusing
+`dictionary_helpers.ts`:
 
-- `trimName`: cut a name at the first line break or word with a digit, and
-  strip trailing punctuation
-- `looksLikePerson`: drop names made only of English words unless one is a
-  listed given name, and drop a lowercase name on a line that has capitals
-- the IPv4 filter, if the chosen model emits PHONE_NUMBER
+- **Trim the edges.** Titles (`TITLES`: "Mr", "Dr.") are stripped at both
+  ends; leading words that are English words but not listed given names are
+  stripped at the start ("Agent David" → "David"). A span with nothing left
+  is dropped ("Mr", "Audio"). "Grace" and "Will" stay: they are listed given
+  names. This replaces `presidio.ts`'s "only English words" rule.
+- **Greetings and fillers:** a span made only of `NEVER_NAMES` ("Salam") is
+  dropped.
+- **Acronyms:** a span made only of all-caps words (`isAllCaps`: "FHIR",
+  "AA") is dropped, unless the rest of its line is in capitals too.
+- **Lowercase names only on lowercase lines:** a lowercase span on a line that
+  has capitals is dropped (kept from `presidio.ts`).
 
-Phase 2 of PLAN.md re-checks that each filter still helps with the new model.
-The lowercase-line rule was written for a cased model.
+`trimName` is gone: spans can no longer cross a line break, hold a word with
+a digit, or end on punctuation. The IPv4 filter is gone with the model's
+PHONE_NUMBER.
+
+Why "Agent" needed the edge trim: the model's span was "Agent David" (from
+"captured between Agent David and customer Robert Miller"). The
+every-occurrence step in `redact.ts` masks each capitalised part of a found
+name everywhere, so "Agent" was then masked on every line. Trimming at the
+source fixes it without changing `redact.ts` for the other layers.
 
 ## Configuration
 
 | Variable | Default | Notes |
 | --- | --- | --- |
-| `NER_MODEL` | set in Phase 2 | folder under `models/`, e.g. `gravitee-io/bert-small-pii-detection` |
-| `NER_MIN_SCORE` | set in Phase 2 | spans below it are dropped |
-| `NER_WINDOW_TOKENS` | `256` | at most 510 |
-| `NER_BATCH_SIZE` | `8` | windows per model call |
+| `NER_MODEL` | `gravitee-io/bert-small-pii-detection` | folder under `models/`; must be in `ner_models.ts` |
+| `NER_MIN_SCORE` | `0.5` | name spans below it are dropped (after joining) |
+| `NER_WINDOW_TOKENS` | `384` | at most 510 |
+| `NER_THREADS` | half the logical CPUs | onnxruntime intra-op threads |
 
 `PRESIDIO_ANALYZER_URL` and `PRESIDIO_ANALYZER_WORKERS` go away.
 
@@ -183,8 +210,8 @@ Checked on Hugging Face on 2026-09-30:
 
 | Model | Licence | Quantized size | Cased | Labels we'd use | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `gravitee-io/bert-small-pii-detection` | Apache-2.0 | 29 MB | **no** | PERSON, and possibly PHONE_NUMBER, US_PASSPORT, … | Try first. Uncased, so it may help with lowercase speech-to-text. Uses Presidio's type names. Its ONNX files are at the repo root (`model.quant.onnx`), so `fetch:model` moves them to `onnx/model_quantized.onnx` |
-| `Xenova/bert-base-NER` | MIT | 109 MB | yes | PER | Closest to spaCy. Likely just as weak on lowercase text |
+| `gravitee-io/bert-small-pii-detection` | Apache-2.0 | 29 MB | **no** | PERSON | **Chosen** (see below). Its ONNX files are at the repo root (`model.quant.onnx`), so `fetch:model` moves them to `onnx/model_quantized.onnx` |
+| `Xenova/bert-base-NER` | MIT | 109 MB | yes | PER | Scored once with the same filters: fails the criteria (below) |
 | `Xenova/distilbert-base-multilingual-cased-ner-hrl` | AFL-3.0 (upstream `Davlan/…`) | ~135 MB | yes | PER | Covers several languages including Arabic script |
 | `bardsai/eu-pii-anonimization-multilang` | Apache-2.0 | 279 MB | yes | PERSON_NAME | XLM-R, multilingual, PII-specific. Large and slower |
 | ~~`iiiorg/piiranha-v1-…`~~ | CC-BY-NC-ND-4.0 | — | — | — | **Excluded: licence forbids commercial use** |
@@ -196,7 +223,7 @@ layer. `regex.ts` has to cover them before Presidio is gone:
 
 | Missed by regex | Example | Fix |
 | --- | --- | --- |
-| Phone numbers in single- or two-digit groups | `+33 6 12 34 56 78` | Validate `+`-prefixed candidates with `libphonenumber-js` |
+| Phone numbers in single- or two-digit groups | `+33 6 12 34 56 78` | **Done in Phase 2** (it leaked once the model's PHONE_NUMBER was dropped): a `+`-prefixed candidate regex, validated with `libphonenumber-js` `isValidPhoneNumber`. `findPhoneNumbersInText` was not used: it over-extends (`+1-202-555-0147, 617`) |
 | Passport with no keyword right before it | `"A38291049"` a few words after "passport" | US passport shape (`[A-Z]\d{8}` or 9 digits) when "passport" is on the same line |
 | (Presidio behaviour we should copy) | `000-12-3456` | Skip impossible SSNs: area 000, 666 or 900–999, group 00, serial 0000 |
 
@@ -209,22 +236,66 @@ layer. `regex.ts` has to cover them before Presidio is gone:
 - **Merging favours masking.** When layers disagree about where a value ends,
   the union is masked.
 
-## Found while building (Phase 1)
+## Choice and numbers (Phase 2, 2026-09-30)
 
-Measured with gravitee, `NER_MIN_SCORE` 0.5 (provisional), window 256,
-batch 8, on a 16-thread Windows machine. Phase 2 tunes all of this.
+**Model: `gravitee-io/bert-small-pii-detection`** @ `f8c27a8`, q8, PERSON
+only, `NER_MIN_SCORE` 0.5, window 384 / overlap 32, one window per call, 8
+threads. Measured on an 8-core / 16-thread i7-11850H, Windows.
 
-- **The model sometimes tags each word of a name `B-`** ("kofi mensah" →
-  `B-PERSON B-PERSON`; "sarah johnson" → `B-PERSON I-PERSON`). Grouping follows
-  the rule above, so these become two adjacent spans. Nothing leaks, but the
-  output reads `<PERSON_1> <PERSON_2>` where Presidio gave one placeholder.
-  Phase 2 should decide whether adjacent same-type spans on one line are joined.
-- **Initials can split around the dot.** In `mockup_interview.txt` "J.L.
-  Picard" comes out as "J" and "L. Picard", leaving the "." visible.
-- **Types other than PERSON cost precision.** Phase 1 takes every one of our
-  types except ORGANIZATION, as Presidio was asked for. DATE_TIME alone adds
-  153 false positives (times, durations, "today"), and US_SSN / US_PASSPORT
-  tag keyword phrases ("US Passport number"). This is the PLAN.md 2.4 decision.
-- **Speed is the model's own compute.** About 90% of the time on 229 KB is in
-  `onnxruntime`'s `session.run`; tokenizing takes under 0.1 s. The 64-token
-  overlap adds about a third more tokens at window 256.
+Scores on the labelled `test_data/` (`npm run eval`), against the
+Presidio-era reference:
+
+| | Now | Reference |
+| --- | --- | --- |
+| PERSON recall, normally cased files | 318 / 319 (99.7%) | 318 / 319 (99.7%) |
+| PERSON characters leaked, `asr_sample.txt` | 8 / 74 (10.8%) | 18 / 74 (24.3%) |
+| PERSON false positives | 6 | 7 |
+| PERSON recall / leaked / precision | 99.1% / 0.5% / 98.2% | 98.5% / 0.9% / 97.9% |
+| All types: recall / leaked / precision | 99.2% / 0.4% / 98.4% | 98.7% / 0.7% / 94.2% |
+
+Every other type has 100% recall and 100% precision. Hard labels: 0 / 10
+found, as in the reference (Phase 1's 4 came from the model's other types).
+
+**`NER_MIN_SCORE`:** 0.1–0.5 score the same; 0.6 also drops "Sarahville"; 0.7
+loses "David" (×11 through every-occurrence). 0.5 keeps a 0.2 margin to that
+drop.
+
+**What each step did** (PERSON false positives, from 30 in Phase 1): PERSON
+only 30 (and one phone leaked, fixed in regex); letter/joiner grouping 30;
+edge trim, `NEVER_NAMES`, acronyms 5; joining 5 and "J.L. Picard" found;
+window 384 6 ("Sarahville").
+
+**Speed** (`redact()`; 229 KB warm is the mean of 2 runs, 6 KB cold is
+a fresh process):
+
+| Setting | 229 KB warm |
+| --- | --- |
+| Phase 1: q8, window 256/64, batch 8, onnxruntime's default threads | 10.2 s |
+| fp32 instead of q8 (default threads / 8 threads) | 11.5 s / 9.5 s |
+| q8, 256/64, batch 8, threads 1 / 2 / 4 / 8 / 16 | 31.4 / 11.1 / 7.5 / 6.6 / 8.7 s |
+| q8, 8 threads, window 384/32 or 510/32, batch 8 | 6.8 / 7.9 s |
+| q8, 8 threads, 256/64, batch 1 / 16 | 6.7 / 7.3 s |
+| q8, 8 threads, 384/32, batch 1 / 2 / 4 | 5.5 / 5.7 / 6.3 s |
+| q8, 384/32, batch 1, threads 6 / 12 | 5.4 / 5.1 s |
+| **Chosen: q8, 384/32, one window per call, 8 threads** | **5.2 s** (cold 6.3 s) |
+
+| 6 KB (`mockup_interview.txt`), cold | Phase 1 | Now |
+| --- | --- | --- |
+| Name lists | — | 0.39 s |
+| Model load (import, tokenizer, ONNX session) | — | 0.59 s |
+| Compute (all layers) | — | 0.20 s |
+| **Total `redact()`** | 1.7 s | **1.22 s** |
+
+The 229 KB file is 58,436 sub-tokens; about 90% of its time is onnxruntime's
+`session.run`, so the model's own compute sets the floor. The 3.8 s target
+(Presidio's) is not met: 5.2 s warm.
+
+**`Xenova/bert-base-NER`** (MIT, cased, 109 MB), same filters, 0.5: PERSON
+recall on cased files 317 / 319, lowercase leak 18 / 74 (no better than the
+reference), 11 false positives ("Will" ×6, "Luhn"), 17.1 s warm for 229 KB.
+At 0.7 false positives fall to 5 but "Eman" ×5 is missed. It fails the
+criteria, so gravitee stays; the multilingual models were not scored.
+
+**Remaining PERSON misses:** "will" and "will mensah" in `asr_sample.txt`
+(only "will" leaks), "May" in *call May tomorrow*. **False positives:**
+"Lua" ×4, "grace" in *grace period*, "Sarahville" (a made-up place).

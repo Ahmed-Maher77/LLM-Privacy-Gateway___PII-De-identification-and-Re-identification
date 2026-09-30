@@ -132,6 +132,13 @@ Criterion 4 (≤ ~1.5 s cold for 6 KB) is not met yet; that is Phase 2.5.
 | 2.5 | Measure speed (6 KB and 229 KB, cold and warm) and peak memory |
 | 2.6 | Record the choice, threshold and numbers in DESIGN.md; set the defaults in `ner.ts` |
 
+**Result (2026-09-30):** gravitee, PERSON only, `NER_MIN_SCORE` 0.5, window
+384/32, one window per call, one thread per physical core. Criterion 3 is met
+(PERSON cased recall 318/319 = reference; `asr_sample` name leak 10.8% vs
+24.3%; 6 PERSON false positives vs 7; no other type loses recall). Criterion 4
+is met for 6 KB (1.22 s cold); 229 KB takes 5.2 s warm, above the 3.8 s
+target. Choice, settings and all numbers: DESIGN.md "Choice and numbers".
+
 **Exit:** criteria 3 and 4 of "Done when" are met. If no candidate meets
 them, stop and decide with the team (for example, fine-tune on our own
 transcripts) before going on.
@@ -141,6 +148,10 @@ transcripts) before going on.
 The three items in DESIGN.md "Regex additions": `libphonenumber-js` for
 international phone numbers, the passport shape with the keyword on the same
 line, and invalid-SSN filtering. Label an example of each in `test_data/`.
+
+The phone item was done in Phase 2: `+33 6 12 34 56 78` leaked once the
+model's PHONE_NUMBER was dropped. `A38291049` did not leak (regex catches it
+after "Passport number is"), so the passport and SSN items remain.
 
 **Exit:** `+33 6 12 34 56 78` and `A38291049` from the saved reports are
 masked again, and `npm run eval` shows no other type losing recall.

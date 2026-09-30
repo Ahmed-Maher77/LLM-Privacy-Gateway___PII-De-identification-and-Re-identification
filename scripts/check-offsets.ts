@@ -71,13 +71,13 @@ async function main() {
         report(name, failures, `  (${ner.length} NER spans)`);
     }
 
-    // k words of ordinary, name-free text put the name at every position from
-    // well inside the first window (256 sub-tokens) to inside the second
+    // k words of ordinary, name-free text (~1.2 sub-tokens each) put the name at
+    // every position across the first window edge, for windows of 256 to 510
     let found = 0;
-    const positions = 80;
+    const positions = 300;
     const boundaryFailures: string[] = [];
-    const filler = FILLER.repeat(8).split(" ");
-    for (let k = 170; k < 170 + positions; k++) {
+    const filler = FILLER.repeat(12).split(" ");
+    for (let k = 150; k < 150 + positions; k++) {
         const prefix = `${filler.slice(0, k).join(" ")}\nMy name is `;
         const text = `${prefix}Sarah Johnson and I called.`;
         const { failures, ner } = await check(`boundary ${k}`, text);
