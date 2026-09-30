@@ -62,7 +62,7 @@ function findNames(text: string, ws: Word[], l: Lists): PIISpan[] {
         if (!adjacent(text, ws[j - 1], ws[j])) break;
         const w = ws[j].text;
         if (PARTICLES.has(w.toLowerCase()) && !isCapitalised(w)) continue; // "van", "el", "bin" before the surname
-        if (!isNameShaped(w) || !isCapitalised(w) || isAllCaps(w)) break;
+        if (!isNameShaped(w) || !isCapitalised(w) || isAllCaps(w) || NEVER_NAMES.has(w.toLowerCase())) break;
         if (!(isSurnameLike(w, l) || !isEnglishWord(w))) break;
         last = j;
       }
@@ -93,7 +93,8 @@ function findNames(text: string, ws: Word[], l: Lists): PIISpan[] {
       isCapitalised(next.text) === isCapitalised(first) &&
       !isAllCaps(next.text) &&
       !isEnglishWord(next.text) &&
-      !PLACE_WORDS.has(next.text.toLowerCase());
+      !PLACE_WORDS.has(next.text.toLowerCase()) &&
+      !NEVER_NAMES.has(next.text.toLowerCase()); // "youssef salam"
     out.push(span(i, withSurname ? i + 1 : i));
     if (withSurname) i++;
   }

@@ -12,7 +12,7 @@ agent: okay okay i understand um let me just [inaudible] one moment
 caller: uh huh
 agent: alright so i will mark it as disputed and we'll issue a provisional credit within ten business days
 caller: okay i hope so because my phone bill is due friday and i i need that money
-agent: of course and you know there's a <PERSON_4> period on your account so you won't get a late fee for this
+agent: of course and you know there's a grace period on your account so you won't get a late fee for this
 caller: oh good good um also my wife <PERSON_4> she has a card on the same account can you check hers too
 agent: i'd need <PERSON_4> to call in herself or be on the line to authorize that
 caller: right right okay she's at work till like six i'll tell her
@@ -27,4 +27,4 @@ caller: yeah that's it
 agent: and is there anything else i can help with today
 caller: uh my brother will might call about his account he's will <PERSON_3> too but a different account
 agent: that's fine he'll just need to verify himself when he calls thanks for calling first harbor <PERSON_7> have a good day
-caller: thanks <PERSON_8>
+caller: thanks <PERSON_1> bye

@@ -8,10 +8,10 @@ Measured with `npm run eval` on the 11 labelled files in `test_data/`:
 
 | | Found | Characters leaked | Over-masked characters | Precision |
 | --- | --- | --- | --- | --- |
-| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 82 | 97.3% (10 false positives) |
+| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 42 | 98.6% (5 false positives) |
 | Names, normally cased files | 99.7% (318 / 319) | — | — | — |
-| Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 60 | 88.4% (5 false positives) |
-| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 82 | 97.7% |
+| Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 20 | 100% (no false positives) |
+| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 42 | 98.8% |
 
 "Found" counts a value as found if it is masked completely, as any type.
 "Over-masked" counts characters masked that belong to no label. Spelled-out
@@ -35,18 +35,20 @@ counted apart ("hard"): none of the 16 is masked.
   names as people ("Lua" ×4 in the test set), and made-up place names
   ("Sarahville"). All-caps acronyms ("FHIR", "JSON") are dropped by a filter,
   unless the whole line is in capitals.
-- **Every-occurrence rule over-masks.** Once a name is found, each of its parts
-  is masked everywhere: after "Grace Hopper", every "Grace"; after a false
-  positive, that word everywhere. A one-word name that is an English word is
-  masked in its ordinary uses too: in `asr_bank.txt`, after the names "hope",
-  "bill" and "mark", also "i hope" ×2, "phone bill" and "i'll mark that"; in
-  `asr_sample.txt`, "grace period". (Verb uses of "will" stay visible: parts
-  of longer names such as "will okonkwo" are not spread when they are
-  lowercase English words.)
-- **Neighbouring words are sometimes masked with a name** in lowercase text:
-  "hi grace", "doctor mark hughes", "thank you mister el hamed" ("you
-  mister"), "youssef salam", "priya bye", "hope bye", "frank mister mensah".
-  Nothing leaks, but those words are hidden (the "over-masked" count).
+- **Every-occurrence rule over-masks capitalised names.** Once a name is
+  found, it and each of its parts are masked everywhere: after "Grace
+  Hopper", every "Grace"; after a false positive, that word everywhere.
+  Lowercase English words are the exception: a found "hope", "bill" or
+  "grace" (or the "will" of "will okonkwo") is not spread to its other
+  lowercase uses, so "i hope" and "grace period" stay visible. The other side
+  of that: a lowercase name the layers find only once stays visible where they
+  miss it.
+- **Words before a title are masked with a name** in lowercase text: "thank
+  you mister el hamed" ("you mister") and "to be frank mister mensah" ("frank
+  mister"). "you" and "frank" are listed given names, so the edge trim keeps
+  them. Nothing leaks, but those words are hidden (the "over-masked"
+  count). Greetings and fillers at either end ("hi grace", "priya bye") are
+  trimmed.
 - **Names inside place or organisation names** ("Ada Lovelace Room", "Martin
   Luther King Jr Way") are masked as names.
 - **Leading English words are trimmed from a model name** unless they are
@@ -130,9 +132,9 @@ match.
   would not happen today. Treat it as a rough reference.
 - Precision counts a masked span as correct if it overlaps a labelled value,
   so extra words masked *with* a name don't lower it. They are counted
-  separately as over-masked characters (the "over" column; 41 in total, 202
-  for the old pipeline): in `asr_sample.txt` "frank mister mensah" and
-  "priya bye" are masked as one name each, hiding "frank" and "bye".
+  separately as over-masked characters (the "over" column: 33 on the 7 files
+  the old pipeline has output for, against its 202; 42 on all 11). The words
+  before a title above are most of them.
   `--details` lists such spans.
 - `npm run check` only detects that output *changed*; whether a change is
   right has to be judged by reading the diff and by `npm run eval`.

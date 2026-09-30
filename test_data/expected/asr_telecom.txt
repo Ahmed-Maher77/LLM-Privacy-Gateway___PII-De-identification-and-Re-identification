@@ -18,4 +18,4 @@ agent: sure and i'll text you at plus two zero one zero one two three four five 
 caller: yes that's my mobile
 agent: is there anything else i can help with
 caller: no inshallah it will be fixed tomorrow thanks <PERSON_1>
-agent: you're welcome mister <PERSON_7>
+agent: you're welcome mister <PERSON_7> salam

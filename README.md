@@ -24,6 +24,8 @@ Thanks, Sarah. Bye, Sarah Johnson.                ->  Thanks, <PERSON_2>. Bye, <
 
 Once a value is found, every other occurrence of it is masked too, and so is
 each part of a found name ("Sarah" and "Johnson" alone after "Sarah Johnson").
+Lowercase English words are not spread this way: after the name "hope" in a
+speech-to-text transcript, "i hope" stays as it is.
 
 Everything else (IP addresses, locations, street addresses, …) is left untouched
 by design: the scope is `ENTITY_TYPES` in `src/pii/types.ts`.
@@ -138,13 +140,13 @@ previous pipeline, on the 7 files it has saved output for:
 
 | | This pipeline | Previous pipeline (spaCy NER) |
 | --- | --- | --- |
-| All PII found / characters leaked / precision | 99.2% / 0.4% / 98.4% | 98.7% / 0.7% / 94.2% |
-| Names found / characters leaked / precision | 99.1% / 0.5% / 98.2% | 98.5% / 0.9% / 97.9% |
+| All PII found / characters leaked / precision | 99.2% / 0.4% / 98.7% | 98.7% / 0.7% / 94.2% |
+| Names found / characters leaked / precision | 99.1% / 0.5% / 98.5% | 98.5% / 0.9% / 97.9% |
 | Name characters leaked, lowercase speech-to-text | 10.8% | 24.3% |
 
-On all 11 files: 99.3% of PII found, 0.3% of characters leaked, 97.7%
+On all 11 files: 99.3% of PII found, 0.3% of characters leaked, 98.8%
 precision. On the 4 lowercase speech-to-text files alone: 95.1% of names
-found, 2.8% of name characters leaked, 88.4% name precision. Every type other
+found, 2.8% of name characters leaked, 100% name precision. Every type other
 than PERSON is at 100% found and 100% precision. The set is small and
 synthetic; see [LIMITATIONS.md](LIMITATIONS.md).
 

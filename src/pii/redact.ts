@@ -14,6 +14,7 @@ import { detectPredefined } from "./layers/predefined";
 import { detectDictionary } from "./layers/dictionary";
 import { detectRegex } from "./layers/regex";
 import { detectNer } from "./layers/ner";
+import { TITLES } from "./layers/dictionary_helpers";
 import { detectWink, isEnglishWord } from "./layers/wink";
 import { Placeholders } from "./policy";
 import type { DetectionMetrics, PIISpan, RedactResult } from "./types";
@@ -74,40 +75,29 @@ function merge(text: string, spans: PIISpan[]): PIISpan[] {
     return out;
 }
 
-/** Words that are part of a detected PERSON span but not a name. */
-const TITLES = new Set([
-    "mr",
-    "mrs",
-    "ms",
-    "miss",
-    "dr",
-    "prof",
-    "sir",
-    "madam",
-    "mister",
-]);
-
+// A lowercase English word ("she's", "will", "hope") is too common to mask everywhere.
+const lowercaseWord = (w: string) =>
+    !/\p{Lu}/u.test(w) && isEnglishWord(w.replace(/['’]s$/, ""));
 
 // acts as a post-processing safety net
-/* It collects all previously detected PII entities, breaks multi-word names down 
+/* It collects all previously detected PII entities, breaks multi-word names down
 into their individual components, and sweeps through the entire transcript with a dynamic regex
 to catch every single remaining occurrence
 */
 function everyOccurrence(text: string, spans: PIISpan[]): PIISpan[] {
     const typeOf = new Map<string, PIISpan["type"]>();
-    for (const s of spans) if (!typeOf.has(s.text)) typeOf.set(s.text, s.type);
+    for (const s of spans) {
+        const oneCommonWord = !/\s/.test(s.text) && lowercaseWord(s.text);
+        if (!oneCommonWord && !typeOf.has(s.text)) typeOf.set(s.text, s.type);
+    }
     for (const s of spans) {
         if (s.type !== "PERSON") continue;
         for (const part of s.text.split(/\s+/)) {
-            // A lowercase English word ("she's", "will") is too common to mask everywhere.
-            const lowercaseWord =
-                !/\p{Lu}/u.test(part) &&
-                isEnglishWord(part.replace(/['’]s$/, ""));
             if (
                 part.length >= 3 &&
                 /^\p{L}[\p{L}'’-]*$/u.test(part) &&
                 !TITLES.has(part.toLowerCase()) &&
-                !lowercaseWord &&
+                !lowercaseWord(part) &&
                 !typeOf.has(part)
             ) {
                 typeOf.set(part, "PERSON");

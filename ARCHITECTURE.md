@@ -153,13 +153,15 @@ before returning, every span is checked to equal `text.slice(start, end)`.
 
 ### 5. Filters (reusing `dictionary_helpers.ts`)
 
-- **Edges:** titles (`TITLES`: "Mr", "Dr.") are trimmed at both ends, and
-  leading words that are English words but not listed given names at the
-  start ("Agent David" → "David"). A span with nothing left is dropped. This
-  matters because the every-occurrence step masks each capitalised part of a
-  name everywhere: untrimmed, "Agent" was masked on every line.
-- **Greetings and fillers:** a span made only of `NEVER_NAMES` ("Salam") is
-  dropped.
+- **Edges:** titles (`TITLES`: "Mr", "Dr.", "doctor") and `NEVER_NAMES`
+  (greetings and fillers: "hi", "bye", "thanks", "Salam") are trimmed at both
+  ends, and leading words that are English words but not listed given names
+  at the start ("Agent David" → "David"). Ordinary English words are not
+  trimmed at the end: a surname could be one. A span with nothing left is
+  dropped ("Mr", "Salam"). This matters because the every-occurrence step
+  masks each capitalised part of a name everywhere: untrimmed, "Agent" was
+  masked on every line. The name lists apply the same rule: a `NEVER_NAMES`
+  word never becomes part of a name ("youssef salam").
 - **Acronyms:** a span made only of all-caps words ("FHIR", "AA") is dropped,
   unless the rest of its line is in capitals too.
 - **Case:** a lowercase span on a line that has capitals is dropped.
@@ -170,7 +172,8 @@ before returning, every span is checked to equal `text.slice(start, end)`.
   one false positive; 0.7 lost a name (×11 through every-occurrence). 0.5
   keeps a margin.
 - **PERSON false positives** went from 30 (all types taken, no filters) to 5
-  with the edge trim, `NEVER_NAMES` and acronym filters, and 6 at window 384.
+  with the edge trim, `NEVER_NAMES` and acronym filters, 6 at window 384,
+  and 5 once one-word English names stopped spreading ("grace period").
 - **Speed**, 229 KB warm, 8-core / 16-thread laptop, all in one tuning
   session (latency under everyday load is in LIMITATIONS.md):
 
@@ -194,7 +197,9 @@ before returning, every span is checked to equal `text.slice(start, end)`.
 1. **Every occurrence.** A value found once is masked everywhere in the
    document, and each part of a found name too: after "Sarah Chen", also
    "Sarah" and "Chen" alone (titles like "Mr" excluded). A model often finds
-   a name only some of the times it appears.
+   a name only some of the times it appears. A lowercase English word is not
+   spread, whether it is a whole found value or a part of one: a found "hope"
+   or "bill" leaves "i hope" and "phone bill" alone.
 2. **Merge.** Overlapping spans become one span covering all of them, so
    nothing a layer found stays partly visible. It takes the type of the
    longest piece.

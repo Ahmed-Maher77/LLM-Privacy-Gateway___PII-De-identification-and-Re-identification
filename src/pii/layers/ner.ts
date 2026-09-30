@@ -201,26 +201,26 @@ function join(text: string, spans: PIISpan[]): PIISpan[] {
   return out;
 }
 
-// ====== Trim titles at both edges ("Mr", "Dr."), and leading English words that aren't given names ("Agent David") ======
-// A span with nothing left ("Mr", "Audio") is dropped; "Grace" and "Will" stay because they are listed given names.
+// ====== Trim titles and never-names at both edges ("Mr", "Dr.", "hi", "bye"), and leading English words that aren't given names ("Agent David") ======
+// A span with nothing left ("Mr", "Salam", "Audio") is dropped; "Grace" and "Will" stay because they are listed given names.
+// Ordinary English words are not trimmed at the end: a surname could be one.
 function trimEdges(span: PIISpan, text: string): PIISpan | undefined {
   const words = [...span.text.matchAll(/\S+/g)];
-  const title = (w: string) => TITLES.has(w.replace(/\.$/, "").toLowerCase());
+  const never = (w: string) => TITLES.has(w.replace(/\.$/, "").toLowerCase()) || NEVER_NAMES.has(w.toLowerCase());
   let first = 0;
   let last = words.length - 1;
-  while (first <= last && (title(words[first][0]) || (isEnglishWord(words[first][0]) && !isListedGivenName(words[first][0])))) first++;
-  while (last >= first && title(words[last][0])) last--;
+  while (first <= last && (never(words[first][0]) || (isEnglishWord(words[first][0]) && !isListedGivenName(words[first][0])))) first++;
+  while (last >= first && never(words[last][0])) last--;
   if (first > last) return undefined;
   const start = span.start + words[first].index;
   const end = span.start + words[last].index + words[last][0].length;
   return { ...span, start, end, text: text.slice(start, end) };
 }
 
-// ====== Check if a PERSON span looks like a real person name, not a greeting or an acronym ======
+// ====== Check if a PERSON span looks like a real person name, not an acronym ======
 function looksLikePerson(span: PIISpan, text: string): boolean {
   const words = span.text.split(/\s+/);
   const line = lineOf(text, span.start);
-  if (words.every((w) => NEVER_NAMES.has(w.toLowerCase()))) return false; // "Salam"
   // "FHIR", "AA": acronyms, unless the rest of the line is in capitals too
   const rest = line.replace(span.text, "");
   if (words.every(isAllCaps) && !(/\p{Lu}/u.test(rest) && !/\p{Ll}/u.test(rest))) return false;

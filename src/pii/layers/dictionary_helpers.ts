@@ -28,14 +28,15 @@ const PARTICLES = new Set(
 const FUSED_PARTICLE_RE =
     /^(?:al|el|abd|abdel|abdul|abu|bin|ibn|ben)[-’']?(?=\p{L}{3,})/iu;
 
-// fillers or everyday Arabic expressions, never a name ("Uhh", "Salam!")
+// fillers, greetings or everyday Arabic expressions, never a name ("Uhh", "hi", "Salam!")
 const NEVER_NAMES = new Set(
-    ("uh uhh uhm um umm hmm hm mm mmm mhm ohh ahh ah er erm huh yeah " +
+    ("uh uhh uhm um umm hmm hm mm mmm mhm ohh ahh ah er erm huh yeah hi bye thanks " +
         "salam salaam inshallah insha'allah mashallah alhamdulillah elhamdulillah hamdulillah " +
         "yalla habibi habibti ahlan marhaba shukran khalas wallah wallahi bismillah").split(" "),
 );
+// Words next to a name that are not part of it ("Mr", "doctor"): trimmed from name spans, never spread
 const TITLES = new Set(
-    "mr mrs ms miss dr prof sir madam mister eng".split(" "),
+    "mr mrs ms miss dr doctor prof sir madam mister eng".split(" "),
 );
 
 
