@@ -124,7 +124,7 @@ function printComparison(current: Scored[], reference: Scored[]): void {
     }
 }
 
-// ======== The two "Done when" criteria of PLAN.md that labels can check =========
+// ======== The "Done when" criteria of PLAN.md that labels can check =========
 function printCriteria(current: Scored[], reference?: Scored[]): void {
     const cased = (files: Scored[]) => person(files.filter((f) => !f.lowercase));
     const lower = (files: Scored[]) => person(files.filter((f) => f.lowercase));
@@ -134,6 +134,7 @@ function printCriteria(current: Scored[], reference?: Scored[]): void {
     console.log("\n== Criteria");
     console.log(`PERSON recall, normally cased files:  ${c.found}/${c.labelled} ${pct(c.found, c.labelled)}${ref(`${rc.found}/${rc.labelled} ${pct(rc.found, rc.labelled)}`)}`);
     console.log(`PERSON characters leaked, lowercase:  ${l.leaked}/${l.chars} ${pct(l.leaked, l.chars)}${ref(`${rl.leaked}/${rl.chars} ${pct(rl.leaked, rl.chars)}`)}`);
+    console.log(`PERSON false positives:               ${person(current).falsePositives}${ref(String(reference ? person(reference).falsePositives : 0))}`);
 }
 
 async function main() {

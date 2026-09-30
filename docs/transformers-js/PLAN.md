@@ -23,6 +23,9 @@ output format or to the `redact()` / `detect()` API.
    - PERSON recall is no lower on normally cased files
    - fewer name characters leak in `asr_sample.txt`
    - no other type loses recall
+   - PERSON false positives are no more than the reference (7: Lua ×4,
+     Bluetooth, Deep Dive, SQLCipher). ORGANIZATION false positives stay
+     excluded (see the reference notes)
 4. A 6 KB file takes at most ~1.5 s end to end, model load included. Measure
    229 KB too.
 5. README.md, ARCHITECTURE.md and LIMITATIONS.md describe the new pipeline,
@@ -46,8 +49,8 @@ no labelled sets in the repo and `test_data/expected/` doesn't exist.
 ### Reference numbers (Presidio era, 2026-09-30)
 
 From `npm run eval -- --reference`, 7 files. Leaked characters leave out
-whitespace. Hard labels (spelled or spoken forms, Arabic script,
-checksum-failing card and IBAN) are counted apart.
+whitespace. Hard labels (spelled or spoken forms, the spoken birth
+date, Arabic script, checksum-failing card and IBAN) are counted apart.
 
 | Type | Labelled | Recall | Leaked chars | Precision |
 | --- | --- | --- | --- | --- |
@@ -57,12 +60,12 @@ checksum-failing card and IBAN) are counted apart.
 | PHONE_NUMBER | 10 | 100% | 0 / 136 | 100% |
 | CREDIT_CARD | 3 | 100% | 0 / 48 | 100% |
 | IBAN_CODE | 2 | 100% | 0 / 54 | 100% |
-| DATE_TIME | 6 | 83.3% | 27 / 65 (41.5%) | 100% |
+| DATE_TIME | 5 | 100% | 0 / 38 | 100% |
 | US_SSN | 4 | 100% | 0 / 44 | 100% |
 | US_PASSPORT | 5 | 100% | 0 / 45 | 100% |
 | US_DRIVER_LICENSE | 2 | 100% | 0 / 24 | 100% |
-| **All types** | **377** | **98.4%** | **48 / 3100 (1.5%)** | **94.2% (23 FP)** |
-| Hard (apart) | 9 | 0% | 105 / 139 (75.5%) | — |
+| **All types** | **376** | **98.7%** | **21 / 3073 (0.7%)** | **94.2% (23 FP)** |
+| Hard (apart) | 10 | 0% | 132 / 166 (79.5%) | — |
 
 The "Done when" criteria against this reference:
 
@@ -70,13 +73,13 @@ The "Done when" criteria against this reference:
   is "May" in *call May tomorrow* (test_2).
 - PERSON characters leaked in `asr_sample.txt`: **18 / 74 (24.3%)**, from
   "grace" ×2, "will" and "will mensah".
+- PERSON false positives: **7** (Lua ×4, Bluetooth, Deep Dive, SQLCipher).
 
 Notes:
 
 - The 16 ORGANIZATION false positives (Redis, RabbitMQ, Datadog, … in test_3)
   come from before companies were taken only from the pre-defined list. Today's
   rules would not produce them, so don't count them in the comparison.
-- The one DATE_TIME miss is the spoken birth date in `asr_sample.txt`.
 - Of the hard labels, the checksum-failing card in test_5 was partly masked
   (as a phone number); none was fully masked.
 

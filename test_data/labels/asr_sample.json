@@ -17,5 +17,5 @@
   ],
   "PHONE_NUMBER": ["617 555 0142", "857-555-0193"],
   "CREDIT_CARD": ["4539 1488 0343 6467"],
-  "DATE_TIME": ["march third nineteen eighty two"]
+  "DATE_TIME": [{ "value": "march third nineteen eighty two", "hard": true }]
 }
