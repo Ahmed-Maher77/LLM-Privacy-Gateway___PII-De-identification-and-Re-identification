@@ -5,7 +5,7 @@
 //   saved in test_data/reference/). Definitions are in scripts/eval/score.ts.
 //
 //   npm run eval -- --reference   score only the saved reference
-//   npm run eval -- --details     also list missed labels and false positives
+//   npm run eval -- --details     also list missed labels, false positives and over-masked spans
 //
 // Prints numbers only: values are shown only with --details, and those come
 // from test data.
@@ -32,15 +32,15 @@ interface Scored {
 
 // ======== Table formatting =========
 const pct = (n: number, d: number) => (d === 0 ? "-" : `${((100 * n) / d).toFixed(1)}%`);
-const WIDTHS = [18, 9, 7, 8, 11, 9, 10, 5, 11];
+const WIDTHS = [18, 9, 7, 8, 11, 9, 7, 10, 5, 11];
 const row = (cells: (string | number)[]) =>
     cells.map((c, i) => (i === 0 ? String(c).padEnd(WIDTHS[i]) : String(c).padStart(WIDTHS[i]))).join("");
-const HEADER = row(["type", "labelled", "found", "recall", "leaked", "leaked%", "detected", "FP", "precision"]);
+const HEADER = row(["type", "labelled", "found", "recall", "leaked", "leaked%", "over", "detected", "FP", "precision"]);
 
-// Hard labels get no precision: a detection over one already counts as a hit above
-const countsRow = (label: string, c: Counts, precision = true) =>
+// Hard labels get no over-masking or precision: those are counted over detected spans, above
+const countsRow = (label: string, c: Counts, detections = true) =>
     row([label, c.labelled, c.found, pct(c.found, c.labelled), `${c.leaked}/${c.chars}`, pct(c.leaked, c.chars),
-        ...(precision ? [c.detected, c.falsePositives, pct(c.detected - c.falsePositives, c.detected)] : [])]);
+        ...(detections ? [c.overMasked, c.detected, c.falsePositives, pct(c.detected - c.falsePositives, c.detected)] : [])]);
 
 function printTable(title: string, byType: Map<EntityType, Counts>, all: Counts, hard: Counts): void {
     console.log(`\n== ${title}\n${HEADER}`);
@@ -97,6 +97,7 @@ async function scoreAll(reference: boolean): Promise<Scored[]> {
 function printDetails({ text, score }: Scored): void {
     for (const o of score.misses) console.log(`  missed ${o.type} "${o.value}" at ${o.start}`);
     for (const s of score.falsePositives) console.log(`  false positive ${s.type} "${text.slice(s.start, s.end)}" at ${s.start}`);
+    for (const s of score.overExtended) console.log(`  over-masked ${s.type} "${text.slice(s.start, s.end)}" at ${s.start}`);
 }
 
 // ======== Current vs reference, on the files both have =========
@@ -109,10 +110,10 @@ function printComparison(current: Scored[], reference: Scored[]): void {
 
     console.log(`\n== Compared with the reference (${cur.length} files)`);
     if (missing > 0) console.log(`   ${missing} file(s) without a reference are left out here`);
-    const w = [18, 16, 16, 18];
+    const w = [18, 16, 16, 12, 18];
     const line = (cells: string[]) => cells.map((c, i) => (i === 0 ? c.padEnd(w[i]) : c.padStart(w[i]))).join("");
     const pair = (x: string, y: string) => `${x} / ${y}`;
-    console.log(line(["type", "recall", "leaked%", "precision"]) + "     (current / reference)");
+    console.log(line(["type", "recall", "leaked%", "over", "precision"]) + "     (current / reference)");
     const types = ENTITY_TYPES.filter((t) => (a.byType.get(t)?.labelled ?? 0) + (b.byType.get(t)?.labelled ?? 0) > 0);
     for (const [label, x, y] of [
         ...types.map((t) => [t, a.byType.get(t) ?? emptyCounts(), b.byType.get(t) ?? emptyCounts()] as const),
@@ -120,6 +121,7 @@ function printComparison(current: Scored[], reference: Scored[]): void {
     ]) {
         console.log(line([label, pair(pct(x.found, x.labelled), pct(y.found, y.labelled)),
             pair(pct(x.leaked, x.chars), pct(y.leaked, y.chars)),
+            pair(String(x.overMasked), String(y.overMasked)),
             pair(pct(x.detected - x.falsePositives, x.detected), pct(y.detected - y.falsePositives, y.detected))]));
     }
 }

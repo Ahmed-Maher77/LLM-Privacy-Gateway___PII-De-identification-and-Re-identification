@@ -98,7 +98,7 @@ any error nothing is written.
 npm run typecheck
 npm run check                  # redacts test_data/*.txt, compares with test_data/expected/
 npm run check -- --update      # after reviewing a difference, save it as expected
-npm run eval                   # recall, leaked characters and precision against test_data/labels/
+npm run eval                   # recall, leaked and over-masked characters, precision vs test_data/labels/
 npm run check:offsets          # every span equals its slice of the text (emoji, CRLF, windows, 229 KB)
 ```
 
@@ -149,13 +149,15 @@ Speed on an 8-core laptop (median of 5; *cold* = the first call in a new
 process, as in one CLI run, including loading the lists and the model; *warm*
 = a later call in the same process, as in library use):
 
-| Input | Cold | Warm |
-| --- | --- | --- |
-| 6 KB | 1.4 s | 0.19 s |
-| 60 KB | 2.8 s | 1.6 s |
-| 229 KB | 8.6 s | 7.0 s |
+| Input | Cold | Warm | Peak memory |
+| --- | --- | --- | --- |
+| 6 KB | 1.4 s | 0.19 s | 0.45 GB |
+| 60 KB | 2.8 s | 1.6 s | 0.46 GB |
+| 229 KB | 8.6 s | 7.0 s | 0.49 GB |
 
-These were measured with other apps using ~30% of the CPU; large files vary
-most (229 KB warm ranged 6.1–11.8 s, and took 5.2 s in quieter tuning runs).
+`npm run bench` measures this table on the machine it runs on (text built
+from `test_data/`, a fresh process per run, about 3 minutes); run it on the
+production machine. These figures were measured with other apps using ~30% of
+the CPU, and the model's threads compete with them: large files vary most
+(229 KB warm ranged 6.1–11.8 s, and took 5.2 s in quieter tuning runs).
 `npm run dev` adds about 1.7 s of `npm` and `tsx` start-up on top of *cold*.
-Peak memory is about 0.46 GB (6 KB) to about 0.5 GB (229 KB).

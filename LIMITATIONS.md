@@ -85,16 +85,16 @@ match.
 - **The model must be fetched once** (`npm run fetch:model`, 29 MB, needs
   internet). If it is missing or doesn't load, the CLI exits with code 2 and
   writes nothing.
-- **Memory:** peak about 0.46 GB for a 6 KB file and about 0.5 GB for 229 KB (the
-  model, the name lists and Node.js).
-- **Latency** (8-core laptop, median of 5): *cold* is one CLI run including
-  loading the lists and the model, *warm* a later call in the same process.
+- **Latency and memory** (8-core laptop, median of 5; `npm run bench`
+  re-measures on any machine): *cold* is one CLI run including loading the
+  lists and the model, *warm* a later call in the same process. Memory is the
+  model, the name lists and Node.js.
 
-  | Input | Cold | Warm |
-  | --- | --- | --- |
-  | 6 KB | 1.4 s | 0.19 s |
-  | 60 KB | 2.8 s | 1.6 s |
-  | 229 KB | 8.6 s | 7.0 s |
+  | Input | Cold | Warm | Peak memory |
+  | --- | --- | --- | --- |
+  | 6 KB | 1.4 s | 0.19 s | 0.45 GB |
+  | 60 KB | 2.8 s | 1.6 s | 0.46 GB |
+  | 229 KB | 8.6 s | 7.0 s | 0.49 GB |
 
   Measured with other apps using ~30% of the CPU; the model's threads compete
   with them, so large files vary most (229 KB warm ranged 6.1–11.8 s, and
@@ -119,8 +119,10 @@ match.
   output, which predates some rule changes: its 16 company false positives
   would not happen today. Treat it as a rough reference.
 - Precision counts a masked span as correct if it overlaps a labelled value,
-  so extra words masked *with* a name are not counted: in `asr_sample.txt`
-  "to be frank mister mensah" and "priya bye" are masked as one name each,
-  hiding "frank" and "bye".
+  so extra words masked *with* a name don't lower it. They are counted
+  separately as over-masked characters (the "over" column; 41 in total, 202
+  for the old pipeline): in `asr_sample.txt` "frank mister mensah" and
+  "priya bye" are masked as one name each, hiding "frank" and "bye".
+  `--details` lists such spans.
 - `npm run check` only detects that output *changed*; whether a change is
   right has to be judged by reading the diff and by `npm run eval`.

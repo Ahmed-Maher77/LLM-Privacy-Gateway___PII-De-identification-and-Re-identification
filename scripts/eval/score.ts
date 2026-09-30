@@ -1,6 +1,7 @@
 // Score detected spans against the labels of one file.
 //   recall     labelled occurrences fully masked (by a span of any type)
 //   leaked     labelled characters left visible (whitespace not counted)
+//   over       masked characters that are in no label (whitespace and ignored words not counted)
 //   precision  detected spans that overlap a labelled occurrence
 // Hard occurrences are kept out of the headline counts and scored apart.
 
@@ -18,6 +19,7 @@ export interface Counts {
     found: number;
     chars: number;
     leaked: number;
+    overMasked: number;
     detected: number;
     falsePositives: number;
 }
@@ -28,9 +30,10 @@ export interface FileScore {
     hard: Counts;
     misses: Occurrence[];
     falsePositives: Detected[];
+    overExtended: Detected[]; // spans that hit a label but also mask words outside it
 }
 
-export const emptyCounts = (): Counts => ({ labelled: 0, found: 0, chars: 0, leaked: 0, detected: 0, falsePositives: 0 });
+export const emptyCounts = (): Counts => ({ labelled: 0, found: 0, chars: 0, leaked: 0, overMasked: 0, detected: 0, falsePositives: 0 });
 
 export function addCounts(into: Counts, from: Counts): void {
     for (const k of Object.keys(into) as (keyof Counts)[]) into[k] += from[k];
@@ -51,6 +54,9 @@ export function scoreFile(text: string, labels: Labels, spans: Detected[]): File
     const hard = emptyCounts();
     const misses: Occurrence[] = [];
     const labelled = new Uint8Array(text.length);
+    const anyLabel = new Uint8Array(text.length); // hard labels and ignored words too: masking them isn't over-masking
+    for (const o of labels.occurrences) anyLabel.fill(1, o.start, o.end);
+    for (const [start, end] of labels.ignored) anyLabel.fill(1, start, end);
 
     for (const o of labels.occurrences) {
         let chars = 0;
@@ -79,16 +85,22 @@ export function scoreFile(text: string, labels: Labels, spans: Detected[]): File
     }
 
     const falsePositives: Detected[] = [];
+    const overExtended: Detected[] = [];
     for (const s of spans) {
         const hit = labels.occurrences.some((o) => overlaps(o, s.start, s.end));
         if (!hit && labels.ignored.some(([start, end]) => overlaps(s, start, end))) continue;
+        let over = 0;
+        for (let i = s.start; i < s.end; i++) if (!anyLabel[i] && counted(i)) over++;
         const c = countsOf(s.type);
         c.detected++;
         all.detected++;
+        c.overMasked += over;
+        all.overMasked += over;
+        if (hit && over > 0) overExtended.push(s);
         if (hit) continue;
         c.falsePositives++;
         all.falsePositives++;
         falsePositives.push(s);
     }
-    return { byType, all, hard, misses, falsePositives };
+    return { byType, all, hard, misses, falsePositives, overExtended };
 }

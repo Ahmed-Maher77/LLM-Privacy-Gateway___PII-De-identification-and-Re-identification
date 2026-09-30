@@ -217,13 +217,14 @@ before returning, every span is checked to equal `text.slice(start, end)`.
 
 ## Checking a change
 
-There are no unit tests. Four commands:
+There are no unit tests. Four commands, plus `npm run bench` for speed and
+memory (cold and warm, 6 / 60 / 229 KB, median of 5 fresh processes):
 
 | Command | What it checks |
 | --- | --- |
 | `npm run typecheck` | TypeScript |
 | `npm run check` | redacts every `test_data/*.txt` and compares with `test_data/expected/`; after an intended change, review the diff, then `npm run check -- --update` |
-| `npm run eval` | per file and type: recall (labelled values fully masked), leaked characters, precision, against `test_data/labels/`; then the totals against the old pipeline's saved output in `test_data/reference/`, and the name criteria. `--details` lists misses and false positives (test data only); `--reference` scores the saved output alone |
+| `npm run eval` | per file and type: recall (labelled values fully masked), leaked characters, over-masked characters (masked but in no label), precision, against `test_data/labels/`; then the totals against the old pipeline's saved output in `test_data/reference/`, and the name criteria. `--details` lists misses, false positives and over-masked spans (test data only); `--reference` scores the saved output alone |
 | `npm run check:offsets` | every NER and pipeline span equals its slice of the text, on emoji and other non-BMP text, CRLF, a name at 300 positions across the window edge, and 229 KB |
 
 Labels (`test_data/labels/<name>.json`) list the PII values per type. An entry

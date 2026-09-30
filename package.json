@@ -10,6 +10,7 @@
     "dev": "tsx src/index.ts",
     "check": "tsx scripts/check.ts",
     "check:offsets": "tsx scripts/check-offsets.ts",
+    "bench": "tsx scripts/bench.ts",
     "eval": "tsx scripts/evaluate.ts",
     "fetch:model": "tsx scripts/fetch-model.ts",
     "typecheck": "tsc --noEmit",

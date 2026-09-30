@@ -9,11 +9,11 @@
 //   The inputs are synthetic or test data; only counts are printed.
 
 import fs from "node:fs";
-import path from "node:path";
 import "dotenv/config";
 import { detect } from "../src/pii/redact";
 import { detectNer } from "../src/pii/layers/ner";
 import type { PIISpan } from "../src/pii/types";
+import { sampleText } from "./sample-text";
 
 const NON_BMP = [
     "😅 Hi, I'm Kofi Mensah 😅 and this is Sarah Johnson👋.",
@@ -45,14 +45,6 @@ async function check(name: string, text: string): Promise<{ failures: string[]; 
     const ner = await detectNer(text);
     const failures = [...problems(text, ner, "ner"), ...problems(text, await detect(text), "pipeline")];
     return { failures, ner };
-}
-
-// ======== The labelled test data, repeated up to 229 KB and cut at a line break =========
-function bigText(): string {
-    const all = fs.readdirSync("test_data").filter((f) => f.endsWith(".txt")).map((f) => fs.readFileSync(path.join("test_data", f), "utf-8"));
-    let text = "";
-    while (text.length < 229 * 1024) text += all.join("\n");
-    return text.slice(0, text.lastIndexOf("\n", 229 * 1024) + 1);
 }
 
 async function main() {
@@ -88,7 +80,7 @@ async function main() {
     }
     report("name around the first window boundary", boundaryFailures, `  (name fully masked at ${found}/${positions} positions)`);
 
-    const big = bigText();
+    const big = sampleText(229 * 1024);
     const started = performance.now();
     const { failures, ner } = await check("229 KB", big);
     report(`${(big.length / 1024).toFixed(0)} KB file`, failures, `  (${ner.length} NER spans, ${(performance.now() - started).toFixed(0)} ms for NER + pipeline)`);
