@@ -126,17 +126,26 @@ function printComparison(current: Scored[], reference: Scored[]): void {
     }
 }
 
-// ======== The "Done when" criteria of PLAN.md that labels can check =========
+// ======== Name criteria against the reference, on the files both have; then all lowercase files =========
 function printCriteria(current: Scored[], reference?: Scored[]): void {
     const cased = (files: Scored[]) => person(files.filter((f) => !f.lowercase));
     const lower = (files: Scored[]) => person(files.filter((f) => f.lowercase));
     const ref = (text: string) => (reference ? `   (reference ${text})` : "");
-    const [c, l] = [cased(current), lower(current)];
+    const names = reference && new Set(reference.map((f) => f.name));
+    const shared = names ? current.filter((f) => names.has(f.name)) : current;
+    const [c, l] = [cased(shared), lower(shared)];
     const [rc, rl] = reference ? [cased(reference), lower(reference)] : [emptyCounts(), emptyCounts()];
-    console.log("\n== Criteria");
+    console.log(`\n== Criteria (${shared.length} files)`);
     console.log(`PERSON recall, normally cased files:  ${c.found}/${c.labelled} ${pct(c.found, c.labelled)}${ref(`${rc.found}/${rc.labelled} ${pct(rc.found, rc.labelled)}`)}`);
     console.log(`PERSON characters leaked, lowercase:  ${l.leaked}/${l.chars} ${pct(l.leaked, l.chars)}${ref(`${rl.leaked}/${rl.chars} ${pct(rl.leaked, rl.chars)}`)}`);
-    console.log(`PERSON false positives:               ${person(current).falsePositives}${ref(String(reference ? person(reference).falsePositives : 0))}`);
+    console.log(`PERSON false positives:               ${person(shared).falsePositives}${ref(String(reference ? person(reference).falsePositives : 0))}`);
+
+    // Speech-to-text is the weak spot, so show every lowercase file together, reference or not
+    const lowercase = current.filter((f) => f.lowercase);
+    const all = lower(current);
+    console.log(`\n== Lowercase files (${lowercase.map((f) => f.name).join(", ")})`);
+    console.log(`PERSON found ${all.found}/${all.labelled} ${pct(all.found, all.labelled)}, characters leaked ${all.leaked}/${all.chars} ${pct(all.leaked, all.chars)}, ` +
+        `over-masked ${all.overMasked}, false positives ${all.falsePositives}, precision ${pct(all.detected - all.falsePositives, all.detected)}`);
 }
 
 async function main() {

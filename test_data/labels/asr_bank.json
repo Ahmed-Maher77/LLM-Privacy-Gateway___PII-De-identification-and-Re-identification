@@ -1,0 +1,20 @@
+{
+  "PERSON": [
+    { "value": "hope", "in": "my name is hope how" },
+    { "value": "hope", "in": "thanks hope bye" },
+    "kwame asante",
+    "asante",
+    "mark asante",
+    { "value": "mark", "in": "my son mark he" },
+    "abena",
+    { "value": "bill", "in": "my brother bill might" },
+    { "value": "bill", "in": "bill would need" }
+  ],
+  "EMAIL_ADDRESS": ["kwame.asante79@gmail.com"],
+  "PHONE_NUMBER": [
+    "+233 24 555 0198",
+    { "value": "oh two four four one two three four five six", "hard": true }
+  ],
+  "CREDIT_CARD": ["4916 3389 1102 7463"],
+  "DATE_TIME": [{ "value": "fourteenth of june nineteen seventy nine", "hard": true }]
+}

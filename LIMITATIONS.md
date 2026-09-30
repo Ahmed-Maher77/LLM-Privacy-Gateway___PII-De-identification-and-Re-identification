@@ -4,22 +4,24 @@ Known drawbacks of the PII redaction pipeline (`src/pii/`), as of 2026-09-30.
 
 ## 1. Accuracy
 
-Measured with `npm run eval` on the 8 labelled files in `test_data/`:
+Measured with `npm run eval` on the 11 labelled files in `test_data/`:
 
-| | Found | Characters leaked | Precision |
-| --- | --- | --- | --- |
-| Names, all files | 99.1% (329 / 332) | 0.5% | 98.2% (6 false positives) |
-| Names, normally cased files | 99.7% (318 / 319) | — | — |
-| Names, lowercase speech-to-text (`asr_sample.txt`) | — | 10.8% (8 / 74) | — |
-| All types | 99.2% (378 / 381) | 0.4% | 98.4% |
+| | Found | Characters leaked | Over-masked characters | Precision |
+| --- | --- | --- | --- | --- |
+| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 82 | 97.3% (10 false positives) |
+| Names, normally cased files | 99.7% (318 / 319) | — | — | — |
+| Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 60 | 88.4% (5 false positives) |
+| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 82 | 97.7% |
 
 "Found" counts a value as found if it is masked completely, as any type.
-Spelled-out and spoken forms, Arabic script and checksum-failing numbers are
-labelled but counted apart ("hard"): none of the 10 is masked.
+"Over-masked" counts characters masked that belong to no label. Spelled-out
+and spoken forms, Arabic script and checksum-failing numbers are labelled but
+counted apart ("hard"): none of the 16 is masked.
 
-- **The labelled set is small:** 8 synthetic transcripts, one of them
-  lowercase speech-to-text. The threshold and filters were tuned on it, so
-  real transcripts may do worse. Add anonymised real transcripts with labels
+- **The labelled set is small:** 11 synthetic transcripts, 4 of them
+  lowercase speech-to-text. The threshold and filters were tuned on the
+  first 8; the 3 newer lowercase files (`asr_bank`, `asr_telecom`,
+  `asr_clinic`) were not used for tuning. Real transcripts may do worse. Add anonymised real transcripts with labels
   to `test_data/` to measure them.
 - **Lowercase speech-to-text is still the weak spot.** Names that are also
   English words are missed when the model misses them: "will" and "will
@@ -35,8 +37,16 @@ labelled but counted apart ("hard"): none of the 10 is masked.
   unless the whole line is in capitals.
 - **Every-occurrence rule over-masks.** Once a name is found, each of its parts
   is masked everywhere: after "Grace Hopper", every "Grace"; after a false
-  positive, that word everywhere. "grace" in *grace period* is masked in the
-  test set this way.
+  positive, that word everywhere. A one-word name that is an English word is
+  masked in its ordinary uses too: in `asr_bank.txt`, after the names "hope",
+  "bill" and "mark", also "i hope" ×2, "phone bill" and "i'll mark that"; in
+  `asr_sample.txt`, "grace period". (Verb uses of "will" stay visible: parts
+  of longer names such as "will okonkwo" are not spread when they are
+  lowercase English words.)
+- **Neighbouring words are sometimes masked with a name** in lowercase text:
+  "hi grace", "doctor mark hughes", "thank you mister el hamed" ("you
+  mister"), "youssef salam", "priya bye", "hope bye", "frank mister mensah".
+  Nothing leaks, but those words are hidden (the "over-masked" count).
 - **Names inside place or organisation names** ("Ada Lovelace Room", "Martin
   Luther King Jr Way") are masked as names.
 - **Leading English words are trimmed from a model name** unless they are

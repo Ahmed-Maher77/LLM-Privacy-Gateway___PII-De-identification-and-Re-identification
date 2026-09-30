@@ -1,0 +1,21 @@
+agent: thank you for calling skyline mobile you're speaking with <PERSON_1> how can i help
+caller: hello yes my name is <PERSON_2> and my internet has been down since sunday
+agent: sorry to hear that can you spell your first name please
+caller: y o u s s e f and the last name is <PERSON_3> two words
+agent: thank <PERSON_4> and your date of birth for security
+caller: <DATE_TIME_1>
+agent: and what's the account number
+caller: it's seven seven three nine two zero one
+agent: thanks and is this about the home line <PHONE_NUMBER_1>
+caller: yes the home line
+agent: okay i can see an outage in your area it should be fixed by tomorrow
+caller: my wife <PERSON_5> called yesterday and they told her the same thing
+agent: i see a note from <PERSON_6> yes
+caller: that's her she works from home so we really need it
+agent: i understand i'll add a credit for three days to your bill
+caller: thank you and can you send the details to <EMAIL_ADDRESS_1>
+agent: sure and i'll text you at plus two zero one zero one two three four five six seven eight
+caller: yes that's my mobile
+agent: is there anything else i can help with
+caller: no inshallah it will be fixed tomorrow thanks <PERSON_1>
+agent: you're welcome mister <PERSON_7>

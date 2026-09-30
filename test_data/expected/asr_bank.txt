@@ -1,0 +1,22 @@
+agent: good morning thanks for calling northgate savings my name is <PERSON_1> how can i help
+caller: hi um yes hi this is <PERSON_2> i'm calling because my card got blocked
+agent: i'm sorry about that mister <PERSON_3> i <PERSON_1> we can sort it out quickly can you confirm your date of birth
+caller: sure it's the fourteenth of june nineteen seventy nine
+agent: thank you and the card number please
+caller: it's uh <CREDIT_CARD_1>
+agent: okay so i see two declined payments yesterday one at a pharmacy and one online
+caller: yeah the online one was me i was paying my phone <PERSON_4>
+agent: alright i'll <PERSON_5> that one as genuine and um the pharmacy one
+caller: that was my son <PERSON_5> he has a card on my account
+agent: i see <PERSON_6> is listed as a second card holder yes
+caller: right and my daughter will be added next month her name is <PERSON_7>
+agent: no problem she will need to call in with you
+caller: okay um also my brother <PERSON_4> might call he helps me with the online banking
+agent: <PERSON_4> would need his own authorization i'm afraid
+caller: fine fine that's okay
+agent: and is oh two four four one two three four five six still your number
+caller: no use my new one it's <PHONE_NUMBER_1>
+agent: got it and i have <EMAIL_ADDRESS_1> as your email is that right
+caller: yes that's right
+agent: perfect you're all set mister <PERSON_3> i <PERSON_1> you have a good rest of your day
+caller: thanks <PERSON_8>

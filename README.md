@@ -133,7 +133,8 @@ first call and is reused, so later calls in the same process are much faster.
 
 ## Measured numbers (2026-09-30)
 
-On the 8 labelled files in `test_data/` (`npm run eval`):
+With `npm run eval` on the labelled files in `test_data/`. Against the
+previous pipeline, on the 7 files it has saved output for:
 
 | | This pipeline | Previous pipeline (spaCy NER) |
 | --- | --- | --- |
@@ -141,9 +142,11 @@ On the 8 labelled files in `test_data/` (`npm run eval`):
 | Names found / characters leaked / precision | 99.1% / 0.5% / 98.2% | 98.5% / 0.9% / 97.9% |
 | Name characters leaked, lowercase speech-to-text | 10.8% | 24.3% |
 
-The previous pipeline's figures are from its saved output on 7 of the files
-(the 8th was added later). Every type other than PERSON is at 100% found and
-100% precision. The set is small; see [LIMITATIONS.md](LIMITATIONS.md).
+On all 11 files: 99.3% of PII found, 0.3% of characters leaked, 97.7%
+precision. On the 4 lowercase speech-to-text files alone: 95.1% of names
+found, 2.8% of name characters leaked, 88.4% name precision. Every type other
+than PERSON is at 100% found and 100% precision. The set is small and
+synthetic; see [LIMITATIONS.md](LIMITATIONS.md).
 
 Speed on an 8-core laptop (median of 5; *cold* = the first call in a new
 process, as in one CLI run, including loading the lists and the model; *warm*
