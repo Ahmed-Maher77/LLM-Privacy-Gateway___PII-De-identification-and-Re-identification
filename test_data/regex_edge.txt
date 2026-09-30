@@ -1,0 +1,10 @@
+Support ticket — identity check (synthetic)
+
+Agent: For the record, which passport do you travel on?
+Customer: A US one. The passport I renewed last year is C03005988, and my old one was 488839667.
+Agent: And your social security number?
+Customer: It's 432-56-7890.
+Agent: The form lists 000-12-3456, 666-45-1234, 912-34-5678, 123-00-4567 and 123-45-0000 as examples; those are never issued.
+Agent: What's the best number to reach you?
+Customer: My mobile is +44 7911 123456, or the Berlin office on +49 30 901820.
+Agent: Thanks, that's all I need.

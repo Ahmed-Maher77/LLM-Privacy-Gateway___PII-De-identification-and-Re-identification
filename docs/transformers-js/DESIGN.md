@@ -224,8 +224,8 @@ layer. `regex.ts` has to cover them before Presidio is gone:
 | Missed by regex | Example | Fix |
 | --- | --- | --- |
 | Phone numbers in single- or two-digit groups | `+33 6 12 34 56 78` | **Done in Phase 2** (it leaked once the model's PHONE_NUMBER was dropped): a `+`-prefixed candidate regex, validated with `libphonenumber-js` `isValidPhoneNumber`. `findPhoneNumbersInText` was not used: it over-extends (`+1-202-555-0147, 617`) |
-| Passport with no keyword right before it | `"A38291049"` a few words after "passport" | US passport shape (`[A-Z]\d{8}` or 9 digits) when "passport" is on the same line |
-| (Presidio behaviour we should copy) | `000-12-3456` | Skip impossible SSNs: area 000, 666 or 900–999, group 00, serial 0000 |
+| Passport with no keyword right before it | `"A38291049"` a few words after "passport" | **Done in Phase 3:** the US passport shape (`[A-Z]\d{8}` or 9 digits) anywhere on a line with "passport" (no letter before it, so `US_PASSPORT:` counts) |
+| (Presidio behaviour we should copy) | `000-12-3456` | **Done in Phase 3:** both SSN rules skip area 000, 666 or 900–999, group 00, serial 0000. `test_data/regex_edge.txt` has five such numbers, unlabelled, so masking one would show as a false positive |
 
 ## Design rules (unchanged)
 

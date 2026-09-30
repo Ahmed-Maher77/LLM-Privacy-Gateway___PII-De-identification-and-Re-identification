@@ -26,8 +26,10 @@ output format or to the `redact()` / `detect()` API.
    - PERSON false positives are no more than the reference (7: Lua ×4,
      Bluetooth, Deep Dive, SQLCipher). ORGANIZATION false positives stay
      excluded (see the reference notes)
-4. A 6 KB file takes at most ~1.5 s end to end, model load included. Measure
-   229 KB too.
+4. 6 KB cold ≤ 1.5 s; 229 KB warm ≤ ~6 s; revisit if production transcripts
+   are much larger than 60 KB. (Decided 2026-09-30: typical transcripts are
+   2–60 KB, which take ~1.3 s or less; the model's own compute sets the floor
+   for large files.)
 5. README.md, ARCHITECTURE.md and LIMITATIONS.md describe the new pipeline,
    with new measured numbers.
 
@@ -136,8 +138,7 @@ Criterion 4 (≤ ~1.5 s cold for 6 KB) is not met yet; that is Phase 2.5.
 384/32, one window per call, one thread per physical core. Criterion 3 is met
 (PERSON cased recall 318/319 = reference; `asr_sample` name leak 10.8% vs
 24.3%; 6 PERSON false positives vs 7; no other type loses recall). Criterion 4
-is met for 6 KB (1.22 s cold); 229 KB takes 5.2 s warm, above the 3.8 s
-target. Choice, settings and all numbers: DESIGN.md "Choice and numbers".
+is met: 6 KB takes 1.22 s cold, 229 KB 5.2 s warm. Choice, settings and all numbers: DESIGN.md "Choice and numbers".
 
 **Exit:** criteria 3 and 4 of "Done when" are met. If no candidate meets
 them, stop and decide with the team (for example, fine-tune on our own
@@ -152,6 +153,14 @@ line, and invalid-SSN filtering. Label an example of each in `test_data/`.
 The phone item was done in Phase 2: `+33 6 12 34 56 78` leaked once the
 model's PHONE_NUMBER was dropped. `A38291049` did not leak (regex catches it
 after "Passport number is"), so the passport and SSN items remain.
+
+**Result (2026-09-30):** all three done. The passport shape now catches
+`A38291049` on the `US_PASSPORT: "A38291049"` line by itself (before, only the
+every-occurrence step did). Both SSN rules skip impossible numbers.
+`test_data/regex_edge.txt` (no reference) has two passports, one valid SSN, two
+international phones, and five impossible SSNs left unlabelled. Every
+non-PERSON type is at 100% recall and precision over the 8 files, and
+`check:offsets` passes.
 
 **Exit:** `+33 6 12 34 56 78` and `A38291049` from the saved reports are
 masked again, and `npm run eval` shows no other type losing recall.

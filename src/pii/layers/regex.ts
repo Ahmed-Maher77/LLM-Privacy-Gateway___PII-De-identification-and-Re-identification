@@ -41,6 +41,16 @@ const MONTH = "(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|jul
 // After a keyword: optional "number"/"no."/"#", then optional "is"/":"/"-".
 const KEYWORD_TAIL = String.raw`(?:\s+(?:number|no\.?|num|#))?\s*(?:is\s+|[:#-]\s*)?`;
 
+// ======== Skip SSNs that are never issued: area 000, 666 or 900–999, group 00, serial 0000 =========
+function ssnValid(value: string): boolean {
+  const d = value.replace(/\D/g, "");
+  return !/^(?:000|666|9\d\d)/.test(d) && d.slice(3, 5) !== "00" && d.slice(5) !== "0000";
+}
+
+// "passport" with no letter before it, so "US_PASSPORT" counts; a letter and 8 digits, or 9 digits
+const PASSPORT_WORD = "(?<![a-z])passport";
+const PASSPORT_SHAPE = String.raw`\b(?:[A-Z]\d{8}|\d{9})\b`;
+
 const RULES: Rule[] = [
   { type: "EMAIL_ADDRESS", pattern: /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g },
 
@@ -49,10 +59,12 @@ const RULES: Rule[] = [
 
   { type: "IBAN_CODE", pattern: /\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,3})?\b/g, valid: ibanValid },
 
-  { type: "US_SSN", pattern: /(?<![\d-])\d{3}-\d{2}-\d{4}(?![\d-])/g },
-  { type: "US_SSN", pattern: new RegExp(String.raw`\b(?:ssn|social\s+security)${KEYWORD_TAIL}(\d{3}[ -]?\d{2}[ -]?\d{4})\b`, "gi"), group: 1 },
+  { type: "US_SSN", pattern: /(?<![\d-])\d{3}-\d{2}-\d{4}(?![\d-])/g, valid: ssnValid },
+  { type: "US_SSN", pattern: new RegExp(String.raw`\b(?:ssn|social\s+security)${KEYWORD_TAIL}(\d{3}[ -]?\d{2}[ -]?\d{4})\b`, "gi"), group: 1, valid: ssnValid },
 
   { type: "US_PASSPORT", pattern: new RegExp(String.raw`\bpassport${KEYWORD_TAIL}([A-Z0-9]{6,9})\b`, "gi"), group: 1, valid: (v) => /\d/.test(v) },
+  // The US passport shape anywhere on a line that says "passport" ("US_PASSPORT: "A38291049"")
+  { type: "US_PASSPORT", pattern: new RegExp(String.raw`(?<=${PASSPORT_WORD}[^\r\n]*)${PASSPORT_SHAPE}|${PASSPORT_SHAPE}(?=[^\r\n]*${PASSPORT_WORD})`, "gi") },
 
   {
     type: "US_DRIVER_LICENSE",
