@@ -20,11 +20,11 @@ agent: no problem is the best number to reach you still <PHONE_NUMBER_1>
 caller: no it changed it's <PHONE_NUMBER_2> now
 agent: got it i've updated that and um do you want the replacement card sent to the same address
 caller: yes please the jordan river apartments one unit twelve
-agent: okay and to be <PERSON_5> i'd also recommend setting up text alerts
+agent: okay and to be frank mister <PERSON_3> i'd also recommend setting up text alerts
 caller: sure sure can you send them to my email too it's <EMAIL_ADDRESS_1>
-agent: yep <PERSON_6> eight two at gmail dot com got it
+agent: yep <PERSON_5> eight two at gmail dot com got it
 caller: yeah that's it
 agent: and is there anything else i can help with today
 caller: uh my brother will might call about his account he's will <PERSON_3> too but a different account
-agent: that's fine he'll just need to verify himself when he calls thanks for calling first harbor <PERSON_7> have a good day
+agent: that's fine he'll just need to verify himself when he calls thanks for calling first harbor <PERSON_6> have a good day
 caller: thanks <PERSON_1> bye

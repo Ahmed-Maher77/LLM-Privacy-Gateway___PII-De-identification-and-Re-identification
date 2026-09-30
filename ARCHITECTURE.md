@@ -157,8 +157,10 @@ before returning, every span is checked to equal `text.slice(start, end)`.
   (greetings and fillers: "hi", "bye", "thanks", "Salam") are trimmed at both
   ends, and leading words that are English words but not listed given names
   at the start ("Agent David" → "David"). Ordinary English words are not
-  trimmed at the end: a surname could be one. A span with nothing left is
-  dropped ("Mr", "Salam"). This matters because the every-occurrence step
+  trimmed at the end: a surname could be one. Words before a title inside
+  the span are dropped ("thank you mister el hamed" → "el hamed"; a title at
+  the very end doesn't count). A span with nothing left is dropped ("Mr",
+  "Salam"). This matters because the every-occurrence step
   masks each capitalised part of a name everywhere: untrimmed, "Agent" was
   masked on every line. The name lists apply the same rule: a `NEVER_NAMES`
   word never becomes part of a name ("youssef salam").

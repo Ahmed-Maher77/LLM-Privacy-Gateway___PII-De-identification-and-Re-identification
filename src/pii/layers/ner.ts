@@ -206,9 +206,12 @@ function join(text: string, spans: PIISpan[]): PIISpan[] {
 // Ordinary English words are not trimmed at the end: a surname could be one.
 function trimEdges(span: PIISpan, text: string): PIISpan | undefined {
   const words = [...span.text.matchAll(/\S+/g)];
-  const never = (w: string) => TITLES.has(w.replace(/\.$/, "").toLowerCase()) || NEVER_NAMES.has(w.toLowerCase());
+  const title = (w: string) => TITLES.has(w.replace(/\.$/, "").toLowerCase());
+  const never = (w: string) => title(w) || NEVER_NAMES.has(w.toLowerCase());
   let first = 0;
   let last = words.length - 1;
+  // Words before an inner title aren't part of the name: "thank you mister el hamed" -> "el hamed"
+  for (let i = 1; i < last; i++) if (title(words[i][0])) first = i;
   while (first <= last && (never(words[first][0]) || (isEnglishWord(words[first][0]) && !isListedGivenName(words[first][0])))) first++;
   while (last >= first && never(words[last][0])) last--;
   if (first > last) return undefined;

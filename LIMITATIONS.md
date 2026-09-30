@@ -8,10 +8,10 @@ Measured with `npm run eval` on the 11 labelled files in `test_data/`:
 
 | | Found | Characters leaked | Over-masked characters | Precision |
 | --- | --- | --- | --- | --- |
-| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 42 | 98.6% (5 false positives) |
+| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 22 | 98.6% (5 false positives) |
 | Names, normally cased files | 99.7% (318 / 319) | — | — | — |
-| Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 20 | 100% (no false positives) |
-| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 42 | 98.8% |
+| Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 0 | 100% (no false positives) |
+| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 22 | 98.8% |
 
 "Found" counts a value as found if it is masked completely, as any type.
 "Over-masked" counts characters masked that belong to no label. Spelled-out
@@ -43,12 +43,11 @@ counted apart ("hard"): none of the 16 is masked.
   lowercase uses, so "i hope" and "grace period" stay visible. The other side
   of that: a lowercase name the layers find only once stays visible where they
   miss it.
-- **Words before a title are masked with a name** in lowercase text: "thank
-  you mister el hamed" ("you mister") and "to be frank mister mensah" ("frank
-  mister"). "you" and "frank" are listed given names, so the edge trim keeps
-  them. Nothing leaks, but those words are hidden (the "over-masked"
-  count). Greetings and fillers at either end ("hi grace", "priya bye") are
-  trimmed.
+- **Words before a title are dropped from a model name:** "thank you mister
+  el hamed" is masked as "el hamed", "to be frank mister mensah" as "mensah".
+  A name that really has a title word inside it would leave its first part
+  visible. Greetings and fillers at either end ("hi grace", "priya bye") are
+  trimmed too.
 - **Names inside place or organisation names** ("Ada Lovelace Room", "Martin
   Luther King Jr Way") are masked as names.
 - **Leading English words are trimmed from a model name** unless they are
@@ -132,9 +131,9 @@ match.
   would not happen today. Treat it as a rough reference.
 - Precision counts a masked span as correct if it overlaps a labelled value,
   so extra words masked *with* a name don't lower it. They are counted
-  separately as over-masked characters (the "over" column: 33 on the 7 files
-  the old pipeline has output for, against its 202; 42 on all 11). The words
-  before a title above are most of them.
+  separately as over-masked characters (the "over" column: 22 on the 7 files
+  the old pipeline has output for, against its 202; also 22 on all 11). All
+  22 are the false positives "Lua" and "Sarahville".
   `--details` lists such spans.
 - `npm run check` only detects that output *changed*; whether a change is
   right has to be judged by reading the diff and by `npm run eval`.
