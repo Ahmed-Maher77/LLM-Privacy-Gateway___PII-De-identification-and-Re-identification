@@ -398,6 +398,7 @@ class TestFixedNames:
 
 
 class TestProductionContract:
+    @pytest.mark.slow
     def test_for_production_enforces_raise_and_full_ensemble(self):
         mw = PIIMiddleware.for_production()
         assert mw.on_leak == "raise"
@@ -406,6 +407,7 @@ class TestProductionContract:
         assert "GlinerDetector" in names
         assert "SpacyDetector" in names
 
+    @pytest.mark.slow
     def test_for_production_records_detector_provenance(self):
         mw = PIIMiddleware.for_production()
         res = mw.analyze("Contact: dev@example.com")
@@ -624,6 +626,7 @@ class TestRemediatedDefects:
         assert "Jennifer" in mined or "Smith" in mined
 
     # T19: Production thread configuration
+    @pytest.mark.slow
     def test_production_thread_configuration(self):
         import os
         os.environ["PII_TORCH_THREADS"] = "4"
