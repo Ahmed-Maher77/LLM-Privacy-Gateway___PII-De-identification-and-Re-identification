@@ -1,6 +1,11 @@
 # Dependencies
 node_modules/
 
+# Temp files
+*.tmp
+.msg.txt
+.git_commit_msg.txt
+
 # Environment configuration — never commit real secrets
 .env
 .env.*
