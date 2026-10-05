@@ -1,49 +1,16 @@
 import winkNLP from "wink-nlp";
 import model from "wink-eng-lite-web-model";
+import type { PIIMaskConfig, PIIMatch, PIIType } from "./types";
 
 const nlp = winkNLP(model);
 const its = nlp.its;
-
-export type PIIType =
-  | "EMAIL"
-  | "URL"
-  | "DATE"
-  | "TIME"
-  | "PHONE"
-  | "MONEY"
-  | "IP_ADDRESS"
-  | "PERSON"
-  | "LOCATION"
-  | "ORGANIZATION"
-  | "MENTION";
-
-export interface PIIMatch {
-  type: PIIType;
-  value: string;
-  start: number;
-  end: number;
-}
-
-export interface PIIMaskConfig {
-  EMAIL?: boolean;
-  URL?: boolean;
-  DATE?: boolean;
-  MONEY?: boolean;
-  TIME?: boolean;
-  PHONE?: boolean;
-  IP_ADDRESS?: boolean;
-  PERSON?: boolean;
-  LOCATION?: boolean;
-  ORGANIZATION?: boolean;
-  MENTION?: boolean;
-}
 
 const DEFAULT_CONFIG: Required<PIIMaskConfig> = {
   EMAIL: true,
   URL: true,
   DATE: true,
   MONEY: false,
-    TIME: false,
+  TIME: false,
   PHONE: false,
   IP_ADDRESS: false,
   PERSON: false,
@@ -56,12 +23,29 @@ export function detectPII(
   text: string,
   config: PIIMaskConfig = {},
 ): PIIMatch[] {
+  if (!text) {
+    return [];
+  }
+
   const finalConfig = {
     ...DEFAULT_CONFIG,
     ...config,
   };
 
   const doc = nlp.readDoc(text);
+
+  // Compute exact character start and end offsets for all tokens in a single O(N) pass
+  let pos = 0;
+  const tokenOffsets: { start: number; end: number }[] = [];
+  doc.tokens().each((token: any) => {
+    const spaces = token.out(its.precedingSpaces) as string;
+    const val = token.out(its.value) as string;
+    const start = pos + spaces.length;
+    const end = start + val.length;
+    tokenOffsets.push({ start, end });
+    pos = end;
+  });
+
   const matches: PIIMatch[] = [];
 
   doc.entities().each((entity: any) => {
@@ -71,81 +55,65 @@ export function detectPII(
       return;
     }
 
-    const value = entity.out();
-
-    const start = findNextOccurrence(
-      text,
-      value,
-      matches,
-    );
-
-    if (start === -1) {
+    const span = entity.out(its.span) as [number, number];
+    if (!span || span.length !== 2) {
       return;
     }
+
+    const [startTok, endTok] = span;
+    const startOffset = tokenOffsets[startTok];
+    const endOffset = tokenOffsets[endTok];
+
+    if (!startOffset || !endOffset) {
+      return;
+    }
+
+    const start = startOffset.start;
+    const end = endOffset.end;
+    const value = text.slice(start, end);
 
     matches.push({
       type,
       value,
       start,
-      end: start + value.length,
+      end,
+      source: "wink-nlp",
     });
   });
 
   return matches;
 }
 
-function findNextOccurrence(
-  text: string,
-  value: string,
-  existingMatches: PIIMatch[],
-): number {
-  let searchFrom = 0;
-
-  while (searchFrom < text.length) {
-    const index = text.indexOf(value, searchFrom);
-
-    if (index === -1) {
-      return -1;
-    }
-
-    const alreadyUsed = existingMatches.some(
-      (match) =>
-        index >= match.start &&
-        index < match.end,
-    );
-
-    if (!alreadyUsed) {
-      return index;
-    }
-
-    searchFrom = index + value.length;
-  }
-
-  return -1;
-}
-
 export function maskPII(
+  matches: PIIMatch[],
   text: string,
-  config: PIIMaskConfig = {},
 ): string {
-  const matches = detectPII(text, config);
-
-  if (matches.length === 0) {
+  if (!text || matches.length === 0) {
     return text;
   }
 
+  // Sort matches ascending by start position; favor longer span on ties
   const sortedMatches = [...matches].sort(
-    (a, b) => b.start - a.start,
+    (a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start),
   );
 
-  let result = text;
+  let result = "";
+  let lastIndex = 0;
 
   for (const match of sortedMatches) {
-    result =
-      result.slice(0, match.start) +
-      `[${match.type}]` +
-      result.slice(match.end);
+    // Prevent overlapping span corruption: ignore spans that fall within previous mask range
+    if (match.start < lastIndex) {
+      continue;
+    }
+
+    // Append preceding non-sensitive text
+    result += text.slice(lastIndex, match.start);
+    // Append entity placeholder
+    result += `[${match.type}]`;
+    lastIndex = match.end;
   }
 
+  // Append remaining text
+  result += text.slice(lastIndex);
   return result;
 }

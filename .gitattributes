@@ -1,0 +1,7 @@
+# Normalize line endings to LF on commit for cross-platform consistency
+* text=auto eol=lf
+
+# Force binary files to not be modified
+*.png binary
+*.jpg binary
+*.ico binary
