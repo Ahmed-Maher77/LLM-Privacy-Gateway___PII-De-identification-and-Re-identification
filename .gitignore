@@ -59,7 +59,5 @@ docs/antigravity-*.md
 # Local pattern overrides
 pii_patterns.toml
 .pii-patterns.toml
-
 # Documentation ignored from tracking
 docs/
-
