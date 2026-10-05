@@ -101,6 +101,7 @@ STRUCTURAL_SPEAKER_LABELS = frozenset(
     {
         "ALL", "BOTH", "EVERYONE", "UNKNOWN", "CROSSTALK", "INAUDIBLE",
         "THE COURT", "THE WITNESS", "Q", "A",
+        "UNIDENTIFIED SPEAKER", "OPERATOR", "CALLER",
     }
 )
 _SPEAKER_DIGITS_RE = re.compile(r"^SPEAKER\s*\d+$", re.IGNORECASE)
@@ -168,7 +169,7 @@ MAX_ALLOWLIST_TOKENS = 4
 
 # Legal-form suffixes that mark a genuine company rather than an acronym.
 CORPORATE_SUFFIXES = frozenset(
-    "inc llc ltd plc gmbh corp corporation co sa ag bv nv srl pty llp".split()
+    "inc llc ltd limited plc gmbh corp corporation co sa ag bv nv srl pty llp".split()
 )
 ACRONYM_MAX_LENGTH = 6
 

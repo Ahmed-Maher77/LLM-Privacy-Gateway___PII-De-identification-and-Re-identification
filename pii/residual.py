@@ -256,7 +256,7 @@ RESIDUAL_RULES: tuple[ResidualRule, ...] = (
     ),
     ResidualRule(
         "orphan_number_beside_placeholder",
-        re.compile(r"(?<![\w.-])\d{1,6}(?=[ \t]*\{\{(?:ADDRESS|LOCATION))"),
+        re.compile(r"(?<![\w.-])\d{1,6}(?=[ \t]*\{\{(?:ADDRESS|LOCATION|ORG))"),
         "LOCATION",
         HIGH,
         0.70,

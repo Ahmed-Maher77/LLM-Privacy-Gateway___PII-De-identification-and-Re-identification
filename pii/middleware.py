@@ -16,16 +16,14 @@ from .custom_patterns import build_rules, load_config
 from .detector import DEFAULT_LABELS, DEFAULT_MODEL, DEFAULT_THRESHOLD, GlinerDetector
 from .entities import EntityIndex, has_honorific_prefix, names_from_emails, strip_affixes
 from .errors import LeakDetected, LeakWarning, PlaceholderInjection, ReviewRequired
-from .patterns import EMAIL_PATTERN, MIN_PATTERN_SCORE, PatternRule, detect_patterns
+from .patterns import EMAIL_PATTERN, PatternRule, detect_patterns
 from .policy import (
     DEFAULT_ALLOWLIST,
     DEFAULT_PROFILE,
     _normalize,
     allowlist_tokens,
     describe_policy,
-    is_allowlisted,
     is_non_personal,
-    is_technical_acronym,
     is_protected_term,
     resolve_types,
 )
@@ -409,6 +407,7 @@ class PIIMiddleware:
             patterns_config=patterns_config,
             allowlist=allowlist,
         )
+        instance._torch_threads = torch_threads
         detector_classes = {type(d).__name__ for d in instance.detectors}
         if "GlinerDetector" not in detector_classes or "SpacyDetector" not in detector_classes:
             missing = {"GlinerDetector", "SpacyDetector"} - detector_classes

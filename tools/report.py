@@ -18,7 +18,7 @@ from __future__ import annotations
 import difflib
 import json
 from pathlib import Path
-from typing import Sequence
+from collections.abc import Sequence
 
 from pii.reporting import WARNING_TEXT, write_text
 from pii.residual import digest, mask

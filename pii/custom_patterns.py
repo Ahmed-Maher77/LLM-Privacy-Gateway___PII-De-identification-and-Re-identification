@@ -243,4 +243,4 @@ def build_rules(
     if config.replace_builtins:
         return tuple(config.rules)
     kept = [rule for rule in builtins if rule.label not in config.disabled_labels]
-    return tuple([*kept, *config.rules])
+    return (*kept, *config.rules)

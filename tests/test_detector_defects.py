@@ -465,3 +465,172 @@ class TestCaselessScripts:
         roster = extract_roster(transcript)
         assert "طارق منصور" in roster
         assert "فاطمة حسن" in roster
+
+
+class TestRemediatedDefects:
+    """Regression tests for T5, T7, T8, T9, T10, T12, T13, T16, T19 defects."""
+
+    # T5: Date of Birth detection & residual check
+    def test_dob_detection_and_formats(self):
+        from pii.patterns import detect_patterns
+
+        texts = [
+            ("DOB: 1985-04-12", "1985-04-12"),
+            ("D.O.B.: 04/12/1985", "04/12/1985"),
+            ("Date of birth: 12 April 1985", "12 April 1985"),
+            ("born on March 4, 1990", "March 4, 1990"),
+            ("birth date: 1978-11-23", "1978-11-23"),
+        ]
+        for text, expected in texts:
+            spans = [s for s in detect_patterns(text) if s.label == "DOB"]
+            assert spans, f"Expected DOB span in: {text}"
+            assert spans[0].text == expected
+
+    def test_month_date_boundary_does_not_swallow_year(self):
+        from pii.patterns import detect_patterns
+
+        text = "Meeting on April 15, 2024 with team."
+        spans = [s for s in detect_patterns(text) if s.label == "DATE"]
+        assert any("2024" in s.text for s in spans)
+
+    # T7: SWIFT_BIC precision & false positives
+    def test_swift_bic_real_vs_english_words(self):
+        from pii.patterns import detect_patterns
+
+        # Real BICs with bank context or digits
+        assert any(s.label == "SWIFT_BIC" for s in detect_patterns("wire to swift: CHASUS33"))
+        assert any(s.label == "SWIFT_BIC" for s in detect_patterns("BIC code DEUTDEDDXXX"))
+        assert any(s.label == "SWIFT_BIC" for s in detect_patterns("routing via CHASUS33XXX"))
+
+        # English words that happen to be 8 or 11 letters
+        words = ["TRANSCRIBED", "ARBITRATION", "COMMENCING", "CONFIDENTIAL", "CERTIFIED"]
+        for word in words:
+            spans = [s for s in detect_patterns(f"The meeting is {word}.") if s.label == "SWIFT_BIC"]
+            assert not spans, f"False positive SWIFT_BIC on {word}"
+
+    # T8: Structural speaker labels
+    def test_structural_speaker_labels(self):
+        from pii.policy import is_structural_speaker
+        from pii.roster import extract_roster
+
+        assert is_structural_speaker("ALL") is True
+        assert is_structural_speaker("EVERYONE") is True
+        assert is_structural_speaker("UNIDENTIFIED SPEAKER") is True
+        assert is_structural_speaker("OPERATOR") is True
+        assert is_structural_speaker("CALLER") is True
+        assert is_structural_speaker("Sarah Jenkins") is False
+
+        transcript = (
+            "ALL: Good morning.\n"
+            "EVERYONE: Good morning.\n"
+            "Sarah Jenkins: Let us begin.\n"
+            "Sarah Jenkins: Any questions?\n"
+        )
+        roster = extract_roster(transcript)
+        assert "Sarah Jenkins" in roster
+        assert "ALL" not in roster
+        assert "EVERYONE" not in roster
+
+    # T9: Deposition gutter line numbers
+    def test_gutter_line_numbers_structure_and_residual(self):
+        from pii.structure import find_gutter_zones
+        from pii.residual import scan_residual
+
+        text = (
+            "1   Q. State your full name.\n"
+            "2   A. John Doe.\n"
+            "3   Q. What is your address?\n"
+            "4   A. 123 Main St, Springfield.\n"
+        )
+        zones = find_gutter_zones(text)
+        assert len(zones) >= 4
+
+        # Verify residual check accepts gutter numbers without flagging as orphan numbers
+        findings = scan_residual(
+            "1   {{NAME_1}} stated that\n2   {{NAME_1}} lives at {{ADDRESS_1}}",
+            key_zones=zones,
+        )
+        orphan_leaks = [f for f in findings if f.rule == "orphan_number" and f.severity == "high"]
+        assert not orphan_leaks
+
+    # T10: ID field values vs subjects
+    def test_id_field_values_ignores_prose_subjects(self):
+        from pii.context import DocumentContext
+
+        # Subject line should not be extracted as an ID value
+        text = "Matter: Halloran v. Apex Logistics\nSession: Panel Discussion on Cloud Architecture\n"
+        ctx = DocumentContext(text)
+        vals = [text[start:end] for start, end in ctx.id_field_values]
+        assert "Halloran v. Apex Logistics" not in vals
+        assert "Panel Discussion on Cloud Architecture" not in vals
+
+        # Real ID line should be extracted
+        text2 = "Case Number: CR-2024-98412\nJob ID: JB-8820-X1\n"
+        ctx2 = DocumentContext(text2)
+        vals2 = [text2[start:end] for start, end in ctx2.id_field_values]
+        assert "CR-2024-98412" in vals2
+        assert "JB-8820-X1" in vals2
+
+    # T12: Corporate head noun demotion
+    def test_corporate_head_noun_demotion(self):
+        mw = PIIMiddleware(
+            detectors=[FixedDetector([
+                Span(0, 22, "PERSON", "Acme Solutions Limited", source="model"),
+                Span(27, 42, "PERSON", "Apex Consulting", source="model"),
+            ])],
+            use_roster=False,
+            on_leak="ignore",
+            profile="strict",
+            entities={"ORG": True},
+        )
+        text = "Acme Solutions Limited and Apex Consulting agreed."
+        res = mw.analyze(text)
+        labels = {s.label for s in res.spans}
+        assert "ORG" in labels
+        assert "PERSON" not in labels
+
+    # T13: NORP release on Language field lines
+    def test_norp_release_on_language_lines(self):
+        from pii.context import DocumentContext
+
+        t1 = "Languages: English, Spanish, French\n"
+        ctx1 = DocumentContext(t1)
+        eng_pos = t1.index("English")
+        assert ctx1.releases_norp(eng_pos, eng_pos + len("English"))
+
+        t2 = "He is of French descent.\n"
+        ctx2 = DocumentContext(t2)
+        fr_pos = t2.index("French")
+        assert not ctx2.releases_norp(fr_pos, fr_pos + len("French"))
+
+    # T16: Handles and spoken digits
+    def test_handles_and_spoken_digits(self):
+        from pii.patterns import detect_patterns, EMAIL_PATTERN
+        from pii.entities import names_from_emails
+
+        # Handle detection
+        handle_text = "Reach out to @johndoe_dev or @alice_smith."
+        handles = [s for s in detect_patterns(handle_text) if s.label == "CUSTOM_ID" and "@" in s.text]
+        assert len(handles) == 2
+        assert handles[0].text == "@johndoe_dev"
+
+        # Spoken digits run
+        code_text = "The last four digits: 4-8-2-1."
+        digit_spans = [s for s in detect_patterns(code_text) if s.label == "CUSTOM_ID"]
+        assert any("4-8-2-1" in s.text for s in digit_spans)
+
+        # Names mined from handles
+        mined = names_from_emails("reach out to @jennifer_smith or @ahmed_maher", EMAIL_PATTERN)
+        assert "Jennifer" in mined or "Smith" in mined
+
+    # T19: Production thread configuration
+    def test_production_thread_configuration(self):
+        import os
+        os.environ["PII_TORCH_THREADS"] = "4"
+        try:
+            mw = PIIMiddleware.for_production()
+            desc = mw.describe_detectors()
+            torch_entries = [d for d in desc if d.get("torch_threads") == 4]
+            assert len(torch_entries) > 0
+        finally:
+            os.environ.pop("PII_TORCH_THREADS", None)

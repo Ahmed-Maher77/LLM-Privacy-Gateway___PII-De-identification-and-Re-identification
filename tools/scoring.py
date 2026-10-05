@@ -25,7 +25,7 @@ import json
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 from pii.policy import _normalize
 from pii.vault import ESCAPE_LABEL

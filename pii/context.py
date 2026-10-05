@@ -79,7 +79,7 @@ MAX_FIELD_VALUE_CHARS = 48
 # Conversational openers that indicate spoken dialogue, not a form field value.
 _SPEAKER_PROSE_RE = re.compile(
     r"^[ \t]*(?:"
-    r"I|We|You|He|She|They|It|Yes|No|Sure|Okay|Please|Thanks|Can|Could|Would|Should|Let|Let's|Sounds|Agreed|Great|Right|Good|Got|Done|Oof|Well|So|Actually|Honestly|Before|Alright|All\s+right"
+    r"Hi|Hello|Hey|I|We|You|He|She|They|It|Yes|No|Sure|Okay|Please|Thanks|Can|Could|Would|Should|Let|Let's|Sounds|Agreed|Great|Right|Good|Got|Done|Oof|Well|So|Actually|Honestly|Before|Alright|All\s+right"
     r"|مرحباً|أهلاً|شكراً|نعم|لا|هل|حسناً|طيب|تمام|أكيد|يا|صباح|مساء|سلام|أنا|نحن|هو|هي|هم|أنتم|أنت|ما|إيه|عظيم|كيف|لو"
     r")\b",
     re.IGNORECASE,
@@ -93,9 +93,7 @@ def _is_speaker_prose(remainder: str) -> bool:
         return True
     if any(p in remainder for p in ("?", "؟", "!", "،")):
         return True
-    if len(remainder.split()) > 6:
-        return True
-    return False
+    return len(remainder.split()) > 6
 
 
 def _mean(values: list[int]) -> float:
@@ -117,9 +115,7 @@ def _is_identifier_value(value: str) -> bool:
     if not any(c.isspace() for c in stripped):
         return any(c.isdigit() for c in stripped) or any(c in "-_/#:" for c in stripped)
     tokens = stripped.split()
-    if len(tokens) <= 3 and any(c.isdigit() for c in stripped):
-        return True
-    return False
+    return len(tokens) <= 3 and any(c.isdigit() for c in stripped)
 
 
 @dataclass
@@ -338,6 +334,12 @@ class DocumentContext:
             line_end = self.text.find(chr(10), match.end())
             line_end = len(self.text) if line_end == -1 else line_end
             val = self.text[match.end() : line_end].strip()
+            if not val:
+                next_line_start = line_end + 1
+                if next_line_start < len(self.text):
+                    next_line_end = self.text.find(chr(10), next_line_start)
+                    next_line_end = len(self.text) if next_line_end == -1 else next_line_end
+                    val = self.text[next_line_start : next_line_end].strip()
             key = match.group("label").casefold()
             remainders.setdefault(key, []).append(len(val))
             raw_remainders.setdefault(key, []).append(val)

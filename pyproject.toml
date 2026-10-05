@@ -16,12 +16,13 @@ dependencies = [
     "transformers>=5.17.0",
 ]
 
-[project.scripts]
-de-identification-and-re-identification-implementation = "de_identification_and_re_identification_implementation:main"
-
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "pii"
 
 [dependency-groups]
 dev = [
@@ -36,3 +37,14 @@ markers = [
 ]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.pyright]
+extraPaths = ["."]
+venvPath = "."
+venv = ".venv"
+
+[tool.basedpyright]
+extraPaths = ["."]
+venvPath = "."
+venv = ".venv"
+

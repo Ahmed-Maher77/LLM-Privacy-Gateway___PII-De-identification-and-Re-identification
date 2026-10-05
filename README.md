@@ -7,25 +7,81 @@ complementary detectors, every match is replaced by a stable placeholder, and
 
 ## Flow
 
+The gateway processes data through seven core layers—from multi-engine detection and structural guards to fail-closed verification and response restoration:
+
 ```mermaid
-flowchart LR
-  A[User input] --> B[Patterns: card, CVV, routing, MAC, address, IDs]
-  A --> C[GLiNER + spaCy ensemble]
-  A --> D[Speaker roster]
-  A --> E[Title lexicon]
-  B --> F[Structure guard + overlap resolution]
-  C --> F
-  D --> F
-  E --> F
-  F --> G[Sanitized input]
-  F --> H[Placeholder mapping]
-  G --> V{audit + residual scan}
-  V -->|failed| X[Raise, do not transmit]
-  V -->|clean| I[Ollama LLM]
-  I --> J[LLM response]
-  J --> K[Restore]
-  H --> K
-  K --> L[Final response]
+flowchart TD
+    subgraph S1["1. Input Layer"]
+        A["Raw Input Data (Text, Transcripts, JSON, Code)"]
+    end
+
+    subgraph S2["2. Detection Layer (Parallel Engines)"]
+        B1["Patterns Engine (Regex, Checksums, Secrets, IDs)"]
+        B2["ML Ensemble (GLiNER Multilingual + spaCy NER)"]
+        B3["Context & Roster (Speaker Labels, Email Names)"]
+        B4["Title Lexicon (Job & Meeting Titles)"]
+    end
+
+    subgraph S3["3. Resolution & Guard Layer"]
+        C1["Structure Guard (Protect JSON Keys & Syntax)"]
+        C2["Span Normalization & Overlap Resolution"]
+        C3["Policy Filter (Balanced, Strict, or Minimal Profile)"]
+    end
+
+    subgraph S4["4. De-identification & Vaulting Layer"]
+        D1["Pseudonym Vault (In-Memory Mapping Store)"]
+        D2["Sanitization (Replace PII with Stable Placeholders)"]
+        D3["Neutralize Template Literals (Injection Defense)"]
+    end
+
+    subgraph S5["5. Verification Gate (Dual-Pass Fail-Closed)"]
+        E1["Pass 1: audit() (Verify All Detected PII Removed)"]
+        E2["Pass 2: scan_residual() (Detect Uncatalogued Secret Shapes)"]
+        GATE{"Verification Gate"}
+        FAIL["ABORT & RAISE (Zero Data Leaves Gateway)"]
+    end
+
+    subgraph S6["6. LLM Processing Layer"]
+        F1["LLM Inference (Ollama / Cloud Provider)"]
+        F2["LLM Response (Contains Preserved Placeholders)"]
+    end
+
+    subgraph S7["7. Re-identification Layer"]
+        G1["Vault Restoration (Reverse Placeholder Lookup)"]
+        G2["Final Protected Response"]
+    end
+
+    %% Pipeline Connections
+    A --> B1
+    A --> B2
+    A --> B3
+    A --> B4
+
+    B1 --> C1
+    B2 --> C1
+    B3 --> C1
+    B4 --> C1
+
+    C1 --> C2
+    C2 --> C3
+
+    C3 --> D1
+    C3 --> D2
+    D2 --> D3
+
+    D3 --> E1
+    D3 --> E2
+
+    E1 --> GATE
+    E2 --> GATE
+
+    GATE -->|failed: leak detected| FAIL
+    GATE -->|clean: verified safe| F1
+
+    F1 --> F2
+    F2 --> G1
+    D1 -.->|Restore original values| G1
+    G1 --> G2
 ```
 
 ## Verification: why there are two passes
@@ -110,7 +166,7 @@ fix alone would have prevented the data loss; both are in place.
 
 | Layer | Handles | Why |
 | --- | --- | --- |
-| **Patterns** | card, CVV, expiry, routing, account, IBAN, SWIFT/BIC, EU VAT, SSN, email, URL, IP, MAC, address (US + UK), labelled IDs, connection strings, bearer tokens, secret assignments | Exact and explainable |
+| **Patterns** | card, CVV, expiry, routing, account, IBAN, SWIFT/BIC, EU VAT, SSN, DOB, email, URL, IP, MAC, address (US + UK), labelled IDs, connection strings, bearer tokens, secret assignments | Exact and explainable |
 | **Models** | people, organizations, locations, addresses, job titles | GLiNER is multilingual and PII-trained; spaCy adds recall on short names |
 | **Roster** | every mention of a known participant | Speaker labels give a reliable roster, so shorthand mentions match deterministically |
 | **Lexicon** | job and meeting titles | Detected so they outrank `ORG`, then left unredacted |
@@ -319,7 +375,10 @@ export PII_PATTERNS_CONFIG=/etc/pii/patterns.toml
 ```bash
 uv sync
 uv run python -m spacy download en_core_web_lg
+cp .env.example .env
 ```
+
+Configure any optional environment variables in `.env` (such as `HF_TOKEN` for Hugging Face downloads or `PII_TORCH_THREADS` to tune CPU thread concurrency).
 
 The first run downloads `urchade/gliner_multi_pii-v1`. The spaCy model is
 optional; without it the ensemble falls back to GLiNER alone, warns, and
@@ -419,23 +478,28 @@ fails if any pool value appears anywhere in `pii/`, and another regenerates the
 corpus at the committed seed and asserts byte-equality, so a failing document
 cannot be hand-edited into passing.
 
-It currently **fails only one check out of 36 (35 passed, 97.2%)** that the tuned
+It currently **fails 2 checks out of 64 (62 passed, 96.9%)** that the tuned
 corpus reports as clean -- down from seven initially, and four in earlier
-revisions. The single surviving failure is `test_no_leaks[holdout_06_noisy_asr]`,
-where an entirely uncapitalized, unpunctuated ASR turn contains the name
-without any capitalization anchor or speaker roster to corroborate it, plus a
-phonetic split ("ayo delay" for "Ayodele"). This is reported and retained as an
-explicit limitation rather than tuned against. See `docs/review-response.md` §9
-for details.
+revisions. The surviving failures are:
+1. `test_no_leaks[holdout_06_noisy_asr]`: an entirely uncapitalized, unpunctuated
+   ASR turn contains a name without any capitalization anchor or speaker roster
+   to corroborate it, plus a phonetic split ("ayo delay" for "Ayodele").
+2. `test_merge_assertions_hold[holdout_05_honorific_pairs]`: participants sharing
+   a surname with title variants ("Mr. Raman" / "Ms. Raman") where bare titles
+   without adjacent full names avoid guessing an ambiguous entity merge.
+
+Both are reported and retained as explicit limitations rather than tuned against.
+See `docs/review-response.md` §9 for details.
 
 ## Limitations
 
 Stated plainly, because these matter more than the numbers above.
 
-- **No independently labelled real-world corpus exists.** The 31 fixtures are
-  synthetic or curated and the 12 held-out documents are generated. Generated
-  labels are exact, which removes labelling error, but does not make the text
-  representative. Nothing here establishes real-world precision or recall.
+- **No independently labelled real-world corpus exists.** The 37 fixtures are
+  synthetic or curated (including multilingual Arabic and code fixtures) and the
+  12 held-out documents are generated. Generated labels are exact, which removes
+  labelling error, but does not make the text representative. Nothing here establishes
+  real-world precision or recall.
 - **"Clean" means "these checks found no issue"**, not "contains no PII".
   `audit()` cannot find a MAC address no detector saw; `scan_residual()` cannot
   find the name "Sarah" surviving in prose. Most of the holdout failures ever
@@ -547,7 +611,7 @@ more than any history fix.
 - `tools/make_holdout.py` — generate the held-out corpus
 - `tools/report.py` — markdown and JSON artefacts, masked by default
 - `docs/review-response.md` — point-by-point response to the external review
-- `tests/` — 425 fast tests, plus the slow corpus and holdout suites
+- `tests/` — 498 fast tests (619 total tests across unit, security, holdout, and regression suites)
 
 ## License
 

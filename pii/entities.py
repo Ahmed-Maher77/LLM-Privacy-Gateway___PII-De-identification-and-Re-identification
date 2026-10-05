@@ -311,6 +311,8 @@ def resolve_aliases(text: str, entities: list[Entity]) -> dict[str, str]:
         label = entity.label
         counters[label] = counters.get(label, 0) + 1
         placeholder = f"{{{{{label}_{counters[label]}}}}}"
+        from .roster import name_variants
+
         aliases = set(entity.surfaces) | name_variants(entity.canonical)
         surname = strip_affixes(entity.canonical).split()[-1]
         if len(surname_owners.get(_normalize(surname), set())) == 1:
