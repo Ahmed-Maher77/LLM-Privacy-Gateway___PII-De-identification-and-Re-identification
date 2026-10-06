@@ -169,9 +169,12 @@ def _rule_from_table(
     if not isinstance(raw, str) or not raw:
         raise PatternConfigError(f"{where}: 'regex' is required")
 
+    raw_flags = table.get("flags")
+    if raw_flags is not None and not isinstance(raw_flags, (list, tuple)):
+        raise PatternConfigError(f"{where}: 'flags' must be a list of flag names")
     flag_value = 0
-    for name in table.get("flags", []) or []:
-        if name not in ALLOWED_FLAGS:
+    for name in list(raw_flags) if isinstance(raw_flags, (list, tuple)) else []:
+        if not isinstance(name, str) or name not in ALLOWED_FLAGS:
             raise PatternConfigError(
                 f"{where}: unsupported flag {name!r}; allowed: {sorted(ALLOWED_FLAGS)}"
             )
@@ -201,7 +204,10 @@ def _rule_from_table(
     if isinstance(group, str) and group not in compiled.groupindex:
         raise PatternConfigError(f"{where}: no group named {group!r}")
 
-    score = float(table.get("score", 1.0))
+    raw_score = table.get("score", 1.0)
+    if not isinstance(raw_score, (int, float)):
+        raise PatternConfigError(f"{where}: 'score' must be a number, got {raw_score!r}")
+    score = float(raw_score)
     if not 0.0 < score <= 1.0:
         raise PatternConfigError(f"{where}: 'score' must be in (0.0, 1.0], got {score}")
 
@@ -225,12 +231,18 @@ def _check_examples(
     The highest-value validation in the file: it turns a silent typo that
     makes a rule match nothing into a startup failure.
     """
-    for sample in table.get("examples", []) or []:
+    raw_examples = table.get("examples")
+    if raw_examples is not None and not isinstance(raw_examples, (list, tuple)):
+        raise PatternConfigError(f"{where}: 'examples' must be a list")
+    for sample in list(raw_examples) if isinstance(raw_examples, (list, tuple)) else []:
         match = compiled.search(str(sample))
         if match is None or match.span(group)[0] < 0:
             raise PatternConfigError(f"{where}: example {sample!r} does not match")
 
-    for sample in table.get("counter_examples", []) or []:
+    raw_counter = table.get("counter_examples")
+    if raw_counter is not None and not isinstance(raw_counter, (list, tuple)):
+        raise PatternConfigError(f"{where}: 'counter_examples' must be a list")
+    for sample in list(raw_counter) if isinstance(raw_counter, (list, tuple)) else []:
         if compiled.search(str(sample)) is not None:
             raise PatternConfigError(f"{where}: counter-example {sample!r} unexpectedly matches")
 
