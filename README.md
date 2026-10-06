@@ -110,7 +110,7 @@ saved output (`test_data/reference/`); see ARCHITECTURE.md.
 
 ## Configuration
 
-Read once at startup; `.env` is loaded and git-ignored.
+Read once at startup; `.env` is loaded and git-ignored (see `.env.example` for template settings).
 
 | Variable | Default | Notes |
 | --- | --- | --- |
