@@ -1,7 +1,7 @@
 [project]
 name = "de-identification-and-re-identification-implementation"
 version = "0.1.0"
-description = "Add your description here"
+description = "PII de-identification and reversible pseudonymization pipeline for LLM gateways"
 readme = "README.md"
 authors = [
     { name = "Ahmed Maher", email = "ahmedmaheraljwhry057@gmail.com" }
