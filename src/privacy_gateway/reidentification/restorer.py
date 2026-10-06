@@ -28,8 +28,8 @@ from ..pseudonymization.mapping_store import MappingStore
 from .drift import DriftFinding, DriftScanner
 from .output_scanner import LeakFinding, OutputScanner
 
-UnknownAction = Literal["keep", "redact", "fail"]
-Status = Literal["ok", "degraded", "blocked"]
+UnknownAction = Literal["keep", "redact"]
+Status = Literal["ok", "degraded"]
 
 UNRESOLVED_MARKER = "[UNRESOLVED_PLACEHOLDER]"
 
@@ -50,10 +50,6 @@ class ReidentificationResult:
     leaks: tuple[LeakFinding, ...] = ()
     stats: Mapping[str, int] = field(default_factory=dict)
 
-    @property
-    def clean(self) -> bool:
-        return not self.unknown and not self.drift and not self.leaks
-
 
 class Reidentifier:
     """Restores placeholders using one trusted, conversation-scoped mapping."""
@@ -70,8 +66,6 @@ class Reidentifier:
         self.store = store
         self.policy = policy
         self.unknown_action = unknown_action
-        self.scan_output = scan_output
-        self.scan_drift = scan_drift
         self._scanner = OutputScanner(store) if scan_output else None
         self._drift = DriftScanner(store) if scan_drift else None
 
@@ -106,9 +100,7 @@ class Reidentifier:
         seen = set(restored)
         unrestored = tuple(sorted(p for p in self.store.placeholders() if p not in seen))
 
-        status: Status = "ok"
-        if unknown or drift or leaks:
-            status = "degraded"
+        status: Status = "degraded" if unknown or drift or leaks else "ok"
 
         stats = {
             "restored": len(restored),

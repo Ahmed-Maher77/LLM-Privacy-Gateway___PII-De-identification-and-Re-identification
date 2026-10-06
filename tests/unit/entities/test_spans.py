@@ -13,6 +13,7 @@ from privacy_gateway.entities.spans import (
     SpanVerdict,
     expand_to_word_boundary,
     is_asr_noise,
+    is_invalid_date,
     is_word_aligned,
     realign,
     strip_possessive,
@@ -268,3 +269,51 @@ def test_leading_timestamp_dash_is_stripped_regardless_of_entity_type():
 def test_a_span_with_no_leading_timestamp_is_unaffected():
     out = realign(ent(0, 11), TEXT, expand=False)  # "Rania Fahmy"
     assert out.text == "Rania Fahmy"
+
+
+# -- trailing duration/timestamp suffix (the "Name X minutes Y seconds" bug) -
+
+@pytest.mark.parametrize(
+    "raw_name,expected_name",
+    [
+        ("Ahmed Farid 1 minute", "Ahmed Farid"),
+        ("Ahmed Farid 1 minute 22 seconds", "Ahmed Farid"),
+        ("Hossam Badri 2 minutes 50 seconds", "Hossam Badri"),
+        ("Ahmed Hamed 2", "Ahmed Hamed"),
+        ("Ahmed Hamed 3 minutes 15 seconds", "Ahmed Hamed"),
+        ("Ahmed Abdelmonaem 34 minutes 26 seconds", "Ahmed Abdelmonaem"),
+        ("Mohamed elSharif 1 minute 26 seconds", "Mohamed elSharif"),
+    ],
+)
+def test_trailing_duration_or_timestamp_is_stripped_from_person(raw_name, expected_name):
+    text = f"Speaker turn:\n{raw_name}\nSpoken words here."
+    start = text.index(raw_name)
+    end = start + len(raw_name)
+    e = DetectedEntity(
+        entity_type="PERSON", text=text[start:end], start=start, end=end,
+        confidence=0.85, detector="presidio",
+    )
+    out = realign(e, text, expand=False)
+    assert out is not None and out.text == expected_name
+
+
+# -- invalid date candidates (bare numbers, timestamps, durations) ----------
+
+@pytest.mark.parametrize(
+    "candidate,expected",
+    [
+        ("26 seconds", True),
+        ("1 minute 22", True),
+        ("34 minutes 26 seconds", True),
+        ("02:50", True),
+        ("10:30", True),
+        ("46", True),
+        ("5", True),
+        ("29 Feb 1964", False),
+        ("April 3, 2025", False),
+        ("1985-04-12", False),
+        ("09/27", False),
+    ],
+)
+def test_is_invalid_date_classifies_correctly(candidate, expected):
+    assert is_invalid_date(candidate) is expected

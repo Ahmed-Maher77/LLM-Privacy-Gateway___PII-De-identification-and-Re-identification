@@ -239,8 +239,7 @@ Instead, three layers that do not widen it:
    asserts no drift finding ever alters the output.
 3. **Repair** — one bounded corrective turn, then degrade visibly.
 
-`GATEWAY_REID_TOLERANT=true` exists, is documented as **UNSAFE**, logs at
-CRITICAL and stamps the report.
+There is no setting that enables tolerant matching.
 
 ### Placeholder injection
 
@@ -339,7 +338,6 @@ Every setting is an environment variable with a safe default; see
 | `GATEWAY_DETECTORS_ENABLED` | `regex,registry,domain,presidio,ner` | Empty is refused outright |
 | `GATEWAY_QWEN_ENABLED` | `false` | Needs `ollama pull qwen2.5:7b-instruct` |
 | `GATEWAY_PLACEHOLDER_STYLE` | `angle` | `guillemet` uses `⟦PERSON_001⟧`, which has no markdown or HTML meaning |
-| `GATEWAY_REID_TOLERANT` | `false` | **UNSAFE.** See §8 |
 | `GATEWAY_MAX_INPUT_CHARS` | `1000000` | Refused before any model call |
 
 Data, not code: `config/policy.toml` (per-type actions and thresholds),
@@ -463,11 +461,8 @@ boundary is handled by the overlap region and the ordinary overlap algorithm,
 not a special case. One `MappingStore` spans the whole conversation, so an
 entity gets the same placeholder in chunk 1 and chunk 7.
 
-Streaming is **off by default**. Hold-back buffering is implemented, but it
-degrades three protections: the drift-retry loop cannot run once tokens are
-emitted, fail-closed response blocking is unavailable, and whole-response
-patterns can straddle the boundary. Enabling it stamps `degraded_protections`
-into the report.
+Streaming is not supported. The gateway waits for the whole response, which is
+what lets the drift-retry loop and fail-closed response blocking run at all.
 
 ## 17. Layout
 
@@ -504,7 +499,7 @@ tests/  unit/ integration/ security/ regression/
 | ⚠️ | Qwen layer | Implemented and unit-tested; **never run against a real model** |
 | ⚠️ | Memory growth | ~1.2 GB across 30 runs with model layers; uninvestigated |
 | ⚠️ | Over-redaction on noisy ASR | Expected and correct, but a real utility cost |
-| ❌ | Mapping persistence | In-memory only; `GATEWAY_PERSIST_MAPPING` writes plaintext JSON. Needs encryption at rest before multi-turn production use |
+| ❌ | Mapping persistence | In-memory only. Persisting it needs encryption at rest before multi-turn production use |
 | ❌ | Authentication / multi-tenancy | Out of scope; conversation isolation is not an authorisation boundary |
 | ❌ | Red-teaming | Only the scripted cases in `tests/security/` |
 | ❌ | Git history | Still contains unredacted meeting content from earlier commits |

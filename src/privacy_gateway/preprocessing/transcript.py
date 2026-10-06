@@ -48,6 +48,7 @@ whether that particular line was recognised as a formal speaker line.
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 from typing import Literal
 
@@ -159,8 +160,24 @@ class ParsedTranscript:
         return tuple(seen)
 
 
+_LABEL_SUFFIX_RE = re.compile(
+    r"^(?:no\.?|num\.?|number|date|time|code|id|ref\.?|vol\.?|sec\.?|dept\.?|app\.?)$",
+    re.IGNORECASE,
+)
+_DOCUMENT_LABEL_TERMS = frozenset(
+    {
+        "case", "matter", "hearing", "date", "time", "location", "court",
+        "reporter", "arbitrator", "counsel", "claimant", "respondent",
+        "plaintiff", "defendant", "petitioner", "job", "page", "pages",
+        "exhibit", "docket", "file", "index", "order", "status", "version",
+        "certificate", "proceedings", "examination", "recess", "dated",
+        "note", "notes", "title", "subject", "volume", "section",
+    }
+)
+
+
 def _plausible_name(name: str, *, min_tokens: int = 1) -> bool:
-    """Reject table rows, timestamps and sentence fragments.
+    """Reject table rows, timestamps, sentence fragments, and caption labels.
 
     ``min_tokens=2`` is used by the inline dialogue format, where a single
     capitalised word before a colon is indistinguishable from an ordinary
@@ -171,6 +188,16 @@ def _plausible_name(name: str, *, min_tokens: int = 1) -> bool:
         return False
     tokens = name.split()
     if not min_tokens <= len(tokens) <= _MAX_NAME_TOKENS:
+        return False
+    clean_tokens = [t.strip(".,;:!?\"'()[]{}") for t in tokens]
+    # Personal names never start with an article (e.g. "The Arbitrator", "The Court", "A Witness")
+    if clean_tokens and clean_tokens[0].casefold() in {"the", "a", "an"}:
+        return False
+    # Reject names containing label suffix tokens like "No.", "ID", "Ref"
+    if any(_LABEL_SUFFIX_RE.match(t) for t in clean_tokens):
+        return False
+    # Reject names that consist entirely of document metadata/caption words
+    if all(t.casefold() in _DOCUMENT_LABEL_TERMS for t in clean_tokens if t):
         return False
     for token in tokens:
         if token.isdigit():
@@ -226,28 +253,45 @@ class TranscriptParser:
             return "unstructured", 0.0
         return best_format, counts[best_format] / total
 
-    # -- teams -----------------------------------------------------------
-    def _teams_labels(self, text: str) -> tuple[SpeakerLabel, ...]:
-        candidates: list[SpeakerLabel] = []
-        counts: dict[str, int] = {}
-        for m in TEAMS_SPEAKER_RE.finditer(text):
+    # -- label extraction ----------------------------------------------------
+    @staticmethod
+    def _match_labels(
+        pattern: re.Pattern[str], text: str, *, min_tokens: int = 1, inline: bool = False
+    ) -> list[SpeakerLabel]:
+        labels: list[SpeakerLabel] = []
+        for m in pattern.finditer(text):
             name = m.group("name").strip()
-            if not _plausible_name(name):
+            if not _plausible_name(name, min_tokens=min_tokens):
                 continue
             start = m.start("name")
-            counts[name] = counts.get(name, 0) + 1
-            candidates.append(
+            groups = m.groupdict()
+            labels.append(
                 SpeakerLabel(
                     name=name,
                     name_start=start,
                     name_end=start + len(name),
                     line_start=m.start(),
-                    line_end=m.end(),
-                    timestamp=m.group("ts") or m.group("ts_words"),
+                    # An inline label's body follows on the same line, after "Name:".
+                    line_end=m.end("name") + 1 if inline else m.end(),
+                    timestamp=groups.get("ts") or groups.get("ts_words"),
                 )
             )
-        # A real speaker speaks more than once; a stray two-column line does not.
-        return tuple(c for c in candidates if counts[c.name] >= 2)
+        return labels
+
+    @staticmethod
+    def _recurring(
+        labels: list[SpeakerLabel], declared: set[str] | frozenset[str] = frozenset()
+    ) -> tuple[SpeakerLabel, ...]:
+        """Keep speakers seen on 2+ lines, or corroborated by a declared roster.
+
+        A real speaker speaks more than once; a stray two-column line does not.
+        """
+        counts = Counter(label.name for label in labels)
+        return tuple(c for c in labels if counts[c.name] >= 2 or c.name in declared)
+
+    # -- teams -----------------------------------------------------------
+    def _teams_labels(self, text: str) -> tuple[SpeakerLabel, ...]:
+        return self._recurring(self._match_labels(TEAMS_SPEAKER_RE, text))
 
     # -- markdown ---------------------------------------------------------
     def _markdown_roster(self, text: str) -> tuple[DeclaredParticipant, ...]:
@@ -277,25 +321,7 @@ class TranscriptParser:
         return tuple(out)
 
     def _markdown_labels(self, text: str, declared: set[str]) -> tuple[SpeakerLabel, ...]:
-        candidates: list[SpeakerLabel] = []
-        counts: dict[str, int] = {}
-        for m in MD_SPEAKER_RE.finditer(text):
-            name = m.group("name").strip()
-            if not _plausible_name(name):
-                continue
-            start = m.start("name")
-            counts[name] = counts.get(name, 0) + 1
-            candidates.append(
-                SpeakerLabel(
-                    name=name,
-                    name_start=start,
-                    name_end=start + len(name),
-                    line_start=m.start(),
-                    line_end=m.end(),
-                    timestamp=m.group("ts"),
-                )
-            )
-        return tuple(c for c in candidates if counts[c.name] >= 2 or c.name in declared)
+        return self._recurring(self._match_labels(MD_SPEAKER_RE, text), declared)
 
     # -- inline ------------------------------------------------------------
     def _inline_labels(self, text: str) -> tuple[SpeakerLabel, ...]:
@@ -314,47 +340,13 @@ class TranscriptParser:
         a spurious participant -- costs an extra placeholder, not a missed
         name, which is the safe direction for a privacy gateway to err in.
         """
-        candidates: list[SpeakerLabel] = []
-        for m in INLINE_SPEAKER_RE.finditer(text):
-            name = m.group("name").strip()
-            if not _plausible_name(name, min_tokens=2):
-                continue
-            start = m.start("name")
-            candidates.append(
-                SpeakerLabel(
-                    name=name,
-                    name_start=start,
-                    name_end=start + len(name),
-                    line_start=m.start(),
-                    line_end=m.end("name") + 1,  # after "Name:"; body is inline
-                    timestamp=m.group("ts"),
-                )
-            )
-        return tuple(candidates)
+        return tuple(self._match_labels(INLINE_SPEAKER_RE, text, min_tokens=2, inline=True))
 
     # -- bracketed ----------------------------------------------------------
     def _bracketed_labels(self, text: str) -> tuple[SpeakerLabel, ...]:
-        candidates: list[SpeakerLabel] = []
-        counts: dict[str, int] = {}
-        for m in BRACKETED_SPEAKER_RE.finditer(text):
-            name = m.group("name").strip()
-            if not _plausible_name(name):
-                continue
-            start = m.start("name")
-            counts[name] = counts.get(name, 0) + 1
-            candidates.append(
-                SpeakerLabel(
-                    name=name,
-                    name_start=start,
-                    name_end=start + len(name),
-                    line_start=m.start(),
-                    line_end=m.end(),
-                    timestamp=m.group("ts"),
-                )
-            )
         # The leading bracket already excludes prose false positives, but the
         # recurrence floor is kept for consistency with the other formats.
-        return tuple(c for c in candidates if counts[c.name] >= 2)
+        return self._recurring(self._match_labels(BRACKETED_SPEAKER_RE, text))
 
     # -- turns -------------------------------------------------------------
     def _turns(self, labels: tuple[SpeakerLabel, ...], length: int) -> tuple[Turn, ...]:

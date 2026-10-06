@@ -16,7 +16,7 @@ class GatewayError(Exception):
 
 
 class ConfigError(GatewayError):
-    exit_code = 1
+    pass
 
 
 class InputTooLargeError(GatewayError):
@@ -71,7 +71,6 @@ class SanitizationLeakError(GatewayError):
         self.count = count
         self.entity_types = entity_types
         self.context = context
-
 
 
 class PlaceholderCollisionError(GatewayError):

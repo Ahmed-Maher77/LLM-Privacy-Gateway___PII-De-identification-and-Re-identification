@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Iterator, Mapping
+from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 
@@ -93,12 +93,6 @@ class MappingEntry:
     @property
     def variants(self) -> frozenset[str]:
         return frozenset(o.exact_text for o in self.occurrences)
-
-    @property
-    def has_case_variants(self) -> bool:
-        return len({v.casefold() for v in self.variants}) < len(self.variants) or len(
-            self.variants
-        ) > 1
 
     def __repr__(self) -> str:  # never include canonical
         return (
@@ -188,9 +182,6 @@ class MappingStore:
 
     def __len__(self) -> int:
         return len(self._by_placeholder)
-
-    def __iter__(self) -> Iterator[MappingEntry]:
-        return iter(self._by_placeholder.values())
 
     def placeholders(self) -> frozenset[str]:
         return frozenset(self._by_placeholder)

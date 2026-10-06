@@ -20,7 +20,6 @@ class RegexDetector:
     """Structured identifiers with deterministic, high-confidence patterns."""
 
     name = "regex"
-    layer = 1
 
     def __init__(self, rules: Sequence[tuple[str, object, float, str]] | None = None) -> None:
         self._rules = tuple(rules if rules is not None else DETERMINISTIC_RULES)

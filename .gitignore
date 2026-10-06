@@ -36,3 +36,14 @@ artifacts/
 evaluation/.cache/
 evaluation/results/
 benchmarks/results/
+
+# Test framework caches (prevent leaking local system paths)
+.hypothesis/
+
+# Local IDE and agent configurations
+.claude/
+.agents/
+
+# Temporary and local test files
+scratch/
+test_data/test.txt

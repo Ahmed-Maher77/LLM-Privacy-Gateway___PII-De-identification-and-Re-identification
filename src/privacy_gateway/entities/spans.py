@@ -17,7 +17,7 @@ import re
 from enum import StrEnum
 
 from .entity import DetectedEntity
-from .taxonomy import LINE_BOUNDED
+from .taxonomy import LINE_BOUNDED, PERSON_LIKE
 
 #: Characters trimmed from both ends of a span. Markdown emphasis, code
 #: backticks, quotes, brackets and trailing punctuation are never part of an
@@ -56,6 +56,16 @@ ASR_NOISE = frozenset(
 )
 
 
+_TRAILING_TIMESTAMP_OR_DURATION_RE = re.compile(
+    r"[ \t]+(?:"
+    r"\d{1,3}[ \t]+(?:minutes?|seconds?|hours?|mins?|secs?)\b.*"
+    r"|\d{1,3}:\d{2}(?::\d{2})?.*"
+    r"|\d+.*"
+    r")$",
+    re.IGNORECASE,
+)
+
+
 class SpanVerdict(StrEnum):
     VALID = "valid"
     OUT_OF_RANGE = "out_of_range"
@@ -70,6 +80,7 @@ class SpanVerdict(StrEnum):
     LOW_CONFIDENCE = "low_confidence"
     NOT_PROPER_NOUN = "not_proper_noun"
     COMMON_WORD = "common_word"
+    INVALID_DATE = "invalid_date"
 
 
 def is_word_aligned(text: str, start: int, end: int) -> bool:
@@ -185,14 +196,36 @@ def realign(
             if end <= start:
                 return None
 
+    if entity.entity_type in PERSON_LIKE:
+        trailing_match = _TRAILING_TIMESTAMP_OR_DURATION_RE.search(text[start:end])
+        if trailing_match is not None:
+            end = start + trailing_match.start()
+            start, end = trim_span(text, start, end, trim_chars)
+            if end <= start:
+                return None
+
     if expand:
         start, end = expand_to_word_boundary(text, start, end)
 
-    if (start, end) == (entity.start, entity.end):
+    if (start, end) == entity.span:
         return entity
-    meta = {"realigned_from": (entity.start, entity.end)} if (start, end) != entity.span else {}
-    return entity.with_span(start, end, text[start:end]).with_metadata(**meta)
+    return entity.with_span(start, end, text[start:end]).with_metadata(
+        realigned_from=entity.span
+    )
 
 
 def is_asr_noise(value: str) -> bool:
     return value.strip().strip(".,!?").casefold() in ASR_NOISE
+
+
+_INVALID_DATE_PATTERNS = (
+    re.compile(r"^\d{1,2}$"),
+    re.compile(r"^\d{1,3}:\d{2}(?::\d{2})?$"),
+    re.compile(r"\b(?:seconds?|minutes?|hours?|mins?|secs?)\b", re.IGNORECASE),
+)
+
+
+def is_invalid_date(value: str) -> bool:
+    """True when a DATE candidate is a bare number, clock timestamp, or duration."""
+    stripped = value.strip()
+    return any(p.search(stripped) for p in _INVALID_DATE_PATTERNS)

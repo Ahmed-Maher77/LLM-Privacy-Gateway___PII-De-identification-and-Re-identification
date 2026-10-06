@@ -8,8 +8,6 @@ not reach a log or a terminal.
 
 from __future__ import annotations
 
-import time
-from collections.abc import Iterator, Sequence
 from typing import Any
 
 from ..errors import LLMError
@@ -29,13 +27,11 @@ class OllamaClient:
         base_url: str | None = None,
         temperature: float = 0.0,
         timeout_seconds: float = 120.0,
-        num_ctx: int | None = None,
     ) -> None:
         self.model = model
         self.base_url = base_url
         self.temperature = temperature
         self.timeout_seconds = timeout_seconds
-        self.num_ctx = num_ctx
         self._client: Any = None
 
     def _ensure(self) -> Any:
@@ -51,26 +47,16 @@ class OllamaClient:
         }
         if self.base_url:
             kwargs["base_url"] = self.base_url
-        if self.num_ctx:
-            kwargs["num_ctx"] = self.num_ctx
         self._client = ChatOllama(**kwargs)
         return self._client
 
-    def invoke(
-        self,
-        prompt: str,
-        *,
-        system: str | None = None,
-        history: Sequence[tuple[str, str]] = (),
-    ) -> LLMResponse:
+    def invoke(self, prompt: str, *, system: str | None = None) -> LLMResponse:
         client = self._ensure()
         messages: list[tuple[str, str]] = []
         if system:
             messages.append(("system", system))
-        messages.extend(history)
         messages.append(("human", prompt))
 
-        started = time.perf_counter()
         try:
             result = client.invoke(messages)
         except Exception as exc:
@@ -79,43 +65,13 @@ class OllamaClient:
             raise LLMError(
                 f"{type(exc).__name__} while calling model {self.model!r}"
             ) from None
-        elapsed = time.perf_counter() - started
 
         content = getattr(result, "content", result)
         if isinstance(content, list):  # some providers return content blocks
             content = "".join(
                 part.get("text", "") if isinstance(part, dict) else str(part) for part in content
             )
-        meta = getattr(result, "response_metadata", {}) or {}
-        usage = getattr(result, "usage_metadata", None)
-        return LLMResponse(
-            text=str(content),
-            model=self.model,
-            finish_reason=meta.get("done_reason"),
-            usage=dict(usage) if usage else None,
-            latency_seconds=elapsed,
-        )
-
-    def stream(
-        self,
-        prompt: str,
-        *,
-        system: str | None = None,
-        history: Sequence[tuple[str, str]] = (),
-    ) -> Iterator[str]:
-        client = self._ensure()
-        messages: list[tuple[str, str]] = []
-        if system:
-            messages.append(("system", system))
-        messages.extend(history)
-        messages.append(("human", prompt))
-        try:
-            for chunk in client.stream(messages):
-                content = getattr(chunk, "content", "")
-                if content:
-                    yield str(content)
-        except Exception as exc:
-            raise LLMError(f"{type(exc).__name__} while streaming from {self.model!r}") from None
+        return LLMResponse(text=str(content), model=self.model)
 
     def health(self) -> bool:
         try:
@@ -123,6 +79,3 @@ class OllamaClient:
             return True
         except LLMError:
             return False
-
-    def close(self) -> None:
-        self._client = None

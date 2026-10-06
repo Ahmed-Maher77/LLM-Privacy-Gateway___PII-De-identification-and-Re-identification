@@ -13,7 +13,7 @@ repository's committed output, so each has a deterministic regression test.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Sequence
 from typing import Literal
 
 from ..errors import LLMError
@@ -34,7 +34,6 @@ _PLACEHOLDER_RE = re.compile(r"<(?P<prefix>[A-Z][A-Z0-9]{1,31})_(?P<index>\d{1,6
 
 #: The exact characters the real model emitted in reports/pod_meeting_run.json.
 NARROW_NBSP = " "
-NON_BREAKING_HYPHEN = "‑"
 
 
 class RecordingMixin:
@@ -43,10 +42,6 @@ class RecordingMixin:
     def __init__(self) -> None:
         self.prompts: list[str] = []
         self.systems: list[str | None] = []
-
-    @property
-    def calls(self) -> list[str]:
-        return self.prompts
 
     @property
     def call_count(self) -> int:
@@ -62,19 +57,13 @@ class EchoLLMClient(RecordingMixin):
     def __init__(self, **_: object) -> None:
         super().__init__()
 
-    def invoke(self, prompt, *, system=None, history=()) -> LLMResponse:
+    def invoke(self, prompt, *, system=None) -> LLMResponse:
         self.prompts.append(prompt)
         self.systems.append(system)
         return LLMResponse(text=prompt, model=self.model)
 
-    def stream(self, prompt, *, system=None, history=()) -> Iterator[str]:
-        yield self.invoke(prompt, system=system, history=history).text
-
     def health(self) -> bool:
         return True
-
-    def close(self) -> None:
-        return None
 
 
 class MockLLMClient(RecordingMixin):
@@ -94,7 +83,7 @@ class MockLLMClient(RecordingMixin):
         self._responses = responses
         self._index = 0
 
-    def invoke(self, prompt, *, system=None, history=()) -> LLMResponse:
+    def invoke(self, prompt, *, system=None) -> LLMResponse:
         self.prompts.append(prompt)
         self.systems.append(system)
         if self.mode == "error":
@@ -143,16 +132,8 @@ class MockLLMClient(RecordingMixin):
             return " ".join(f"<PERSON_{i:03d}>" for i in range(1, 50_001))
         raise AssertionError(f"unhandled mock mode: {self.mode}")
 
-    def stream(self, prompt, *, system=None, history=()) -> Iterator[str]:
-        text = self.invoke(prompt, system=system, history=history).text
-        for i in range(0, len(text), 7):
-            yield text[i : i + 7]
-
     def health(self) -> bool:
         return self.mode != "error"
-
-    def close(self) -> None:
-        return None
 
 
 class FailingLLMClient(RecordingMixin):
@@ -165,16 +146,9 @@ class FailingLLMClient(RecordingMixin):
         super().__init__()
         self.message = message
 
-    def invoke(self, prompt, *, system=None, history=()) -> LLMResponse:
+    def invoke(self, prompt, *, system=None) -> LLMResponse:
         self.prompts.append(prompt)
         raise LLMError(self.message)
 
-    def stream(self, prompt, *, system=None, history=()) -> Iterator[str]:
-        raise LLMError(self.message)
-        yield ""  # pragma: no cover
-
     def health(self) -> bool:
         return False
-
-    def close(self) -> None:
-        return None

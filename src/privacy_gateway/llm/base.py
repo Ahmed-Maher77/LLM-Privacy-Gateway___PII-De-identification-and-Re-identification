@@ -8,8 +8,7 @@ one factory function and nothing else.
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
 
 
@@ -17,10 +16,6 @@ from typing import Any, Protocol, runtime_checkable
 class LLMResponse:
     text: str
     model: str = ""
-    finish_reason: str | None = None
-    usage: Mapping[str, int] | None = None
-    latency_seconds: float = 0.0
-    metadata: Mapping[str, Any] = field(default_factory=dict)
 
 
 @runtime_checkable
@@ -28,25 +23,9 @@ class LLMClient(Protocol):
     name: str
     model: str
 
-    def invoke(
-        self,
-        prompt: str,
-        *,
-        system: str | None = None,
-        history: Sequence[tuple[str, str]] = (),
-    ) -> LLMResponse: ...
-
-    def stream(
-        self,
-        prompt: str,
-        *,
-        system: str | None = None,
-        history: Sequence[tuple[str, str]] = (),
-    ) -> Iterator[str]: ...
+    def invoke(self, prompt: str, *, system: str | None = None) -> LLMResponse: ...
 
     def health(self) -> bool: ...
-
-    def close(self) -> None: ...
 
 
 def build_llm(config: Any = None, **kwargs: Any) -> LLMClient:

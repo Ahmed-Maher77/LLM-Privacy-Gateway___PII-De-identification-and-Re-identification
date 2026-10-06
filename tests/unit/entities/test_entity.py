@@ -90,10 +90,6 @@ def test_repr_of_a_list_of_entities_is_safe():
     assert "Rania" not in repr([_entity()])
 
 
-def test_unsafe_repr_does_contain_the_text():
-    assert "Rania Fahmy" in _entity().unsafe_repr()
-
-
 def test_fingerprint_is_stable_for_equal_values():
     assert _entity().fingerprint() == _entity().fingerprint()
 

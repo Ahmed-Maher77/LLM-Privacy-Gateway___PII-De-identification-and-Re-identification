@@ -1,0 +1,283 @@
+=====================================================================
+DEPOSITION TRANSCRIPT
+=====================================================================
+IN THE UNITED STATES DISTRICT COURT
+FOR THE NORTHERN DISTRICT OF CALIFORNIA
+
+Case No.:          3:24-cv-01847-JD
+Matter:            Halloran v. Brightpath Analytics, Inc.
+Deponent:          Katherine Halloran
+Date:              November 14, 2024
+Time:              9:32 AM PST
+Location:          Offices of Sterling & Moss LLP
+                   555 California Street, Suite 3100
+                   San Francisco, CA 94104
+Taken By:          Marcus Delgado, Esq. (Counsel for Defendant)
+Court Reporter:    Yolanda Reyes, CSR No. 12874
+Job No.:           2024-1114-HALL-001
+Pages:             1 – 47
+=====================================================================
+
+              --- PROCEEDINGS ---
+
+[Page 1]
+
+              HALLORAN v. BRIGHTPATH ANALYTICS
+
+              November 14, 2024      9:32 a.m.
+
+              Deposition of KATHERINE HALLORAN,
+              taken by counsel for the Defendant, at the
+              offices of Sterling & Moss LLP, 555 California
+              Street, Suite 3100, San Francisco, California,
+              pursuant to the Federal Rules of Civil Procedure.
+
+              Reported by: Yolanda Reyes, CSR No. 12874,
+              Certified Shorthand Reporter.
+
+              APPEARANCES:
+
+              On behalf of the Plaintiff:
+                Priya Ramanathan, Esq.
+                ZHANG & ASSOCIATES
+                1 Market Street, Suite 3600
+                San Francisco, CA 94105
+                (415) 555-0211
+
+              On behalf of the Defendant:
+                Marcus Delgado, Esq.
+                Jennifer Whitfield, Esq.
+                STERLING & MOSS LLP
+                555 California Street, Suite 3100
+                San Francisco, CA 94104
+                (415) 555-0300
+
+              ALSO PRESENT:
+                Katherine Halloran (Deponent)
+                Dr. Samuel Okonkwo (Plaintiff's Expert Witness)
+                Rebecca Lindgren (Paralegal, Zhang & Associates)
+
+[Page 12]
+
+              --- KATHERINE HALLORAN, having been first duly
+              sworn, was examined and testified as follows: ---
+
+              DIRECT EXAMINATION
+
+              BY MR. DELGADO:
+
+      1       Q.  Good morning, Ms. Halloran. Could you
+      2           please state your full name for the record?
+      3       A.  Katherine Elizabeth Halloran.
+      4       Q.  And your current address?
+      5       A.  I live at 1428 Elm Street, Apt. 7B, Oakland,
+      6           California 94612.
+      7       Q.  How long have you lived there?
+      8       A.  About three years. I moved in September 2021
+      9           after my divorce from Thomas Halloran.
+     10       Q.  Is Mr. Halloran also a defendant in this
+     11           matter?
+     12       A.  No, he's not. We've been divorced since 2022.
+     13           He has nothing to do with Brightpath.
+     14       Q.  Let's talk about your employment history.
+     15           Where did you work before Brightpath?
+     16       A.  I was at Meridian Data Systems from 2018 to
+     17           March 2021. I reported to the VP of Engineering,
+     18           a woman named Patricia Nakamura.
+     19       Q.  And then you joined Brightpath?
+     20       A.  Yes. I was hired as a Senior Data Analyst in
+     21           April 2021. My hiring manager was Robert Chen,
+     22           the Director of Analytics. He reported to the
+     23           Chief Technology Officer, David Kumar.
+     24       Q.  Who was your direct supervisor at Brightpath?
+     25       A.  Initially it was Robert. Then in July 2022,
+
+[Page 13]
+
+      1           there was a reorganization. I was moved under
+      2           a new manager named Sarah Goldstein. She was
+      3           hired from a competitor — I think it was a
+      4           company called Quantiva Analytics.
+      5       Q.  Did you have any issues with Ms. Goldstein?
+      6       A.  Yes. From the beginning. She made comments
+      7           about my age, about my family situation.
+      8           She once told me in front of my colleague,
+      9           James O'Brien, that I was "not management
+     10           material."
+     11       Q.  Do you recall the date of that comment?
+     12       A.  It was around October 2022. I remember because
+     13           it was just before the company offsite at the
+     14           Fairmont Sonoma Mission Inn.
+     15       Q.  Who else was present?
+     16       A.  James O'Brien was there. And I think Sarah's
+     17           assistant, a woman named Mei-Ling Chen, may
+     18           have overheard it.
+
+              MR. DELGADO:  Let me mark this as Exhibit 14.
+
+              (Whereupon, Exhibit 14 was marked for
+              identification.)
+
+              BY MR. DELGADO:
+
+     19       Q.  Ms. Halloran, I'm handing you what's been
+     20           marked as Exhibit 14. Can you identify it?
+     21       A.  Yes. This is a performance review that Sarah
+     22           Goldstein wrote about me in January 2023. I
+     23           received it on January 17th.
+
+     24           MS. RAMANATHAN:  Objection. Relevance.
+
+     25           MR. DELGADO:  I'll rephrase.
+
+[Page 14]
+
+      1       Q.  Did you contest this review?
+      2       A.  I did. I filed a complaint with HR on
+      3           February 2, 2023. I spoke with a woman named
+      4           Angela Foster in Human Resources. She was
+      5           based in the Austin office.
+      6       Q.  What was the outcome of that complaint?
+      7       A.  Nothing. I was told it had been "reviewed
+      8           and closed." Then in April 2023, I was placed
+      9           on a performance improvement plan.
+     10       Q.  Who placed you on the PIP?
+     11       A.  Sarah Goldstein. But she claimed it was
+     12           approved by her manager, Michael Torres.
+     13       Q.  Was Mr. Torres ever your manager?
+     14       A.  No. He was the VP of Data Science. I never
+     15           reported to him directly.
+     16       Q.  Did you speak with anyone else about this?
+     17       A.  I spoke with David Kumar, the CTO. He
+     18           suggested I "give it six months." He also
+     19           mentioned that Sarah was close friends with
+     20           the CEO, Elizabeth Ashworth.
+     21       Q.  Did you ever speak with Ms. Ashworth?
+     22       A.  Once. In August 2023. I requested a meeting
+     23           through her executive assistant, Tomoko
+     24           Yamamoto. The meeting lasted fifteen minutes.
+     25           The CEO told me she "didn't get involved in
+
+[Page 15]
+
+      1           personnel matters."
+      2       Q.  What happened after that meeting?
+      3       A.  In November 2023, I was terminated. The
+      4           termination letter was signed by Sarah
+      5           Goldstein and cc'd to Angela Foster and
+      6           Michael Torres. The HR business partner
+      7           who delivered it was a man named Daniel
+      8           Osei.
+      9       Q.  Did you receive a severance package?
+     10       A.  Yes. Eight weeks of pay, conditioned on
+     11           signing a non-disclosure agreement. My
+     12           attorney, Rachel Zimmerman at Zimmerman
+     13           & Patel, advised me not to sign it. I
+     14           didn't.
+     15       Q.  Who was your attorney at that time?
+     16       A.  Rachel Zimmerman. She's with the firm
+     17           Zimmerman & Patel in Berkeley.
+     18       Q.  Let's discuss the events leading up to
+     19           your termination. Did you ever access
+     20           customer data without authorization?
+     21       A.  No, I did not.
+     22       Q.  Did you ever share Brightpath's proprietary
+     23           algorithms with any third party?
+     24       A.  No.
+
+     25           MS. RAMANATHAN:  Objection. Asked and answered.
+
+[Page 16]
+
+      1       Q.  Did you ever communicate with reporters
+      2           or journalists about Brightpath?
+      3       A.  I spoke with a journalist at the Wall Street
+      4           Journal. Her name was Eleanor Vance. That
+      5           was in December 2023, after my termination.
+      6       Q.  What did you discuss with Ms. Vance?
+      7       A.  I discussed the culture of harassment at
+      8           Brightpath. I also mentioned that David Kumar
+      9           had raised concerns internally about a product
+     10           called InsightPro that may have violated the
+     11           California Consumer Privacy Act.
+     12       Q.  Did you provide Ms. Vance with any documents?
+     13       A.  I did. I provided her with copies of my
+     14           performance reviews, my PIP, and my
+     15           termination letter. I also provided an
+     16           internal email from Sarah Goldstein dated
+     17           August 3, 2023, in which she referred to
+     18           older employees as "legacy overhead."
+     19       Q.  Do you still have copies of those documents?
+     20       A.  My attorney does. Rachel Zimmerman has them
+     21           in a safety deposit box at Wells Fargo on
+     22           Shattuck Avenue in Berkeley.
+     23       Q.  Did you provide the same documents to the
+     24           Equal Employment Opportunity Commission?
+     25       A.  Yes. I filed a charge with the EEOC on
+
+[Page 17]
+
+      1           January 22, 2024. The investigator assigned
+      2           to my case was a woman named Fatima Al-Rashid.
+      3           She's based in the EEOC's Oakland office.
+      4       Q.  What was the outcome of the EEOC charge?
+      5       A.  I received a right-to-sue letter in
+      6           June 2024. My current attorney, Benjamin
+      7           Achterberg at the firm Achterberg & Lowe,
+      8           filed this lawsuit in July 2024.
+
+              MS. RAMANATHAN:  For the record, the
+              right-to-sue letter is Exhibit 22.
+
+              MR. DELGADO:  Noted.
+
+      9       Q.  Ms. Halloran, let's talk about your
+     10           current employment. Where do you work now?
+     11       A.  I'm at a company called Northstar Health
+     12           in Emeryville. I was hired in September
+     13           2024. My manager is Priya Deshpande.
+     14       Q.  Are you asking for front pay in this case?
+     15       A.  Yes. My salary at Northstar is $147,000.
+     16           My salary at Brightpath was $185,000 when
+     17           I was terminated.
+     18       Q.  Did you seek other employment between
+     19           November 2023 and September 2024?
+     20       A.  I did. I applied to at least forty positions.
+     21           I interviewed with six companies. One was
+     22           Salesforce, one was Snowflake, one was
+     23           Databricks, one was Stripe, one was a
+     24           smaller company called Fivetran, and one
+     25           was a startup called Anyscale. I was only
+
+[Page 18]
+
+      1           offered one position — the one at Northstar.
+      2       Q.  What was the salary range for those roles?
+      3       A.  Between $160,000 and $200,000.
+      4       Q.  Did you turn down any offers?
+      5       A.  I did not receive any other offers.
+      6       Q.  I have no further questions.
+
+              MS. RAMANATHAN:  I have no questions.
+
+              MR. DELGADO:  Then we'll recess. Thank you,
+              Ms. Halloran.
+
+              (Whereupon, the deposition was concluded
+              at 4:47 p.m.)
+
+              --- CERTIFICATE ---
+
+              I, Yolanda Reyes, CSR No. 12874, do hereby
+              certify that the foregoing is a true and
+              correct transcript of the proceedings.
+
+              Dated: November 18, 2024
+
+              Yolanda Reyes, CSR No. 12874
+
+              Job No.: 2024-1114-HALL-001
+
+=====================================================================
+END OF DEPOSITION
+=====================================================================

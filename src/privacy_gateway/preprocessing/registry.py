@@ -37,6 +37,8 @@ TOKEN_STOPWORDS = frozenset(
         "so", "to", "in", "on", "at", "it", "is", "be", "do", "go", "up",
         "good", "next", "last", "same", "some", "then", "than", "what",
         "when", "who", "how", "why", "very", "more", "most", "much", "many",
+        "case", "job", "date", "time", "hearing", "court", "page", "pages",
+        "counsel", "reporter", "arbitrator", "line", "number",
     }
 )
 
@@ -48,8 +50,6 @@ class Participant:
     display_name: str
     tokens: tuple[str, ...]
     role: str | None = None
-    speaker_line_count: int = 0
-    first_seen: int = 0
     aliases: frozenset[str] = field(default_factory=frozenset)
 
 
@@ -94,8 +94,9 @@ class ParticipantRegistry:
             for alias in p.aliases:
                 self._add_surface(alias, p.display_name)
             for token in p.tokens:
-                if len(token) >= _MIN_TOKEN_LEN and token.casefold() not in TOKEN_STOPWORDS:
-                    self._add_surface(token, p.display_name)
+                clean_token = token.strip(".,;:!?\"'()[]{}")
+                if len(clean_token) >= _MIN_TOKEN_LEN and clean_token.casefold() not in TOKEN_STOPWORDS:
+                    self._add_surface(clean_token, p.display_name)
         self._pattern = self._build_pattern()
 
     def _add_surface(self, surface: str, display_name: str) -> None:
@@ -119,10 +120,8 @@ class ParticipantRegistry:
         parsed: ParsedTranscript,
         aliases: Mapping[str, str] | None = None,
     ) -> ParticipantRegistry:
-        counts: dict[str, int] = {}
         first: dict[str, int] = {}
         for label in parsed.speaker_labels:
-            counts[label.name] = counts.get(label.name, 0) + 1
             first.setdefault(label.name, label.name_start)
 
         roles = {d.name: d.role for d in parsed.declared_participants}
@@ -133,14 +132,12 @@ class ParticipantRegistry:
         for alias, target in (aliases or {}).items():
             alias_map.setdefault(target, set()).add(alias)
 
-        names = sorted(set(counts) | set(roles), key=lambda n: first.get(n, 0))
+        names = sorted(first, key=first.__getitem__)
         participants = tuple(
             Participant(
                 display_name=name,
                 tokens=tuple(name.split()),
                 role=roles.get(name),
-                speaker_line_count=counts.get(name, 0),
-                first_seen=first.get(name, 0),
                 aliases=frozenset(alias_map.get(name, set())),
             )
             for name in names
@@ -154,9 +151,6 @@ class ParticipantRegistry:
 
     def lookup(self, surface: str) -> tuple[str, ...]:
         return tuple(self._by_surface.get(surface.casefold(), ()))
-
-    def is_ambiguous(self, surface: str) -> bool:
-        return len(self.lookup(surface)) > 1
 
     def mentions(self, text: str) -> Iterator[Mention]:
         """Yield every participant mention, structural labels first.

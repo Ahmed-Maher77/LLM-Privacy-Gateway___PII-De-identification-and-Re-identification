@@ -6,11 +6,9 @@ model echoes it, and restoration expands it to whatever real person happened to
 be assigned index 001 -- exfiltrating a value the attacker never supplied.
 
 The defence is to treat the placeholder grammar as just another thing that must
-be escaped. Any placeholder-shaped token in the *input* is neutralised before
-detection by swapping its delimiters for the visually similar but inert single
-guillemets U+2039/U+203A. The token is then detected as a ``LITERAL`` entity,
-pseudonymized like anything else, and restores to exactly the text the user
-typed.
+be escaped. Any placeholder-shaped token in the *input* is detected before any
+other entity as a ``LITERAL``, pseudonymized like anything else, and restores to
+exactly the text the user typed.
 
 That yields the invariant this module exists for:
 
@@ -30,11 +28,6 @@ from dataclasses import dataclass
 from ..entities.entity import DetectedEntity, make_entity
 from ..entities.taxonomy import EntityType
 
-#: Inert look-alike delimiters. U+2039/U+203A render almost identically to
-#: angle brackets for a human reader but cannot match the placeholder grammar.
-SAFE_OPEN = chr(0x2039)
-SAFE_CLOSE = chr(0x203A)
-
 #: Any placeholder-shaped token, in any supported delimiter style, tolerating
 #: internal zero-width characters that normalization may not have removed.
 INJECTION_RE = re.compile(
@@ -50,24 +43,9 @@ class InjectedPlaceholder:
     start: int
     end: int
     text: str
-    neutralized: str
 
     def __repr__(self) -> str:
         return f"InjectedPlaceholder({self.start}:{self.end})"
-
-
-def neutralize_token(token: str) -> str:
-    """Swap the delimiters for inert look-alikes."""
-    body = token
-    for opener in ("<", "⟦", "[["):
-        if body.startswith(opener):
-            body = body[len(opener) :]
-            break
-    for closer in (">", "⟧", "]]"):
-        if body.endswith(closer):
-            body = body[: -len(closer)]
-            break
-    return f"{SAFE_OPEN}{body}{SAFE_CLOSE}"
 
 
 class PlaceholderInjectionGuard:
@@ -75,12 +53,7 @@ class PlaceholderInjectionGuard:
 
     def scan(self, text: str) -> tuple[InjectedPlaceholder, ...]:
         return tuple(
-            InjectedPlaceholder(
-                start=m.start(),
-                end=m.end(),
-                text=m.group(),
-                neutralized=neutralize_token(m.group()),
-            )
+            InjectedPlaceholder(start=m.start(), end=m.end(), text=m.group())
             for m in INJECTION_RE.finditer(text)
         )
 

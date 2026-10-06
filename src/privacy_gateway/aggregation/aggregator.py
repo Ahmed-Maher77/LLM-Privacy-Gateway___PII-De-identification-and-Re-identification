@@ -28,6 +28,7 @@ from ..entities.spans import (
     DEFAULT_TRIM_CHARS,
     SpanVerdict,
     is_asr_noise,
+    is_invalid_date,
     is_word_aligned,
     realign,
     validate_span,
@@ -94,10 +95,6 @@ class AggregationResult:
     entities: tuple[DetectedEntity, ...] = ()
     rejected: tuple[RejectedEntity, ...] = ()
     stats: Mapping[str, int] = field(default_factory=dict)
-
-    @property
-    def count(self) -> int:
-        return len(self.entities)
 
 
 _PERSON_LIKE = frozenset({"PERSON", "EMPLOYEE", "STAKEHOLDER", "CUSTOMER"})
@@ -170,19 +167,26 @@ class EntityAggregator:
                 continue
 
             # A single ordinary English word labelled as a proper noun by a
-            # statistical detector is a false positive. Left in place, one such
-            # word ("operations") matches case-insensitively across the whole
-            # document and produces a leak finding at every occurrence.
-            # Curated and deterministic detectors are exempt, so a real company
-            # named after a common word is still protected via the lexicon.
+            # statistical detector (or derived as a single token mention by the
+            # registry) is a false positive. Left in place, one such word
+            # ("operations", "no", "hearing") matches case-insensitively across
+            # the whole document and produces a leak finding at every occurrence.
+            # Curated domain terms and formal speaker labels are exempt.
             if (
                 cfg.drop_common_words
-                and repaired.detector in _STATISTICAL
                 and repaired.entity_type in _CAPITALISED_TYPES
                 and " " not in surface
+                and (repaired.detector in _STATISTICAL or repaired.source == "token")
                 and surface.casefold() in COMMON_WORDS
             ):
                 rejected.append(RejectedEntity(repaired, SpanVerdict.COMMON_WORD, "clean"))
+                continue
+
+            # Person names are never under 3 characters (e.g. "Kim", "Ana", "Leo"
+            # are 3 characters). Reject any 1-2 character person-like entity to prevent
+            # fragments or abbreviations like "No" from entering the mapping.
+            if repaired.entity_type in _PERSON_LIKE and len(surface) < cfg.min_person_chars:
+                rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
                 continue
 
             # A very short span from a statistical detector is nearly always a
@@ -195,19 +199,22 @@ class EntityAggregator:
             # output scanner correctly (and confusingly) reports each one as a
             # leak. Curated and deterministic detectors are exempt, since a
             # domain-lexicon entry or a regex match is never a fragment.
-            if repaired.detector in _STATISTICAL:
-                if repaired.entity_type in _PERSON_LIKE:
-                    floor = cfg.min_person_chars
-                elif repaired.entity_type in _CAPITALISED_TYPES:
-                    floor = cfg.min_capitalised_chars
-                else:
-                    floor = 0
-                if len(surface) < floor and repaired.confidence < cfg.short_entity_confidence:
-                    rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
-                    continue
+            # Person-like types were already held to their own floor above.
+            if (
+                repaired.detector in _STATISTICAL
+                and repaired.entity_type in _CAPITALISED_TYPES - _PERSON_LIKE
+                and len(surface) < cfg.min_capitalised_chars
+                and repaired.confidence < cfg.short_entity_confidence
+            ):
+                rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
+                continue
 
             if repaired.confidence < cfg.min_confidence:
                 rejected.append(RejectedEntity(repaired, SpanVerdict.LOW_CONFIDENCE, "clean"))
+                continue
+
+            if repaired.entity_type == "DATE" and is_invalid_date(surface):
+                rejected.append(RejectedEntity(repaired, SpanVerdict.INVALID_DATE, "clean"))
                 continue
 
             verdict = validate_span(

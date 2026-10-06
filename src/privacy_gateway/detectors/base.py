@@ -45,9 +45,6 @@ class DetectionContext:
     """Everything a detector may need beyond the text itself."""
 
     conversation_id: str = ""
-    chunk_index: int = 0
-    chunk_offset: int = 0
-    transcript_format: str = "unstructured"
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
 
@@ -56,28 +53,12 @@ class Detector(Protocol):
     """A source of candidate entities."""
 
     name: str
-    layer: int
 
     def warmup(self) -> None:
         """Load any models. Safe to call repeatedly."""
 
     def detect(self, text: str, ctx: DetectionContext) -> Sequence[DetectedEntity]:
         """Return candidates with offsets relative to ``text``."""
-
-
-@dataclass(frozen=True, slots=True)
-class DetectorOutcome:
-    """The result of running one detector, including failure."""
-
-    name: str
-    entities: tuple[DetectedEntity, ...] = ()
-    error: BaseException | None = None
-    seconds: float = 0.0
-    skipped: bool = False
-
-    @property
-    def failed(self) -> bool:
-        return self.error is not None
 
 
 #: module path -> factory function. The import happens inside
@@ -90,10 +71,6 @@ _FACTORIES: Mapping[str, str] = {
     "ner": "privacy_gateway.detectors.ner_detector:build",
     "qwen": "privacy_gateway.detectors.qwen_detector:build",
 }
-
-
-def available_detectors() -> tuple[str, ...]:
-    return tuple(_FACTORIES)
 
 
 def build_detector(name: str, config: Any = None, **kwargs: Any) -> Detector:

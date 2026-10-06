@@ -45,20 +45,12 @@ class Prompt:
 class PromptWrapper:
     """Builds the system and user messages for a sanitized document."""
 
-    def __init__(
-        self,
-        instruction: str = DEFAULT_INSTRUCTION,
-        contract: str = PLACEHOLDER_CONTRACT,
-        include_contract: bool = True,
-    ) -> None:
+    def __init__(self, instruction: str = DEFAULT_INSTRUCTION) -> None:
         self.instruction = instruction
-        self.contract = contract
-        self.include_contract = include_contract
 
     def wrap(self, sanitized_text: str, instruction: str | None = None) -> Prompt:
-        system = self.contract if self.include_contract else ""
         user = f"{instruction or self.instruction}\n\n{sanitized_text}"
-        return Prompt(system=system, user=user)
+        return Prompt(system=PLACEHOLDER_CONTRACT, user=user)
 
     def correction(self, malformed: tuple[str, ...]) -> str:
         """A single corrective turn quoting the specific malformed tokens."""

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import re
 import tomllib
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -29,12 +29,10 @@ _SECTION_TYPES: Mapping[str, str] = {
     "internal_systems": EntityType.INTERNAL_SYSTEM,
     "internal_services": EntityType.INTERNAL_SERVICE,
     "customers": EntityType.CUSTOMER,
-    "organizations": EntityType.ORGANIZATION,
     "projects": EntityType.PROJECT,
     "stakeholders": EntityType.STAKEHOLDER,
     "employees": EntityType.EMPLOYEE,
     "contracts": EntityType.CONTRACT,
-    "internal_domains": EntityType.INTERNAL_URL,
 }
 
 DEFAULT_LEXICON_PATH = Path("config/domain_lexicon.toml")
@@ -87,15 +85,11 @@ class DomainLexicon:
             patterns=tuple(patterns),
         )
 
-    def is_empty(self) -> bool:
-        return not self.terms and not self.patterns
-
 
 class DomainDetector:
     """Matches configured terms and patterns."""
 
     name = "domain"
-    layer = 2
 
     def __init__(self, lexicon: DomainLexicon | None = None) -> None:
         self.lexicon = lexicon or DomainLexicon()
@@ -180,9 +174,3 @@ def build(config: Any = None, lexicon: DomainLexicon | None = None, **_: Any) ->
             raise
         return DomainDetector(DomainLexicon())
 
-
-def build_terms_only(terms: Mapping[str, Sequence[str]], confidence: float = 0.9) -> DomainDetector:
-    """Convenience constructor for tests."""
-    return DomainDetector(
-        DomainLexicon(terms={k: tuple((t, confidence) for t in v) for k, v in terms.items()})
-    )

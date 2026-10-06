@@ -49,7 +49,7 @@ class Timings:
             seconds
             for name, seconds in self.stages.items()
             if name.startswith("detect.")
-            or name in {"normalize", "parse_transcript", "build_registry", "chunk",
+            or name in {"normalize", "parse_transcript", "build_registry",
                         "aggregate", "policy", "injection_guard"}
         )
         llm = self.stages.get("llm.invoke", 0.0) + self.stages.get("llm.retry", 0.0)
@@ -69,16 +69,3 @@ class Timings:
             "counters": dict(sorted(self.counters.items())),
         }
 
-
-def percentile(values: list[float], p: float) -> float | None:
-    """Nearest-rank percentile. Returns None when the sample is too small.
-
-    A p99 computed from 30 samples is the maximum wearing a percentile's name,
-    so the caller is expected to check sample size; this helper refuses to
-    interpolate a statistic the data cannot support.
-    """
-    if not values:
-        return None
-    ordered = sorted(values)
-    rank = max(1, min(len(ordered), round(p / 100.0 * len(ordered) + 0.5)))
-    return ordered[rank - 1]

@@ -104,13 +104,6 @@ class DetectedEntity:
 
     __str__ = __repr__
 
-    def unsafe_repr(self) -> str:
-        """Include the matched text. Only for local debugging behind a config flag."""
-        return (
-            f"DetectedEntity({self.entity_type} {self.start}:{self.end} "
-            f"text={self.text!r} det={self.detector} conf={self.confidence:.2f})"
-        )
-
 
 def make_entity(
     *,

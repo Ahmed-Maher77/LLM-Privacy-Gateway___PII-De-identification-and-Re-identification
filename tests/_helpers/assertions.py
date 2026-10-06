@@ -31,6 +31,11 @@ def _squash(text: str) -> str:
     return _SQUASH_RE.sub("", text).casefold()
 
 
+_GENERIC_TOKENS = frozenset(
+    {"example", "test", "invalid", "localhost", "com", "org", "net", "edu", "gov", "mil", "http", "https", "mail", "email"}
+)
+
+
 def find_leaks(
     text: str,
     values: Iterable[str],
@@ -65,6 +70,8 @@ def find_leaks(
         #    the real defect: with "<PER_2>ehal Fahmy" in the prompt, the token
         #    "Fahmy" is present in plain text.
         for token in _WORD_RE.findall(value):
+            if token.casefold() in _GENERIC_TOKENS:
+                continue
             if len(token) >= token_min and token.casefold() in lowered:
                 found.append(("token", token))
                 break

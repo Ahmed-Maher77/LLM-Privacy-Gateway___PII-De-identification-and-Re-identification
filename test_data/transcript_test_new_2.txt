@@ -1,0 +1,246 @@
+=====================================================================
+ARBITRATION HEARING TRANSCRIPT
+=====================================================================
+AMERICAN ARBITRATION ASSOCIATION
+INTERNATIONAL CENTRE FOR DISPUTE RESOLUTION
+
+Case No.:          AAA-ICDR-2024-09-1127
+Matter:            Rourke Industries v. Solstice Biotech GmbH
+Hearing Date:      December 3, 2024
+Hearing Time:      10:15 AM EST – 3:45 PM EST
+Location:          JAMS Resolution Center
+                   620 Eighth Avenue, 34th Floor
+                   New York, NY 10018
+Arbitrator:        Hon. Eleanor M. Kessler (Ret.)
+Counsel Claimant:  Gregory A. Whitmore, Esq. (Whitmore & Associates LLP)
+Counsel Respondent: Astrid Lindqvist, Esq. (Lindqvist, Bauer & Partners)
+Court Reporter:    Reginald Osei-Bonsu, CSR No. 20314
+Job No.:           AAA-ICDR-2024-1203-RIS
+Pages:             1 – 63
+=====================================================================
+
+                     --- PROCEEDINGS ---
+
+[Page 1]
+
+                     AAA-ICDR-2024-09-1127
+
+                     December 3, 2024      10:15 a.m.
+
+                     Arbitration hearing in the matter of
+                     ROURKE INDUSTRIES v. SOLSTICE BIOTECH GMBH,
+                     before the Honorable Eleanor M. Kessler,
+                     retired judge of the Superior Court of New
+                     Jersey, at the JAMS Resolution Center,
+                     620 Eighth Avenue, 34th Floor, New York,
+                     New York, pursuant to the arbitration
+                     agreement dated March 15, 2023.
+
+                     Reported by: Reginald Osei-Bonsu, CSR No.
+                     20314, Certified Shorthand Reporter.
+
+                     APPEARANCES:
+
+                     On behalf of the Claimant:
+                       Gregory A. Whitmore, Esq.
+                       WHITMORE & ASSOCIATES LLP
+                       200 Park Avenue, Suite 1700
+                       New York, NY 10166
+                       (212) 555-0900
+
+                     On behalf of the Respondent:
+                       Astrid Lindqvist, Esq.
+                       Henrik Bauer, Esq.
+                       LINDQVIST, BAUER & PARTNERS
+                       Kungsgatan 12
+                       111 43 Stockholm, Sweden
+                       +46 8 555 0120
+
+                     ALSO PRESENT:
+                       Margaret Rourke (CEO, Rourke Industries)
+                       Dr. Sanjay Venkataraman (Expert Witness)
+                       Ingrid Sørensen (Paralegal, Lindqvist, Bauer & Partners)
+
+[Page 15]
+
+                     --- MARGARET ROURKE, having been first duly
+                     sworn, was examined and testified as follows: ---
+
+                     DIRECT EXAMINATION
+
+                     BY MR. WHITMORE:
+
+        1       Q.  Please state your name for the record.
+        2       A.  Margaret Anne Rourke.
+        3       Q.  And your position at Rourke Industries?
+        4       A.  I am the Chief Executive Officer. I've held
+        5           that role since founding the company in 2015.
+        6       Q.  Ms. Rourke, where is Rourke Industries
+        7           headquartered?
+        8       A.  We're based in Newark, New Jersey. Our
+        9           manufacturing facility is in Elizabeth, New
+       10           Jersey. We also have a distribution center
+       11           in Allentown, Pennsylvania.
+       12       Q.  Let's discuss the contract at issue. When did
+       13           Rourke Industries first engage Solstice Biotech?
+       14       A.  In August 2022. We were introduced through a
+       15           broker — a firm called Meridian Partners. The
+       16           broker who handled our account was a woman
+       17           named Priya Raghunathan.
+       18       Q.  Who at Solstice did you deal with?
+       19       A.  Initially, their VP of Business Development,
+       20           a man named Klaus Bergmann. After he left in
+       21           March 2023, we dealt with their CEO, Dr. Elke
+       22           Hoffmann. She's based in their Munich office.
+       23       Q.  Did you meet Dr. Hoffmann in person?
+       24       A.  Yes. Twice. Once in Munich in June 2023, and
+       25           once at a trade show in Frankfurt in October
+
+[Page 16]
+
+        1           2023. My executive assistant at the time,
+        2           a woman named Beatrix Novak, accompanied
+        3           me to the Frankfurt meeting.
+        4       Q.  Where is Ms. Novak now?
+        5       A.  She left the company in January 2024. She
+        6           relocated to Vienna for family reasons. I
+        7           believe she's now working at a company
+        8           called Red Bull.
+        9       Q.  Let's talk about the dispute. What was the
+       10           nature of the disagreement?
+       11       A.  Solstice claimed we breached the exclusivity
+       12           clause in Section 4.2 of the supply agreement.
+       13           We disagreed. Our position was that Solstice
+       14           failed to meet the delivery milestones under
+       15           Schedule B. We engaged outside counsel —
+       16           a firm called Kellerman & Voss — to review
+       17           the contract. The lead attorney there was
+       18           a man named Thomas Reinholt.
+       19       Q.  And then you retained Mr. Whitmore's firm?
+       20       A.  Yes. In September 2024, we retained Whitmore
+       21           & Associates. Mr. Whitmore has been our lead
+       22           counsel since then.
+       23       Q.  Did you ever communicate directly with
+       24           Solstice's board?
+       25       A.  Once. I wrote a letter to their Chairman,
+
+[Page 17]
+
+        1           a man named Wilhelm von Habsburg. He never
+        2           responded. I believe the letter was forwarded
+        3           to their General Counsel, a woman named
+        4           Charlotte Weaver.
+        5       Q.  Ms. Rourke, let's turn to the damages claim.
+        6           Can you explain the basis for the $47.3
+        7           million figure?
+        8       A.  Yes. That represents lost revenue from Q3
+        9           and Q4 of 2024. Approximately $28.5 million
+       10           is from the cancelled European distribution
+       11           agreement. The remaining $18.8 million is from
+       12           projected North American sales that never
+       13           materialized.
+       14       Q.  Did you consult with an expert on this?
+       15       A.  Yes. Dr. Sanjay Venkataraman from the firm
+       16           Analysis Group. He's based in their Boston
+       17           office. His report was filed on November 8,
+       18           2024.
+       19       Q.  Did Dr. Venkataraman's analysis account for
+       20           market conditions?
+       21       A.  It did. He used a regression model based on
+       22           industry data from Gartner and McKinsey. Both
+       23           reports are cited in his expert disclosure.
+       24       Q.  One final question, Ms. Rourke. Have you
+       25           ever met Dr. Elke Hoffmann in person?
+
+[Page 18]
+
+        1       A.  I have. As I said, twice. Munich and
+        2           Frankfurt.
+        3       Q.  No further questions.
+
+                     MS. LINDQVIST:  I have no questions
+                     at this time.
+
+                     THE ARBITRATOR:  We'll take a fifteen-
+                     minute recess. Please return at 11:30.
+
+                     (Whereupon, a recess was taken.)
+
+                     --- CROSS-EXAMINATION ---
+
+                     BY MS. LINDQVIST:
+
+        1       Q.  Ms. Rourke, my name is Astrid Lindqvist. I
+        2           represent Solstice Biotech. I'd like to ask
+        3           you some questions about your testimony.
+        4       A.  Of course.
+        5       Q.  You mentioned that Rourke Industries engaged
+        6           a firm called Kellerman & Voss in 2023. Who
+        7           at that firm advised you?
+        8       A.  Thomas Reinholt was the lead partner. He
+        9           worked with a junior associate named Sofia
+       10           Marchetti.
+       11       Q.  Did Kellerman & Voss provide a written
+       12           opinion?
+       13       A.  They did. It was dated July 14, 2023. I can
+       14           provide a copy.
+       15       Q.  Please do. Now, Ms. Rourke, you mentioned
+       16           Dr. Hoffmann. Have you read her deposition
+       17           transcript in this matter?
+       18       A.  I have not. My attorneys advised me not to.
+       19       Q.  Did you communicate with Dr. Hoffmann after
+       20           March 2023?
+       21       A.  Only through email. My assistant — Beatrix
+       22           Novak, who I mentioned earlier — handled the
+       23           correspondence.
+       24       Q.  Ms. Rourke, isn't it true that Beatrix Novak
+       25           is now employed by Solstice Biotech?
+
+[Page 19]
+
+        1       A.  That's not true. She works at Red Bull, as I
+        2           said.
+        3       Q.  Let me rephrase. Ms. Novak is employed by a
+        4           company called Helvetica Analytics, is that
+        5           correct?
+        6       A.  I have no knowledge of that.
+        7       Q.  No further questions.
+
+                     MR. WHITMORE:  Redirect, Your Honor.
+
+                     THE ARBITRATOR:  Proceed.
+
+                     --- REDIRECT EXAMINATION ---
+
+                     BY MR. WHITMORE:
+
+        1       Q.  Ms. Rourke, just to clarify — when did you
+        2           last speak with Ms. Novak?
+        3       A.  In January 2024, when she gave notice.
+        4       Q.  Have you spoken with her since?
+        5       A.  No. I've had no contact with her since
+        6           she left.
+        7       Q.  Thank you. Nothing further.
+
+                     THE ARBITRATOR:  Ms. Rourke, you may
+                     step down. We'll take a brief recess
+                     before Dr. Venkataraman is called.
+
+                     (Whereupon, a recess was taken.)
+
+                     --- CERTIFICATE ---
+
+                     I, Reginald Osei-Bonsu, CSR No. 20314,
+                     do hereby certify that the foregoing is
+                     a true and correct transcript of the
+                     proceedings.
+
+                     Dated: December 6, 2024
+
+                     Reginald Osei-Bonsu, CSR No. 20314
+
+                     Job No.: AAA-ICDR-2024-1203-RIS
+
+=====================================================================
+END OF TRANSCRIPT
+=====================================================================

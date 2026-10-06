@@ -23,7 +23,6 @@ replaced.
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -152,10 +151,3 @@ class OutputScanner:
                 context=context,
             )
 
-
-def summarize(findings: Sequence[LeakFinding]) -> dict[str, int]:
-    out: dict[str, int] = {"total": len(findings)}
-    for f in findings:
-        out[f.severity] = out.get(f.severity, 0) + 1
-        out[f.match_kind] = out.get(f.match_kind, 0) + 1
-    return out

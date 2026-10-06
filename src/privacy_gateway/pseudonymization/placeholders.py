@@ -18,7 +18,6 @@ data rather than on this paragraph.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Literal
 
@@ -65,38 +64,7 @@ class PlaceholderFormat:
             return None
         return m.group("prefix"), int(m.group("index"))
 
-    def find(self, text: str) -> Iterator[re.Match[str]]:
-        return self.pattern.finditer(text)
-
-    def is_placeholder(self, token: str) -> bool:
-        return self.parse(token) is not None
-
 
 #: The default instance used throughout the gateway.
 DEFAULT_FORMAT = PlaceholderFormat()
-PLACEHOLDER_RE = DEFAULT_FORMAT.pattern
 
-
-def format_placeholder(prefix: str, index: int, pad: int = DEFAULT_PAD) -> str:
-    return PlaceholderFormat(pad=pad).render(prefix, index)
-
-
-def parse_placeholder(token: str) -> tuple[str, int] | None:
-    return DEFAULT_FORMAT.parse(token)
-
-
-def find_placeholders(text: str) -> Iterator[re.Match[str]]:
-    return DEFAULT_FORMAT.find(text)
-
-
-#: Matches a placeholder in *any* supported style, plus common manglings.
-#: Used only to DETECT drift and injection -- never to resolve a value.
-ANY_STYLE_RE = re.compile(
-    r"(?:"
-    + "|".join(
-        re.escape(o) + _PREFIX.replace("prefix", f"prefix{i}") + r"_"
-        + _INDEX.replace("index", f"index{i}") + re.escape(c)
-        for i, (o, c) in enumerate(_DELIMITERS.values())
-    )
-    + r")"
-)

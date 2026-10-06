@@ -71,7 +71,6 @@ class NormalizedText:
     original: str
     text: str
     offset_map: OffsetMap
-    ops_applied: tuple[str, ...] = ()
     stats: Mapping[str, int] = field(default_factory=dict)
 
     def __len__(self) -> int:
@@ -86,14 +85,6 @@ class NormalizedText:
 
     def is_exact(self, start: int, end: int) -> bool:
         return self.offset_map.is_exact(start, end)
-
-    def line_of(self, index: int) -> int:
-        return self.text.count("\n", 0, index) + 1
-
-    @classmethod
-    def identity(cls, text: str) -> NormalizedText:
-        """Wrap text that needs no normalization (used in tests and fast paths)."""
-        return cls(original=text, text=text, offset_map=OffsetMap.identity(len(text)))
 
 
 @dataclass(frozen=True, slots=True)
@@ -234,25 +225,7 @@ class Normalizer:
             i += 1
 
         text, offset_map = rec.finish(raw)
-        ops = tuple(
-            name
-            for name, on in (
-                ("newlines", cfg.normalize_newlines),
-                ("html_entities", cfg.decode_html_entities),
-                ("zero_width", cfg.strip_zero_width),
-                ("space_fold", cfg.fold_spaces),
-                ("quote_fold", cfg.fold_quotes),
-                (f"unicode_{cfg.unicode_form.lower()}", cfg.unicode_form != "none"),
-            )
-            if on
-        )
-        return NormalizedText(
-            original=raw,
-            text=text,
-            offset_map=offset_map,
-            ops_applied=ops,
-            stats=stats,
-        )
+        return NormalizedText(original=raw, text=text, offset_map=offset_map, stats=stats)
 
     def _post_process(self, value: str) -> str:
         """Apply the character-level folds to a decoded entity replacement."""

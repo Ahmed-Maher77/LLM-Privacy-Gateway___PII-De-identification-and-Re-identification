@@ -64,7 +64,3 @@ class Allowlist:
 
     def matches(self, entity_type: str, value: str) -> bool:
         return (entity_type, value) in self
-
-    def with_entries(self, *items: tuple[str, str]) -> Allowlist:
-        extra = {(t.upper(), v.casefold()) for t, v in items}
-        return Allowlist(self.entries | extra)

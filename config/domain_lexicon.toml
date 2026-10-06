@@ -30,10 +30,7 @@ confidence = 0.92
 
 [organizations]
 # Vendors and partners that are NOT public companies.
-terms = [
-    "NorthStar Systems",
-    "Exampleco",
-]
+terms = []
 confidence = 0.88
 
 [projects]
@@ -55,9 +52,7 @@ confidence = 0.90
 
 [internal_domains]
 # Any email address or URL on these domains is internal by definition.
-terms = [
-    "brightpath-example.com",
-]
+terms = []
 confidence = 0.95
 
 [patterns]
@@ -65,7 +60,6 @@ confidence = 0.95
 # Single-quoted TOML literal strings: no escape processing, so a regex can
 # be written exactly as Python would see it.
 rules = [
-    ['CUSTOMER_ID', '(?<![\w-])CUST-\d{4,10}(?![\w-])', 0.95, 'customer_id'],
     ['CONTRACT',    '(?<![\w-])CTR-\d{4,10}(?![\w-])', 0.95, 'contract_id'],
     ['EMPLOYEE',    '(?<![\w-])EMP-\d{3,10}(?![\w-])', 0.95, 'employee_id'],
 ]

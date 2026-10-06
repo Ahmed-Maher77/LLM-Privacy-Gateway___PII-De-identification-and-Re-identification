@@ -15,25 +15,19 @@ from collections.abc import Sequence
 from typing import Any
 
 from ..entities.entity import DetectedEntity, make_entity
-from ..entities.taxonomy import canonical_type
+from ..entities.spans import is_invalid_date
+from ..entities.taxonomy import EntityType, canonical_type
 from ..errors import DetectorUnavailableError
 from .base import DEFAULT_PRIORITIES, DetectionContext
 
 DEFAULT_SPACY_MODEL = "en_core_web_lg"
 
-#: Presidio recognisers worth running. DATE_TIME is requested so that the policy
-#: layer can decide about dates; it is not protected by default, because a
-#: transcript's timestamps are its structure.
+#: Presidio recognisers to run. Excludes organization, location, account, IP, and URL.
 DEFAULT_ENTITIES: tuple[str, ...] = (
     "PERSON",
-    "ORGANIZATION",
-    "LOCATION",
     "EMAIL_ADDRESS",
     "PHONE_NUMBER",
     "CREDIT_CARD",
-    "IBAN_CODE",
-    "IP_ADDRESS",
-    "URL",
     "DATE_TIME",
     "US_SSN",
     "MEDICAL_LICENSE",
@@ -45,7 +39,6 @@ class PresidioDetector:
     """Wraps ``AnalyzerEngine`` and normalises its output."""
 
     name = "presidio"
-    layer = 1
 
     def __init__(
         self,
@@ -105,6 +98,9 @@ class PresidioDetector:
             if entity_type is None:
                 continue
             if r.start < 0 or r.end > len(text) or r.end <= r.start:
+                continue
+            # Ignore bare meeting timestamps, durations, and bare numbers
+            if entity_type == EntityType.DATE and is_invalid_date(text[r.start : r.end]):
                 continue
             out.append(
                 make_entity(

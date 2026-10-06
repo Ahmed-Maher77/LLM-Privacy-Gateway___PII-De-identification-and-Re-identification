@@ -27,23 +27,20 @@ def ent(text="Ahmed Farid", etype="PERSON", conf=0.95):
 
 @pytest.mark.parametrize(
     "entity_type",
-    ["PERSON", "EMAIL", "PHONE", "CUSTOMER_ID", "EMPLOYEE", "INTERNAL_SYSTEM", "INTERNAL_URL"],
+    ["PERSON", "EMAIL", "PHONE", "EMPLOYEE", "INTERNAL_SYSTEM", "DATE", "SSN"],
 )
 def test_always_protected_types_are_pseudonymized(entity_type):
     engine = PolicyEngine()
     assert engine.decide(ent(etype=entity_type)).action is Action.PSEUDONYMIZE
 
 
-def test_date_is_allowed_by_default():
-    # Presidio's DATE_TIME fires on every Teams timestamp and markdown speaker
-    # header; protecting them removes the transcript's structure.
-    assert PolicyEngine().decide(ent("September 22, 2026", "DATE")).action is Action.ALLOW
+def test_date_is_pseudonymized_by_default():
+    assert PolicyEngine().decide(ent("September 22, 2026", "DATE")).action is Action.PSEUDONYMIZE
 
 
-def test_account_identifier_is_reversible_by_default():
+def test_account_identifier_is_allowed_by_default():
     decision = PolicyEngine().decide(ent("GB29 NWBK 6016 1331 9268 19", "ACCOUNT_IDENTIFIER"))
-    assert decision.action is Action.PSEUDONYMIZE
-    assert decision.rule.restorable
+    assert decision.action is Action.ALLOW
 
 
 def test_confidential_business_information_is_pseudonymized():
@@ -114,7 +111,7 @@ def test_the_denylist_overrides_a_low_confidence_score():
 
 def test_an_unknown_type_is_protected_by_default():
     # A new detector emitting an unconfigured label must not silently leak.
-    decision = PolicyEngine().decide(ent("something", "PASSPORT_NUMBER"))
+    decision = PolicyEngine().decide(ent("something", "ALIEN_REGISTRATION_ID"))
     assert decision.action is Action.PSEUDONYMIZE
     assert decision.rule_id.startswith("unknown_type")
 
@@ -142,10 +139,10 @@ def test_decide_all_preserves_order():
     assert [d.entity for d in engine.decide_all(entities)] == entities
 
 
-def test_transformable_filters_out_allowed_entities():
+def test_only_protected_entities_transform():
     engine = PolicyEngine(allowlist=Allowlist.parse(["ORGANIZATION\tMicrosoft"]))
     decisions = engine.decide_all([ent("Microsoft", "ORGANIZATION"), ent("Ahmed Farid")])
-    assert len(engine.transformable(decisions)) == 1
+    assert [d.transforms for d in decisions] == [False, True]
 
 
 # -- configuration -----------------------------------------------------------

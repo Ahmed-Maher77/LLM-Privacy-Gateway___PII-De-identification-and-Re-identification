@@ -33,6 +33,7 @@ class EntityType(StrEnum):
     IP_ADDRESS = "IP_ADDRESS"
     CREDIT_CARD = "CREDIT_CARD"
     URL = "URL"
+    SSN = "SSN"
     #: A placeholder-shaped token found in the *input*. Neutralised before
     #: detection so an attacker cannot seed a placeholder and have the gateway
     #: restore somebody else's value into it.
@@ -52,6 +53,8 @@ LINE_BOUNDED: frozenset[str] = frozenset(
         EntityType.INTERNAL_SYSTEM,
         EntityType.INTERNAL_SERVICE,
         EntityType.PROJECT,
+        EntityType.DATE,
+        EntityType.SSN,
     }
 )
 
@@ -63,21 +66,23 @@ PERSON_LIKE: frozenset[str] = frozenset(
 
 #: Normalisation of third-party detector labels onto the canonical taxonomy.
 #: ``None`` means "drop": MISC carries no privacy meaning and NRP (nationality /
-#: religion / political affiliation) is out of scope for v1.
+#: religion / political affiliation) is out of scope for v1. Excluded types are
+#: also mapped to None so third-party detectors never propagate them.
 DETECTOR_TYPE_MAP: dict[str, str | None] = {
     "PER": EntityType.PERSON,
     "PERSON": EntityType.PERSON,
-    "ORG": EntityType.ORGANIZATION,
-    "ORGANIZATION": EntityType.ORGANIZATION,
-    "LOC": EntityType.LOCATION,
-    "GPE": EntityType.LOCATION,
-    "LOCATION": EntityType.LOCATION,
+    "ORG": None,
+    "ORGANIZATION": None,
+    "LOC": None,
+    "GPE": None,
+    "LOCATION": None,
     "EMAIL_ADDRESS": EntityType.EMAIL,
     "PHONE_NUMBER": EntityType.PHONE,
     "CREDIT_CARD": EntityType.CREDIT_CARD,
-    "IP_ADDRESS": EntityType.IP_ADDRESS,
-    "URL": EntityType.URL,
+    "IP_ADDRESS": None,
+    "URL": None,
     "DATE_TIME": EntityType.DATE,
+    "US_SSN": EntityType.SSN,
     "MISC": None,
     "NRP": None,
 }
@@ -88,4 +93,4 @@ def canonical_type(raw: str) -> str | None:
     key = raw.strip().upper()
     if key in DETECTOR_TYPE_MAP:
         return DETECTOR_TYPE_MAP[key]
-    return key if key in set(EntityType) else key or None
+    return key or None

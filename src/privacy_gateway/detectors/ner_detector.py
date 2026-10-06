@@ -74,7 +74,6 @@ class NERDetector:
     """Hugging Face token-classification pipeline, normalised and chunked."""
 
     name = "ner"
-    layer = 4
 
     def __init__(
         self,
@@ -82,7 +81,7 @@ class NERDetector:
         device: str = "cpu",
         score_threshold: float = 0.60,
         min_chars: int = 2,
-        drop_types: Sequence[str] = ("MISC",),
+        drop_types: Sequence[str] = ("MISC", "ORG", "ORGANIZATION", "LOC", "LOCATION", "GPE"),
         chunk_chars: int = DEFAULT_CHUNK_CHARS,
     ) -> None:
         self.model = model

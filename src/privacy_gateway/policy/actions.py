@@ -24,10 +24,6 @@ class Action(StrEnum):
     MASK = "mask"
     #: Leave untouched.
     ALLOW = "allow"
-    #: Leave untouched, but count and report. May escalate to BLOCK.
-    FLAG = "flag"
-    #: Refuse the request entirely.
-    BLOCK = "block"
 
 
 #: Actions that rewrite the text.
@@ -87,18 +83,18 @@ DEFAULT_RULES: dict[str, EntityRule] = {
         _rule(EntityType.STAKEHOLDER, Action.PSEUDONYMIZE, 0.60, "PERSON", max_chars=64),
         _rule(EntityType.EMAIL, Action.PSEUDONYMIZE, 0.90, "EMAIL", case_sensitive=True),
         _rule(EntityType.PHONE, Action.PSEUDONYMIZE, 0.70, "PHONE", case_sensitive=True),
-        _rule(EntityType.ADDRESS, Action.PSEUDONYMIZE, 0.60, "ADDRESS", max_chars=120),
-        _rule(EntityType.ORGANIZATION, Action.PSEUDONYMIZE, 0.60, "ORG"),
+        _rule(EntityType.ADDRESS, Action.ALLOW, 0.0, "ADDRESS", max_chars=120),
+        _rule(EntityType.ORGANIZATION, Action.ALLOW, 0.0, "ORG"),
         _rule(EntityType.CUSTOMER, Action.PSEUDONYMIZE, 0.60, "CUSTOMER"),
-        _rule(EntityType.CUSTOMER_ID, Action.PSEUDONYMIZE, 0.85, "CUSTID", case_sensitive=True),
+        _rule(EntityType.CUSTOMER_ID, Action.ALLOW, 0.0, "CUSTID", case_sensitive=True),
         _rule(EntityType.PROJECT, Action.PSEUDONYMIZE, 0.70, "PROJECT"),
         _rule(EntityType.INTERNAL_SYSTEM, Action.PSEUDONYMIZE, 0.70, "SYSTEM"),
         _rule(EntityType.INTERNAL_SERVICE, Action.PSEUDONYMIZE, 0.70, "SERVICE"),
-        _rule(EntityType.INTERNAL_URL, Action.PSEUDONYMIZE, 0.80, "URL", case_sensitive=True),
-        _rule(EntityType.URL, Action.PSEUDONYMIZE, 0.85, "URL", case_sensitive=True, max_chars=300),
+        _rule(EntityType.INTERNAL_URL, Action.ALLOW, 0.0, "URL", case_sensitive=True),
+        _rule(EntityType.URL, Action.ALLOW, 0.0, "URL", case_sensitive=True, max_chars=300),
         _rule(EntityType.CONTRACT, Action.PSEUDONYMIZE, 0.70, "CONTRACT", case_sensitive=True),
         _rule(
-            EntityType.ACCOUNT_IDENTIFIER, Action.PSEUDONYMIZE, 0.85, "ACCOUNT", case_sensitive=True
+            EntityType.ACCOUNT_IDENTIFIER, Action.ALLOW, 0.0, "ACCOUNT", case_sensitive=True
         ),
         _rule(
             EntityType.CONFIDENTIAL_BUSINESS_INFORMATION,
@@ -112,9 +108,16 @@ DEFAULT_RULES: dict[str, EntityRule] = {
             max_chars=200,
         ),
         _rule(EntityType.CREDIT_CARD, Action.PSEUDONYMIZE, 0.90, "CARD", case_sensitive=True),
-        _rule(EntityType.IP_ADDRESS, Action.PSEUDONYMIZE, 0.85, "IP", case_sensitive=True),
-        _rule(EntityType.LOCATION, Action.PSEUDONYMIZE, 0.70, "LOCATION"),
-        _rule(EntityType.DATE, Action.ALLOW, 0.0, "DATE"),
+        _rule(EntityType.IP_ADDRESS, Action.ALLOW, 0.0, "IP", case_sensitive=True),
+        _rule(EntityType.LOCATION, Action.ALLOW, 0.0, "LOCATION"),
+        _rule(EntityType.DATE, Action.PSEUDONYMIZE, 0.70, "DATE"),
+        _rule(EntityType.SSN, Action.PSEUDONYMIZE, 0.85, "SSN", case_sensitive=True),
+        # Explicit ALLOW rules for other excluded categories:
+        _rule("PASSPORT", Action.ALLOW, 0.0, "PASSPORT"),
+        _rule("PASSPORT_NUMBER", Action.ALLOW, 0.0, "PASSPORT"),
+        _rule("SESSION_TOKEN", Action.ALLOW, 0.0, "TOKEN"),
+        _rule("GEO", Action.ALLOW, 0.0, "GEO"),
+        _rule("DEVICE_ID", Action.ALLOW, 0.0, "DEVICE"),
         # A placeholder-shaped token found in the input. Pseudonymizing it is
         # what neutralises the injection: it becomes an ordinary mapped value
         # and restores to exactly the literal the user typed.

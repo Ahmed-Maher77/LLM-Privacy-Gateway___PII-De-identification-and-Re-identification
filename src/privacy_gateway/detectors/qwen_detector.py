@@ -39,16 +39,14 @@ from .base import DEFAULT_PRIORITIES, DetectionContext
 ALLOWED_TYPES: frozenset[str] = frozenset(
     {
         EntityType.PERSON,
-        EntityType.ORGANIZATION,
         EntityType.CUSTOMER,
         EntityType.STAKEHOLDER,
         EntityType.EMPLOYEE,
         EntityType.PROJECT,
         EntityType.INTERNAL_SYSTEM,
         EntityType.INTERNAL_SERVICE,
-        EntityType.CUSTOMER_ID,
         EntityType.CONFIDENTIAL_BUSINESS_INFORMATION,
-        EntityType.LOCATION,
+        EntityType.DATE,
     }
 )
 
@@ -254,7 +252,6 @@ class QwenDetector:
     """Semantic detection via a local Ollama model. Disabled by default."""
 
     name = "qwen"
-    layer = 3
 
     def __init__(
         self,
@@ -274,7 +271,6 @@ class QwenDetector:
         self.max_span_ratio = float(getattr(settings, "max_span_ratio", 0.10))
         self._client = client
         self._priority = DEFAULT_PRIORITIES["qwen"]
-        self.last_stats: dict[str, int] = {}
 
     def build_prompt(self, document: str) -> str:
         return PROMPT_TEMPLATE.format(
@@ -300,38 +296,27 @@ class QwenDetector:
         if self._client is None:
             raise DetectorUnavailableError(self.name, hint="no client configured")
 
-        stats: dict[str, int] = {"requests": 0, "parse_errors": 0, "dropped": 0}
         entities: list[DetectedEntity] = []
-
         for offset, window in split_for_context(text, self.max_chars):
-            parsed = self._request(window, stats)
+            parsed = self._request(window)
             if parsed is None:
                 continue
-            stats["dropped"] += parsed.dropped
-            found, ground_stats = ground_candidates(
+            found, _ = ground_candidates(
                 parsed.candidates,
                 window,
                 priority=self._priority,
                 max_entities=self.max_entities,
                 max_span_ratio=self.max_span_ratio,
             )
-            for key, value in ground_stats.items():
-                stats[key] = stats.get(key, 0) + value
             entities.extend(e.shifted(offset) for e in found)
-
-        total = len(entities) + stats.get("ungrounded", 0)
-        if total and stats.get("ungrounded", 0) / total > 0.5:
-            stats["mostly_ungrounded"] = 1
-        self.last_stats = stats
 
         # Rebasing must agree with the source; anything that does not is dropped
         # rather than trusted.
         return tuple(e for e in entities if text[e.start : e.end] == e.text)
 
-    def _request(self, window: str, stats: dict[str, int]) -> ParseResult | None:
+    def _request(self, window: str) -> ParseResult | None:
         prompt = self.build_prompt(window)
         for attempt in range(self.max_retries + 1):
-            stats["requests"] += 1
             try:
                 response = self._client.invoke(prompt)
             except Exception as exc:
@@ -339,7 +324,6 @@ class QwenDetector:
             try:
                 return parse_qwen_response(getattr(response, "text", str(response)))
             except QwenParseError:
-                stats["parse_errors"] += 1
                 if attempt >= self.max_retries:
                     return None
                 prompt = (

@@ -20,11 +20,11 @@ bookkeeping, which is the classic source of off-by-N corruption.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from collections.abc import Sequence
+from dataclasses import dataclass
 
 from ..errors import AggregationInvariantError
-from ..policy.actions import Action, EntityRule
+from ..policy.actions import Action
 from ..policy.engine import PolicyDecision
 from .mapping_store import MappingStore
 
@@ -59,12 +59,6 @@ class SanitizationResult:
     text: str
     store: MappingStore
     applied: tuple[AppliedReplacement, ...] = ()
-    skipped: tuple[PolicyDecision, ...] = ()
-    stats: Mapping[str, int] = field(default_factory=dict)
-
-    @property
-    def entity_count(self) -> int:
-        return len(self.store)
 
 
 def _mask(value: str) -> str:
@@ -83,17 +77,13 @@ class Pseudonymizer:
 
     def apply(self, text: str, decisions: Sequence[PolicyDecision]) -> SanitizationResult:
         transforming = [d for d in decisions if d.transforms]
-        skipped = tuple(d for d in decisions if not d.transforms)
-
         ordered = sorted(transforming, key=lambda d: (d.entity.start, d.entity.end))
         self._assert_disjoint(ordered, text)
 
         # Assign in ascending order so placeholder numbering follows document
         # order: <PERSON_001> is the first person mentioned. Stable, reviewable,
         # and diff-friendly across runs.
-        replacements: list[AppliedReplacement] = []
-        for decision in ordered:
-            replacements.append(self._render(decision))
+        replacements = [self._render(decision) for decision in ordered]
 
         # Apply in descending order so untouched spans keep valid offsets.
         pieces: list[str] = []
@@ -103,50 +93,25 @@ class Pseudonymizer:
             pieces.append(replacement.replacement)
             cursor = replacement.start
         pieces.append(text[:cursor])
-        out = "".join(reversed(pieces))
-
-        stats = {
-            "decisions": len(decisions),
-            "applied": len(replacements),
-            "skipped": len(skipped),
-            "mapping_entries": len(self.store),
-        }
-        for r in replacements:
-            key = f"applied_{r.action}"
-            stats[key] = stats.get(key, 0) + 1
-
         return SanitizationResult(
-            text=out,
-            store=self.store,
-            applied=tuple(replacements),
-            skipped=skipped,
-            stats=stats,
+            text="".join(reversed(pieces)), store=self.store, applied=tuple(replacements)
         )
 
     def _render(self, decision: PolicyDecision) -> AppliedReplacement:
-        entity, rule = decision.entity, decision.rule
+        entity = decision.entity
+        placeholder = None
         if decision.action is Action.PSEUDONYMIZE:
-            placeholder = self.store.assign(entity, rule)
-            return AppliedReplacement(
-                entity.start, entity.end, placeholder, decision.action,
-                entity.entity_type, placeholder, entity.text,
-            )
-        if decision.action is Action.REDACT:
-            return AppliedReplacement(
-                entity.start,
-                entity.end,
-                REDACTED_TEMPLATE.format(entity_type=entity.entity_type),
-                decision.action,
-                entity.entity_type,
-                None,
-                entity.text,
-            )
-        if decision.action is Action.MASK:
-            return AppliedReplacement(
-                entity.start, entity.end, _mask(entity.text), decision.action,
-                entity.entity_type, None, entity.text,
-            )
-        raise AssertionError(f"non-transforming action reached the applier: {decision.action}")
+            placeholder = replacement = self.store.assign(entity, decision.rule)
+        elif decision.action is Action.REDACT:
+            replacement = REDACTED_TEMPLATE.format(entity_type=entity.entity_type)
+        elif decision.action is Action.MASK:
+            replacement = _mask(entity.text)
+        else:
+            raise AssertionError(f"non-transforming action reached the applier: {decision.action}")
+        return AppliedReplacement(
+            entity.start, entity.end, replacement, decision.action,
+            entity.entity_type, placeholder, entity.text,
+        )
 
     @staticmethod
     def _assert_disjoint(decisions: Sequence[PolicyDecision], text: str) -> None:
@@ -172,10 +137,6 @@ class Pseudonymizer:
                     f"entity text disagrees with its span at offset {entity.start}"
                 )
             previous_end = entity.end
-
-
-def build_rule_lookup(decisions: Sequence[PolicyDecision]) -> dict[str, EntityRule]:
-    return {d.entity.entity_type: d.rule for d in decisions}
 
 
 def invert(sanitized_text: str, applied: Sequence[AppliedReplacement]) -> str:

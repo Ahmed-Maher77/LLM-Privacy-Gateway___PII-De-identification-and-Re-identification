@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import secrets
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Literal
 
 from .aggregation.aggregator import AggregationResult, EntityAggregator
 from .config import Settings
-from .detectors.base import DetectionContext, Detector, DetectorOutcome, build_detector
+from .detectors.base import DetectionContext, Detector, build_detector
 from .entities.entity import DetectedEntity
 from .errors import (
     DetectorUnavailableError,
@@ -47,7 +47,7 @@ from .reidentification.injection import PlaceholderInjectionGuard
 from .reidentification.output_scanner import OutputScanner
 from .reidentification.restorer import ReidentificationResult, Reidentifier
 
-Status = Literal["ok", "degraded", "blocked"]
+Status = Literal["ok", "degraded"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,10 +55,6 @@ class GatewayRequest:
     text: str
     conversation_id: str = ""
     instruction: str | None = None
-    source_name: str | None = None
-
-    def with_conversation(self, conversation_id: str) -> GatewayRequest:
-        return GatewayRequest(self.text, conversation_id, self.instruction, self.source_name)
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,7 +72,6 @@ class SanitizeOutcome:
     registry: ParticipantRegistry
     injected: int = 0
     degraded_detectors: tuple[str, ...] = ()
-    outcomes: tuple[DetectorOutcome, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -172,9 +167,8 @@ class PrivacyGateway:
 
     def _run_detectors(
         self, detectors: Sequence[Detector], text: str, ctx: DetectionContext, timings: Timings
-    ) -> tuple[list[DetectedEntity], list[DetectorOutcome], list[str]]:
+    ) -> tuple[list[DetectedEntity], list[str]]:
         entities: list[DetectedEntity] = []
-        outcomes: list[DetectorOutcome] = []
         degraded: list[str] = []
 
         for detector in detectors:
@@ -185,14 +179,12 @@ class PrivacyGateway:
             except Exception as exc:
                 if self._is_required(name):
                     raise DetectorUnavailableError(name, exc) from exc
-                outcomes.append(DetectorOutcome(name=name, error=exc))
                 degraded.append(name)
                 continue
             entities.extend(found)
-            outcomes.append(DetectorOutcome(name=name, entities=found))
             timings.count(f"entities.{name}", len(found))
 
-        return entities, outcomes, degraded
+        return entities, degraded
 
     # -- sanitize ----------------------------------------------------------
     def sanitize(
@@ -219,12 +211,9 @@ class PrivacyGateway:
                 raise PlaceholderInjectionError(len(injected))
             injected_entities = self.guard.as_entities(text, injected)
 
-        ctx = DetectionContext(
-            conversation_id=request.conversation_id,
-            transcript_format=parsed.format,
-        )
+        ctx = DetectionContext(conversation_id=request.conversation_id)
         detectors = self._build_detectors(registry)
-        found, outcomes, degraded = self._run_detectors(detectors, text, ctx, timings)
+        found, degraded = self._run_detectors(detectors, text, ctx, timings)
 
         with timings.stage("aggregate"):
             aggregation = self.aggregator.aggregate([*injected_entities, *found], text)
@@ -268,7 +257,6 @@ class PrivacyGateway:
             registry=registry,
             injected=len(injected),
             degraded_detectors=tuple(degraded),
-            outcomes=tuple(outcomes),
         )
 
     # -- full pipeline -----------------------------------------------------
@@ -277,7 +265,7 @@ class PrivacyGateway:
         warnings: list[str] = []
 
         if not request.conversation_id:
-            request = request.with_conversation(new_conversation_id())
+            request = replace(request, conversation_id=new_conversation_id())
 
         outcome = self.sanitize(request, timings)
         if outcome.degraded_detectors:
@@ -291,7 +279,7 @@ class PrivacyGateway:
         prompt = self.prompt_wrapper.wrap(outcome.sanitized_text, request.instruction)
 
         with timings.stage("llm.invoke"):
-            response = llm.invoke(prompt.user, system=prompt.system or None)
+            response = llm.invoke(prompt.user, system=prompt.system)
 
         reidentifier = Reidentifier(
             outcome.store,
@@ -309,14 +297,14 @@ class PrivacyGateway:
         if (
             result.drift
             and self.settings.reidentification.on_drift == "retry"
-            and retries < self.settings.reidentification.max_drift_retries
+            and self.settings.reidentification.max_drift_retries > 0
         ):
-            retries += 1
+            retries = 1
             correction = self.prompt_wrapper.correction(tuple(d.raw for d in result.drift))
             try:
                 with timings.stage("llm.retry"):
                     retry_response = llm.invoke(
-                        prompt.user + "\n\n" + correction, system=prompt.system or None
+                        prompt.user + "\n\n" + correction, system=prompt.system
                     )
                 retried = reidentifier.restore(
                     retry_response.text, conversation_id=request.conversation_id

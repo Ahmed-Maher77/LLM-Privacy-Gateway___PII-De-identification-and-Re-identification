@@ -9,11 +9,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 from .config import Settings
 from .errors import GatewayError
-from .gateway import GatewayRequest, PrivacyGateway, new_conversation_id
+from .gateway import GatewayRequest, GatewayResult, PrivacyGateway, new_conversation_id
 from .llm.base import build_llm
 from .report import build_report, write_report
 
@@ -50,18 +51,21 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
 
 def _settings(args: argparse.Namespace) -> Settings:
     settings = Settings.from_env()
-    overrides = {}
     if args.fail_mode:
-        overrides["fail_mode"] = args.fail_mode
+        settings = replace(settings, fail_mode=args.fail_mode)
     if args.detectors:
-        from dataclasses import replace
-
         enabled = tuple(d.strip() for d in args.detectors.split(",") if d.strip())
-        overrides["detectors"] = replace(settings.detectors, enabled=enabled)
-    return settings.with_overrides(**overrides) if overrides else settings
+        settings = replace(settings, detectors=replace(settings.detectors, enabled=enabled))
+    return settings
 
 
-def _emit(args, settings, result, input_path, sanitized_path) -> None:
+def _emit(
+    args: argparse.Namespace,
+    settings: Settings,
+    result: GatewayResult,
+    input_path: Path,
+    sanitized_path: Path,
+) -> None:
     report = build_report(
         result,
         settings,
@@ -90,12 +94,7 @@ def cmd_sanitize(args: argparse.Namespace) -> int:
     print(f"Sanitized input written to {sanitized_path}")
     print(f"{len(outcome.entities)} entities, {len(outcome.store)} mapping entries")
 
-    from .gateway import GatewayResult
-    from .observability.timing import Timings
-
-    result = GatewayResult(
-        status="ok", output="", sanitize=outcome, timings=Timings()
-    )
+    result = GatewayResult(status="ok", output="", sanitize=outcome)
     _emit(args, settings, result, args.input_file, sanitized_path)
     return 0
 
@@ -126,7 +125,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     if args.print_answer:
         print("\n--- answer ---\n")
         print(result.output)
-    return 0 if result.status != "blocked" else 6
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:

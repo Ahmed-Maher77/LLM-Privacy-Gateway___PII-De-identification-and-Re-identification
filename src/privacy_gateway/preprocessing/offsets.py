@@ -73,20 +73,8 @@ class OffsetMap:
         self._new = new_anchors
         self._orig = orig_anchors
 
-    @classmethod
-    def identity(cls, length: int) -> OffsetMap:
-        return cls([], length, length)
-
     def __len__(self) -> int:
         return self._new_len
-
-    @property
-    def edits(self) -> tuple[Edit, ...]:
-        return self._edits
-
-    @property
-    def orig_len(self) -> int:
-        return self._orig_len
 
     # -- queries ---------------------------------------------------------
     def to_original_index(self, i: int, *, side: Literal["left", "right"] = "left") -> int:

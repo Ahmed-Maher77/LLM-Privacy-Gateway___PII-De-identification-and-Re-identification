@@ -108,6 +108,28 @@ gap.
   same digit run is too common a shape (a reference number, a zip+4, a
   quantity) to detect safely. A label-free account number in unstructured
   prose will not be caught by this layer.
+- **A court-report caption block was parsed as a speaker roster, causing a
+  fail-closed false positive at the pre-send gate.** *Fixed with regression coverage.*
+  `test_data/transcript_test_new_2.txt` is an arbitration hearing transcript —
+  a legal document class whose caption block has a column of field labels.
+  Previously, `INLINE_SPEAKER_RE` accepted labels as speaker names (`Case No.`,
+  `Hearing Date`, `Court Reporter`, `Job No.`), and short tokens like `No` (2 chars)
+  entered the mapping as a `PERSON`, causing un-swept ordinary words like
+  `No further questions` in the dialogue to trigger a false-positive pre-send leak abort.
+
+  Fixed across three layers:
+  1. `_plausible_name` (`preprocessing/transcript.py`): Explicitly rejects names
+     containing label suffix tokens (`No.`, `ID`, `Ref`, `Number`), names where all
+     tokens are document metadata/caption words (`case`, `hearing`, `counsel`, `reporter`,
+     `arbitrator`), and names starting with articles (`The Arbitrator`, `The Court`).
+  2. `ParticipantRegistry` (`preprocessing/registry.py`): Strips punctuation from candidate
+     tokens before checking length and `TOKEN_STOPWORDS` (so `No.` cleanly normalizes to `no`),
+     and expands stopwords to cover legal/caption terms.
+  3. `EntityAggregator` (`aggregation/aggregator.py`): Enforces a hard 3-character minimum
+     floor (`min_person_chars`) on all `PERSON_LIKE` entities across all detectors to eliminate
+     1-2 character fragments, and applies `COMMON_WORDS` filtering to single-token registry mentions.
+  Pinned by regression tests `test_legal_hearing_caption_does_not_abort_pre_send_gate` and
+  `test_similar_court_caption_formats_reject_labels` in `tests/regression/test_prototype_defects.py`.
 
 ## The gateway itself
 

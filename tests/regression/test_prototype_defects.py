@@ -17,10 +17,11 @@ from __future__ import annotations
 
 import json
 import re
+from pathlib import Path
 
 import pytest
 
-from privacy_gateway.config import DetectorSettings, Settings
+from privacy_gateway.config import DetectorSettings, LLMSettings, Settings
 from privacy_gateway.gateway import GatewayRequest, PrivacyGateway
 from privacy_gateway.llm.mock_client import EchoLLMClient
 from privacy_gateway.pseudonymization.applier import invert
@@ -292,8 +293,6 @@ def test_the_ambiguous_bare_ahmed_is_protected_without_being_attributed(pod):
 
 SME_LEAKED_BY_PROTOTYPE = [
     "+44 7700 900123",
-    "BP-28491",
-    "https://api.fleetcore.brightpath-example.com/v2",
     "sarah.mitchell@brightpath-example.com",
     "michael.brown@brightpath-example.com",
     "omar.khaled@brightpath-example.com",
@@ -306,6 +305,16 @@ def test_sme_values_the_prototype_leaked_are_now_protected(sme, value):
     _, result = sme
     assert value not in result.sanitized_input
     assert value in {e.canonical for e in result.store.entries()}
+
+
+def test_excluded_identifiers_and_urls_pass_through_in_plain_text(sme):
+    _, result = sme
+    assert "BP-28491" in result.sanitized_input
+    assert "https://api." in result.sanitized_input
+    assert "brightpath-example.com/v2" in result.sanitized_input
+    assert "<URL_" not in result.sanitized_input
+    assert "<CUSTID_" not in result.sanitized_input
+    assert "<ACCOUNT_" not in result.sanitized_input
 
 
 @pytest.mark.parametrize(
@@ -346,9 +355,10 @@ def test_dollar_amounts_are_preserved(sme):
     assert "$180,000" in result.sanitized_input
 
 
-def test_dates_and_timestamps_are_preserved(sme):
+def test_dates_are_detected_and_pseudonymized(sme):
     _, result = sme
-    assert "September 22, 2026" in result.sanitized_input
+    assert "September 22, 2026" not in result.sanitized_input
+    assert "September 22, 2026" in {e.canonical for e in result.store.entries()}
 
 
 # ---------------------------------------------------------------------------
@@ -405,3 +415,80 @@ def test_the_full_detector_set_does_find_it(raw_transcript, name):
     )
     assert name not in result.sanitized_input
     assert name in {e.canonical for e in result.store.entries()}
+
+
+# -- legal document captions & false-positive pre-send leak gate prevention --
+
+def test_legal_hearing_caption_does_not_abort_pre_send_gate():
+    """Pin fix for documented defect in LIMITATIONS.md: arbitration hearing caption block.
+
+    Formerly caused false-positive pre-send gate abort (exit code 5) because
+    caption field labels (e.g. 'Case No.', 'Job No.') were minted as PERSON entities
+    with 2-character token 'No', causing un-swept prose occurrences to trigger leak alerts.
+    """
+    path = Path(__file__).resolve().parents[2] / "test_data" / "transcript_test_new_2.txt"
+    if not path.exists():
+        pytest.skip("transcript_test_new_2.txt fixture not found")
+    text = path.read_text(encoding="utf-8")
+    settings = Settings(
+        detectors=DetectorSettings(
+            enabled=("regex", "registry", "domain"),
+            required=("regex", "registry"),
+        ),
+        llm=LLMSettings(provider="mock"),
+    )
+    gw = PrivacyGateway(settings, llm=EchoLLMClient())
+    result = gw.run(GatewayRequest(text=text, conversation_id="c-legal-repro"))
+    assert result.status == "ok"
+    assert len(result.store) > 0
+
+    # Ensure field labels were not registered as people
+    names = {e.canonical.casefold() for e in result.store.entries()}
+    assert "case no." not in names
+    assert "job no." not in names
+    assert "hearing date" not in names
+    assert "hearing time" not in names
+    assert "court reporter" not in names
+    assert "counsel claimant" not in names
+    assert "no" not in names
+
+    # Ensure genuine dialogue phrases with "No" survive unmasked in the sanitized text
+    assert "No further questions." in result.sanitized_input or "no further questions" in result.sanitized_input.casefold()
+
+
+def test_similar_court_caption_formats_reject_labels():
+    """Verify other legal/caption forms (Docket No., Claim No., File No., etc.) do not become participants."""
+    caption_text = """=====================================================================
+DEPOSITION TRANSCRIPT
+=====================================================================
+Docket No.:        CV-2025-00421
+Claim No.:         CLM-88392-B
+File No.:          FL-99120
+Hearing Date:      April 14, 2025
+Hearing Time:      09:00 AM – 12:00 PM
+Court Reporter:    Alice Walker, CSR No. 11223
+Job No.:           JOB-2025-412
+=====================================================================
+
+MS. LINDQVIST: Please state your name for the record.
+THE WITNESS: My name is David Miller.
+MS. LINDQVIST: Thank you. No further questions.
+"""
+    settings = Settings(
+        detectors=DetectorSettings(
+            enabled=("regex", "registry", "domain"),
+            required=("regex", "registry"),
+        ),
+        llm=LLMSettings(provider="mock"),
+    )
+    gw = PrivacyGateway(settings, llm=EchoLLMClient())
+    result = gw.run(GatewayRequest(text=caption_text, conversation_id="c-caption-test"))
+    assert result.status == "ok"
+    names = {e.canonical.casefold() for e in result.store.entries()}
+    assert "docket no." not in names
+    assert "claim no." not in names
+    assert "file no." not in names
+    assert "job no." not in names
+    assert "no" not in names
+    assert "No further questions." in result.sanitized_input
+

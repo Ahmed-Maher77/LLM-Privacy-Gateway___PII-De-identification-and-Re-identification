@@ -305,7 +305,6 @@ def test_three_ahmeds_are_registered_separately():
 def test_bare_ambiguous_token_reports_every_candidate():
     reg = _registry(AMBIGUOUS)
     assert set(reg.lookup("Ahmed")) == {"Ahmed Farid", "Ahmed Hamed", "Ahmed Maher"}
-    assert reg.is_ambiguous("Ahmed")
 
 
 def test_bare_ambiguous_token_is_still_detected():

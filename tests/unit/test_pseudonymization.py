@@ -19,12 +19,7 @@ from privacy_gateway.policy.actions import DEFAULT_RULES, Action, EntityRule
 from privacy_gateway.policy.engine import PolicyDecision, PolicyEngine
 from privacy_gateway.pseudonymization.applier import Pseudonymizer, invert
 from privacy_gateway.pseudonymization.mapping_store import MappingStore, identity_key
-from privacy_gateway.pseudonymization.placeholders import (
-    PlaceholderFormat,
-    find_placeholders,
-    format_placeholder,
-    parse_placeholder,
-)
+from privacy_gateway.pseudonymization.placeholders import DEFAULT_FORMAT, PlaceholderFormat
 
 PERSON = DEFAULT_RULES["PERSON"]
 EMAIL = DEFAULT_RULES["EMAIL"]
@@ -51,22 +46,22 @@ def sanitize(text, entities, rules=None):
 # -- placeholder format ------------------------------------------------------
 
 def test_placeholder_format_is_zero_padded():
-    assert format_placeholder("PERSON", 1) == "<PERSON_001>"
+    assert DEFAULT_FORMAT.render("PERSON", 1) == "<PERSON_001>"
 
 
 def test_index_grows_beyond_the_padding():
-    assert format_placeholder("PERSON", 1000) == "<PERSON_1000>"
+    assert DEFAULT_FORMAT.render("PERSON", 1000) == "<PERSON_1000>"
 
 
 def test_a_placeholder_round_trips_through_the_parser():
-    assert parse_placeholder("<PERSON_001>") == ("PERSON", 1)
+    assert DEFAULT_FORMAT.parse("<PERSON_001>") == ("PERSON", 1)
 
 
 @pytest.mark.parametrize(
     "token", ["<div>", "<br/>", "<PERSON>", "<person_001>", "<PERSON_>", "PERSON_001", "<_001>"]
 )
 def test_non_placeholders_do_not_parse(token):
-    assert parse_placeholder(token) is None
+    assert DEFAULT_FORMAT.parse(token) is None
 
 
 def test_a_placeholder_is_not_a_prefix_of_a_longer_one():
@@ -74,11 +69,11 @@ def test_a_placeholder_is_not_a_prefix_of_a_longer_one():
     # str.replace of <PER_1> before <PER_11> corrupts the latter. Anchoring on
     # the closing delimiter makes the problem impossible.
     text = "<PERSON_001> and <PERSON_0011>"
-    assert [m.group() for m in find_placeholders(text)] == ["<PERSON_001>", "<PERSON_0011>"]
+    assert [m.group() for m in DEFAULT_FORMAT.pattern.finditer(text)] == ["<PERSON_001>", "<PERSON_0011>"]
 
 
 def test_iso_standards_and_model_names_are_not_placeholders():
-    assert [m.group() for m in find_placeholders("ISO 9001 and GPT 4 and PER 2")] == []
+    assert [m.group() for m in DEFAULT_FORMAT.pattern.finditer("ISO 9001 and GPT 4 and PER 2")] == []
 
 
 def test_the_guillemet_style_is_available():
@@ -92,7 +87,7 @@ def test_the_guillemet_style_is_available():
 @settings(max_examples=200, deadline=None)
 @given(st.integers(min_value=1, max_value=999_999))
 def test_property_every_rendered_placeholder_parses(index):
-    assert parse_placeholder(format_placeholder("PERSON", index)) == ("PERSON", index)
+    assert DEFAULT_FORMAT.parse(DEFAULT_FORMAT.render("PERSON", index)) == ("PERSON", index)
 
 
 # -- identity ----------------------------------------------------------------

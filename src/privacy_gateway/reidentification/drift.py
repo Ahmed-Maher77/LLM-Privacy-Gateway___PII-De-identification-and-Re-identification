@@ -33,7 +33,6 @@ from __future__ import annotations
 
 import re
 from bisect import bisect_left
-from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -185,11 +184,3 @@ class DriftScanner:
             return "delimiters_missing"
         return "separator_changed"
 
-
-def summarize(findings: Sequence[DriftFinding]) -> dict[str, int]:
-    out: dict[str, int] = {}
-    for f in findings:
-        out[f.kind] = out.get(f.kind, 0) + 1
-    out["total"] = len(findings)
-    out["resolvable_but_not_restored"] = sum(1 for f in findings if f.in_store)
-    return out

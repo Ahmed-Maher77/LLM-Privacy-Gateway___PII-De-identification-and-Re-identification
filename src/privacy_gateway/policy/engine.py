@@ -56,7 +56,6 @@ class PolicyConfig:
     unknown_type_action: Action = Action.PSEUDONYMIZE
     below_threshold_action: Action = Action.ALLOW
     below_threshold_action_failclosed: Action = Action.PSEUDONYMIZE
-    escalate_flags: bool = False
 
     @classmethod
     def load(cls, path: Path | str = DEFAULT_POLICY_PATH) -> PolicyConfig:
@@ -107,7 +106,6 @@ class PolicyConfig:
             rules=rules,
             unknown_type_action=unknown,
             below_threshold_action=below,
-            escalate_flags=bool(defaults.get("escalate_flags", False)),
         )
 
 
@@ -188,14 +186,7 @@ class PolicyEngine:
                 f"confidence {entity.confidence:.2f} < {rule.min_confidence:.2f}",
             )
 
-        action = rule.action
-        if action is Action.FLAG and self.fail_closed and self.config.escalate_flags:
-            action = Action.BLOCK
-        return PolicyDecision(entity, action, rule, f"type_default:{entity.entity_type}")
+        return PolicyDecision(entity, rule.action, rule, f"type_default:{entity.entity_type}")
 
     def decide_all(self, entities: Sequence[DetectedEntity]) -> tuple[PolicyDecision, ...]:
         return tuple(self.decide(e) for e in entities)
-
-    @staticmethod
-    def transformable(decisions: Sequence[PolicyDecision]) -> tuple[PolicyDecision, ...]:
-        return tuple(d for d in decisions if d.transforms)

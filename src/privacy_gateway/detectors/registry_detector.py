@@ -23,7 +23,6 @@ class RegistryDetector:
     """Turns :class:`ParticipantRegistry` mentions into entities."""
 
     name = "registry"
-    layer = 2
 
     def __init__(self, registry: ParticipantRegistry | None = None) -> None:
         self.registry = registry
