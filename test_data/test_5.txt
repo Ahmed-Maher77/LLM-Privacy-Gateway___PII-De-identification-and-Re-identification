@@ -2,7 +2,7 @@ Meeting Details
 
 Title: Customer Care & Financial Operations — Fraud Escalation & PII Remediation Review
 
-Platform: Microsoft Teams + Exampleco
+Platform: Microsoft Teams + Acme
 
 Participants:
 

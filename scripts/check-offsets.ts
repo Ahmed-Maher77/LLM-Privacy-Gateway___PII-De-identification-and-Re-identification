@@ -17,7 +17,7 @@ import { sampleText } from "./sample-text";
 
 const NON_BMP = [
     "😅 Hi, I'm Kofi Mensah 😅 and this is Sarah Johnson👋.",
-    "👩‍👩‍👧 family: Priya Raman, 🇪🇬 Ahmed Maher, ❤️ Grace Hopper.",
+    "👩‍👩‍👧 family: Priya Raman, 🇪🇬 Ahmed Mansour, ❤️ Grace Hopper.",
     "𝒜𝒷𝒸 Dr. Beverly Crusher ​ called José and José at 617-555-0142 😅😅😅",
     "Mixed 中文 名字 and Yvette Picard 🙂 kofi.mensah82@gmail.com",
 ];

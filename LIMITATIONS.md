@@ -118,7 +118,6 @@ match.
   rerun `npm run build:lists` to refresh.
 - **Whole document in memory**, 2,000,000-character limit, no streaming.
 - **Redaction is one-way.** Originals are not stored or encrypted.
-- **`reports/` is not git-ignored.**
 - **CLI only.** A service would still need an HTTP API, PII-free logging and
   metrics.
 

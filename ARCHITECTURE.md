@@ -33,7 +33,7 @@ No layer depends on another.
 
 | Layer | Finds | How |
 | --- | --- | --- |
-| 1. Pre-defined list | whatever you list, and the **only** source of ORGANIZATION | `config/predefined-list.json`, per type: `{ "PERSON": ["Sarah Johnson"], "ORGANIZATION": ["Exampleco Inc"] }`. Case-insensitive, whole words. |
+| 1. Pre-defined list | whatever you list, and the **only** source of ORGANIZATION | `config/predefined-list.json`, per type: `{ "PERSON": ["Sarah Johnson"], "ORGANIZATION": ["Acme Corp"] }`. Case-insensitive, whole words. |
 | 1b. Name lists | names (English, and Arabic written in English) | Registry lists in `data/lists/` (next section), each hit checked by a rule so list entries that are also English words ("Will", "Grace") don't match on their own. |
 | 2. Regex | emails, cards, IBANs, SSNs, passports, driver's licences, phones, dates | Fixed formats. Cards must pass Luhn, IBANs mod-97, `+`-prefixed international phones `libphonenumber-js`. SSNs in impossible ranges are skipped. Passports and licences need a keyword first ("passport number is …"); a US passport shape (letter + 8 digits, or 9 digits) is also taken anywhere on a line that says "passport". |
 | 3. NER model | names only | `gravitee-io/bert-small-pii-detection` through Transformers.js, on the CPU (section below). |

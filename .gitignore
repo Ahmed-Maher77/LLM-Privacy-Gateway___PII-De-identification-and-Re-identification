@@ -1,4 +1,12 @@
 node_modules/
 .env
 .env.*
+!.env.example
 models/
+reports/
+scratch/
+dist/
+build/
+*.log
+.DS_Store
+Thumbs.db

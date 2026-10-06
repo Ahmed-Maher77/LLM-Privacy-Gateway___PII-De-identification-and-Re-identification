@@ -1,6 +1,6 @@
 {
   "PERSON": ["Mona", "Hassan", "Eman", "Kareem", "David", "Robert Charles Miller", "Robert", "Miller"],
-  "ORGANIZATION": ["Exampleco"],
+  "ORGANIZATION": ["Acme"],
   "EMAIL_ADDRESS": ["robert.miller88@gmail.com"],
   "PHONE_NUMBER": ["+1 (617) 555-0142"],
   "CREDIT_CARD": [{ "value": "4532 0192 8472 9104", "hard": true }],

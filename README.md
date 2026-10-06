@@ -38,7 +38,7 @@ Values you always want masked, whatever the detectors think, go in
 ```json
 {
   "PERSON": ["Sarah Johnson", "Kofi Mensah"],
-  "ORGANIZATION": ["Exampleco Inc", "Acme Corp"],
+  "ORGANIZATION": ["Acme Corp", "Example Ltd"],
   "EMAIL_ADDRESS": ["ops@acme.com"]
 }
 ```
@@ -52,9 +52,8 @@ easy to miss.
 mostly flagged products, acronyms and headings, so it is not used: a company
 is masked if and only if it is listed here. Add your clients, partners and
 your own company. An entry with a legal suffix also covers the short name:
-`"Exampleco Inc"` masks "Exampleco" and "EXAMPLECO" too. The short name
-matches only capitalised or in capitals, so the ordinary word "exampleco" is
-left alone; list other short forms or abbreviations explicitly.
+`"Acme Corp"` masks "Acme" and "ACME" too. The short name
+matches only capitalised or in capitals; list other short forms or abbreviations explicitly.
 
 ## Name lists
 

@@ -38,7 +38,7 @@ function loadPatterns(): { type: EntityType; pattern: RegExp }[] {
     const byLength = (a: string, b: string) => b.length - a.length;
     cached.push({ type: type as EntityType, pattern: wholeWords([...words].sort(byLength).map(escape), "giu") });
 
-    // Short company names: "Exampleco Inc" -> "Exampleco", "EXAMPLECO" (case-sensitive)
+    // Short company names: "Acme Corp" -> "Acme", "ACME" (case-sensitive)
     if (type === "ORGANIZATION") {
       const shortNames = words.map((v) => v.replace(LEGAL_SUFFIX_RE, "")).filter((v, i) => v !== words[i] && v.length >= 2);
       const forms = [...new Set(shortNames.flatMap((v) => [v, v.toUpperCase()]))];
