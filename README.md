@@ -9,6 +9,31 @@ layer, and rewritten with reversible placeholders. **Only the placeholder text
 reaches the model.** The mapping stays in the trusted process and is restored
 afterwards.
 
+### Main PII Lifecycle & Processing Layers
+
+```mermaid
+flowchart TD
+    classDef gate fill:#fce8e6,stroke:#c5221f,stroke-width:2px,color:#c5221f;
+    classDef external fill:#fef7e0,stroke:#ea8600,stroke-width:2px,color:#b06000;
+    classDef store fill:#f1f3f4,stroke:#5f6368,stroke-width:2px,stroke-dasharray: 5 5;
+
+    A["1. Raw User Input<br/>Text containing sensitive PII (Names, Emails, Dates, Secrets)"] --> B["2. Multi-Layer Detection<br/>Regex Patterns • Participant Registry • Domain Lexicon • Presidio & NER"]
+    B --> C["3. Aggregation & Policy Filtering<br/>Deduplicate & arbitrate overlaps • Enforce public allowlists (ALLOW vs PROTECT)"]
+    C --> D["4. De-Identification (Pseudonymization)<br/>Right-to-left offset replacement with reversible tokens (e.g. &lt;PERSON_001&gt;)"]
+    
+    D -.->|Store mapping locally| S[("Mapping Store<br/>In-memory only • Never sent to LLM")]
+    
+    D --> E{{"5. Pre-Send Leak Gate<br/>Fail-closed scan ensuring no cleartext PII survives"}}
+    E -->|Only sanitized text transmitted| F["6. Downstream LLM<br/>External / local model processes anonymized text"]
+    F --> G["7. Re-Identification (Restoration)<br/>Single-pass anchored replacement restoring original entities"]
+    S -.->|Restore original values| G
+    G --> H["8. Safe Final Output<br/>Coherent completion returned to the caller"]
+
+    class D,E gate;
+    class F external;
+    class S store;
+```
+
 > Read [`LIMITATIONS.md`](LIMITATIONS.md) before quoting any number from this
 > repository. The evaluation labels were produced by an AI assistant, not a
 > human annotator, and the Qwen layer has never been run against a real model.
