@@ -1,0 +1,260 @@
+{
+  "timestamp": "2026-10-06T01:34:46.327Z",
+  "originalLength": 1399,
+  "sanitizedLength": 1308,
+  "entitiesFound": 15,
+  "outputFile": "sanitized_output/sanitized_output.txt",
+  "matches": [
+    {
+      "type": "DATE",
+      "value": "2023-10-27",
+      "start": 33,
+      "end": 43,
+      "method": "winknlp",
+      "confidence": 0.95,
+      "placeholder": "[DATE_1]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Sarah Jenkins",
+      "start": 174,
+      "end": 187,
+      "method": "rule",
+      "confidence": 0.95,
+      "placeholder": "[PERSON_1]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Sarah",
+      "start": 225,
+      "end": 230,
+      "method": "rule",
+      "confidence": 0.85,
+      "placeholder": "[PERSON_2]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Michael T. Rodriguez",
+      "start": 274,
+      "end": 294,
+      "method": "rule",
+      "confidence": 0.95,
+      "placeholder": "[PERSON_3]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Mike Rodriguez",
+      "start": 326,
+      "end": 340,
+      "method": "rule",
+      "confidence": 0.9,
+      "placeholder": "[PERSON_4]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Rodriguez",
+      "start": 376,
+      "end": 385,
+      "method": "rule",
+      "confidence": 0.95,
+      "placeholder": "[PERSON_5]"
+    },
+    {
+      "type": "DATE",
+      "value": "04/12/1985",
+      "start": 465,
+      "end": 475,
+      "method": "winknlp",
+      "confidence": 0.95,
+      "placeholder": "[DATE_2]"
+    },
+    {
+      "type": "SSN",
+      "value": "000-12-3456",
+      "start": 534,
+      "end": 545,
+      "method": "regex",
+      "confidence": 0.9,
+      "placeholder": "[SSN_1]"
+    },
+    {
+      "type": "EMAIL",
+      "value": "mike.rodriguez88@gmail.com",
+      "start": 623,
+      "end": 649,
+      "method": "regex",
+      "confidence": 0.99,
+      "placeholder": "[EMAIL_1]"
+    },
+    {
+      "type": "EMAIL",
+      "value": "m.rodriguez@acmecorp.com",
+      "start": 737,
+      "end": 761,
+      "method": "regex",
+      "confidence": 0.99,
+      "placeholder": "[EMAIL_2]"
+    },
+    {
+      "type": "ADDRESS",
+      "value": "742 Evergreen Terrace, Springfield, OR 97403",
+      "start": 885,
+      "end": 929,
+      "method": "regex",
+      "confidence": 0.9,
+      "placeholder": "[ADDRESS_1]"
+    },
+    {
+      "type": "PHONE",
+      "value": "(555) 123-4567",
+      "start": 988,
+      "end": 1002,
+      "method": "regex",
+      "confidence": 0.95,
+      "placeholder": "[PHONE_1]"
+    },
+    {
+      "type": "PHONE",
+      "value": "555-987-6543",
+      "start": 1044,
+      "end": 1056,
+      "method": "regex",
+      "confidence": 0.95,
+      "placeholder": "[PHONE_2]"
+    },
+    {
+      "type": "CREDIT_CARD",
+      "value": "4111 2222 3333 4321",
+      "start": 1208,
+      "end": 1227,
+      "method": "regex",
+      "confidence": 0.85,
+      "placeholder": "[CREDIT_CARD_1]"
+    },
+    {
+      "type": "PERSON",
+      "value": "Sarah",
+      "start": 1330,
+      "end": 1335,
+      "method": "rule",
+      "confidence": 0.85,
+      "placeholder": "[PERSON_2]"
+    }
+  ],
+  "entityMap": {
+    "[DATE_1]": "2023-10-27",
+    "[PERSON_1]": "Sarah Jenkins",
+    "[PERSON_2]": "Sarah",
+    "[PERSON_3]": "Michael T. Rodriguez",
+    "[PERSON_4]": "Mike Rodriguez",
+    "[PERSON_5]": "Rodriguez",
+    "[DATE_2]": "04/12/1985",
+    "[SSN_1]": "000-12-3456",
+    "[EMAIL_1]": "mike.rodriguez88@gmail.com",
+    "[EMAIL_2]": "m.rodriguez@acmecorp.com",
+    "[ADDRESS_1]": "742 Evergreen Terrace, Springfield, OR 97403",
+    "[PHONE_1]": "(555) 123-4567",
+    "[PHONE_2]": "555-987-6543",
+    "[CREDIT_CARD_1]": "4111 2222 3333 4321"
+  },
+  "entities": [
+    {
+      "placeholder": "[DATE_1]",
+      "type": "DATE",
+      "index": 1,
+      "value": "2023-10-27",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PERSON_1]",
+      "type": "PERSON",
+      "index": 1,
+      "value": "Sarah Jenkins",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PERSON_2]",
+      "type": "PERSON",
+      "index": 2,
+      "value": "Sarah",
+      "occurrences": 2
+    },
+    {
+      "placeholder": "[PERSON_3]",
+      "type": "PERSON",
+      "index": 3,
+      "value": "Michael T. Rodriguez",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PERSON_4]",
+      "type": "PERSON",
+      "index": 4,
+      "value": "Mike Rodriguez",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PERSON_5]",
+      "type": "PERSON",
+      "index": 5,
+      "value": "Rodriguez",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[DATE_2]",
+      "type": "DATE",
+      "index": 2,
+      "value": "04/12/1985",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[SSN_1]",
+      "type": "SSN",
+      "index": 1,
+      "value": "000-12-3456",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[EMAIL_1]",
+      "type": "EMAIL",
+      "index": 1,
+      "value": "mike.rodriguez88@gmail.com",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[EMAIL_2]",
+      "type": "EMAIL",
+      "index": 2,
+      "value": "m.rodriguez@acmecorp.com",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[ADDRESS_1]",
+      "type": "ADDRESS",
+      "index": 1,
+      "value": "742 Evergreen Terrace, Springfield, OR 97403",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PHONE_1]",
+      "type": "PHONE",
+      "index": 1,
+      "value": "(555) 123-4567",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[PHONE_2]",
+      "type": "PHONE",
+      "index": 2,
+      "value": "555-987-6543",
+      "occurrences": 1
+    },
+    {
+      "placeholder": "[CREDIT_CARD_1]",
+      "type": "CREDIT_CARD",
+      "index": 1,
+      "value": "4111 2222 3333 4321",
+      "occurrences": 1
+    }
+  ]
+}

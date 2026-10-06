@@ -1,0 +1,33 @@
+Test Case ID: PII-TEST-001
+Date: [DATE_1]
+Source: Customer Support Chat Log
+
+[START OF TRANSCRIPT]
+
+Agent (System): Thank you for contacting SecureBank Support. My name is [PERSON_1]. How can I help you today?
+
+User: Hi [PERSON_2]. I’m having trouble logging in. My name is [PERSON_3], but my account might be under [PERSON_4].
+
+Agent: I can help with that, Mr. [PERSON_5]. Can you please verify your identity? I have your date of birth listed here as [DATE_2].
+
+User: Yes, that’s correct. My social security number is [SSN_1] if you need that.
+
+Agent: Thank you. I see the account associated with email [EMAIL_1]. Is that correct?
+
+User: Yes, but please send the reset link to my work email instead: [EMAIL_2].
+
+Agent: Got it. I’ve updated the contact preference. Now, can you confirm the billing address on file?
+User: It should be [ADDRESS_1].
+
+Agent: Perfect. And the phone number we have on file is [PHONE_1].
+User: Actually, my cell is better. It’s [PHONE_2].
+
+Agent: Updated. For security purposes, can you confirm the last four digits of your card?
+User: Sure, it’s a Visa ending in 4321. The full number is [CREDIT_CARD_1].
+
+Agent: Thank you. I’ve unlocked your account. Is there anything else?
+User: No, that’s all. Thanks, [PERSON_2].
+
+Agent: You’re welcome. Have a great day.
+
+[END OF TRANSCRIPT]
