@@ -256,7 +256,8 @@ def write(only: str | None = None, *, directory: Path = FIXTURE_DIR) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    description = (__doc__ or "").splitlines()[0] if __doc__ else None
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--only", default=None, help="restrict to one fixture")
     parser.add_argument("--write", action="store_true", help="derive and write gold_spans")
     parser.add_argument("--check", action="store_true", help="validate stored offsets")

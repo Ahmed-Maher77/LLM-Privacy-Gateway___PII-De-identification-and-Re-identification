@@ -154,7 +154,9 @@ class TestSpanNormalisation:
         text = "- Dr. Samuel Adeyemi       Oncology Lead"
         span = Span(6, 35, "PERSON", text[6:35], source="model")
         once = normalize_span(text, span)
+        assert once is not None
         twice = normalize_span(text, once)
+        assert twice is not None
         assert once.start == twice.start and once.end == twice.end
 
 

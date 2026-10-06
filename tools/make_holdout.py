@@ -410,7 +410,8 @@ def build(out_dir: Path, seed: int = SEED) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    description = (__doc__ or "").splitlines()[0] if __doc__ else None
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--out", default=str(HOLDOUT_DIR))
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--check", action="store_true", help="verify pools are disjoint only")
