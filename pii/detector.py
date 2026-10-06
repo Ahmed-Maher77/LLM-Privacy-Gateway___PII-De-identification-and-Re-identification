@@ -12,6 +12,7 @@ a one-line change rather than a fine-tune.
 from __future__ import annotations
 
 import threading
+from typing import Any
 
 from .chunking import iter_windows
 from .policy import has_name_initial
@@ -90,11 +91,11 @@ class GlinerDetector:
         self.window_chars = window_chars
         self.overlap_chars = overlap_chars
         self.batch_size = batch_size
-        self._model = None
+        self._model: Any = None
         self._load_lock = threading.Lock()
 
     @property
-    def model(self):
+    def model(self) -> Any:
         """Load the weights on first use so importing this module stays cheap.
 
         Double-checked under a lock. Unsynchronised, two threads sharing one
@@ -146,12 +147,13 @@ class GlinerDetector:
     def _to_spans(self, offset: int, text: str, entities: list[dict]) -> list[Span]:
         spans: list[Span] = []
         for entity in entities:
-            label = LABEL_MAP.get(entity["label"], entity["label"].upper().replace(" ", "_"))
+            raw_label = str(entity.get("label", ""))
+            label = LABEL_MAP.get(raw_label, raw_label.upper().replace(" ", "_"))
             spans.extend(
                 build_spans(
                     text,
-                    offset + entity["start"],
-                    offset + entity["end"],
+                    offset + int(entity["start"]),
+                    offset + int(entity["end"]),
                     label,
                     float(entity.get("score", 0.0)),
                 )
