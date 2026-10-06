@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# Production build artifacts
+dist/
+build/
+
+# Coverage and test artifacts
+coverage/
+.vitest/
+sanitized_output_test/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+*.env
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Agent and tool scratch directories
+.agents/
+.gemini/
+
+# Compiled JS alongside TS source (build output is in dist/)
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map
+
+# Internal task / prompt specification (not for public repo)
+PROJECT_PLAN.md
+
