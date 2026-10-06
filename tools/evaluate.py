@@ -40,14 +40,17 @@ import time
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 if sys.platform == "win32":
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-    if hasattr(sys.stderr, "reconfigure"):
-        sys.stderr.reconfigure(encoding="utf-8")
+    reconfig_out = getattr(sys.stdout, "reconfigure", None)
+    if callable(reconfig_out):
+        reconfig_out(encoding="utf-8")
+    reconfig_err = getattr(sys.stderr, "reconfigure", None)
+    if callable(reconfig_err):
+        reconfig_err(encoding="utf-8")
 
 from pii import PIIMiddleware  # noqa: E402
 from pii.policy import _normalize, describe_policy  # noqa: E402
@@ -226,6 +229,10 @@ def score_document(
             score.error = f"{type(exc).__name__}: {exc}"
             return score
         timings.append(time.perf_counter() - started)
+
+    if result is None:
+        score.error = "no analysis result produced"
+        return score
 
     # Median, and drop the first pass when repeating: it carries model warmup.
     score.latency_s = statistics.median(timings[1:] or timings)
@@ -685,7 +692,7 @@ def main() -> int:
         print(f"No fixtures found in {directory}. Add <name>.txt + <name>.expected.json")
         return 2
 
-    kwargs = {"on_leak": "warn"}
+    kwargs: dict[str, Any] = {"on_leak": "warn"}
     if args.profile:
         kwargs["profile"] = args.profile
     if args.entities:

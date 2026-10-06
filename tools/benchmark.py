@@ -201,6 +201,7 @@ def _pool_init(threads_per_worker: int | None = None) -> None:
 
 def _pool_analyze(text: str) -> float:
     started = time.perf_counter()
+    assert _worker_middleware is not None
     _worker_middleware.analyze(text)
     return time.perf_counter() - started
 
