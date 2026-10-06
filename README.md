@@ -215,11 +215,16 @@ Detection and protection are different questions. Precedence, first match wins:
 
 Actions: `pseudonymize`, `redact`, `mask`, `allow`, `flag`, `block`.
 
-**`DATE` is `allow` by default.** Presidio's `DATE_TIME` recogniser fires on all
-886 Teams timestamps and all 73 markdown speaker headers in the samples;
-protecting them removes the document's structure and makes a summary worthless,
-while a bare date identifies nobody. Deployments with a stricter obligation flip
-it in `config/policy.toml`.
+**`DATE` is `pseudonymize` by default (`<DATE_xxx>`).** Calendar dates, birth
+dates, and expiration dates are protected and pseudonymized reversibly. Bare
+clock timestamps (such as `00:04:12` or `10:30`), speaker headers, and durations
+are filtered out at aggregation so the document's structure and chronology
+remain legible without leaking sensitive dates.
+
+**Public and excluded categories pass through in plain text.** Types such as
+`ORGANIZATION`, `LOCATION` / `ADDRESS`, `IP_ADDRESS`, `URL`, `PASSPORT`, and
+`ACCOUNT_IDENTIFIER` (IBAN, bank account numbers) are configured as `allow` by
+default.
 
 `PERSON`, `EMPLOYEE` and `STAKEHOLDER` share one `PERSON_NNN` counter, so a
 reader tracks one numbering scheme for people rather than three.
@@ -377,7 +382,7 @@ uv run pytest tests/unit -q            # fast layer
 uv run pytest tests/regression -q      # the acceptance gate
 ```
 
-557 tests across unit, integration, security and regression. None requires a
+730 tests across unit, integration, security, regression, and evaluation suites. None requires a
 network or a running Ollama.
 
 The regression suite has two halves. The first pins **the evidence**: the

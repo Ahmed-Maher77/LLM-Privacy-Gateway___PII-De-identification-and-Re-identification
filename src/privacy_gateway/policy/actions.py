@@ -70,11 +70,10 @@ def _rule(entity_type, action, min_confidence, prefix, case_sensitive=False, max
 #: PERSON, EMPLOYEE and STAKEHOLDER deliberately share the ``PERSON`` prefix, so
 #: a reader tracks one numbering scheme for people rather than three.
 #:
-#: DATE is ALLOW. Presidio's DATE_TIME recogniser fires on all 886 Teams
-#: timestamps and all 73 markdown speaker headers in the sample transcripts;
-#: pseudonymizing them removes the document's structure and makes a summary
-#: worthless, while a bare date identifies nobody. Deployments with a stricter
-#: obligation flip this in config/policy.toml.
+#: DATE is PSEUDONYMIZE. Calendar dates, birth dates, and expiration dates are
+#: pseudonymized with the <DATE_xxx> prefix. Bare clock timestamps (e.g. 00:04:12)
+#: and durations are filtered at aggregation to preserve transcript structure.
+#: Deployments can adjust this in config/policy.toml.
 DEFAULT_RULES: dict[str, EntityRule] = {
     str(r.entity_type): r
     for r in (
