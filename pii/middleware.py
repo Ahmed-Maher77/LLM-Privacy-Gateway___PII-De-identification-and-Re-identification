@@ -282,8 +282,10 @@ class PIIMiddleware:
         self._custom_labels = {rule.label for rule in config.rules}
         self.redacted_types = resolve_types(profile, entities, custom_labels=self._custom_labels)
 
+        self._torch_threads: int | None = None
+
         if detectors is None:
-            detectors = [
+            detector_list: list[Detector] = [
                 GlinerDetector(
                     model_name=model_name,
                     labels=labels,
@@ -295,9 +297,10 @@ class PIIMiddleware:
             if use_spacy:
                 spacy_detector = SpacyDetector.load_if_available(required=require_detectors)
                 if spacy_detector is not None:
-                    detectors.append(spacy_detector)
-
-        self.detectors = list(detectors)
+                    detector_list.append(spacy_detector)
+            self.detectors: list[Detector] = detector_list
+        else:
+            self.detectors = list(detectors)
 
     @property
     def detector(self) -> Detector:

@@ -18,7 +18,6 @@ identity is derived from a span's text.
 from __future__ import annotations
 
 import re
-import unicodedata
 
 from .context import NON_NAME_POS, DocumentContext
 from .policy import is_name_initial

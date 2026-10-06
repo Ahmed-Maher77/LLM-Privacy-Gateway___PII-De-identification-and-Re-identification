@@ -122,7 +122,6 @@ class SpacyDetector:
             DetectorUnavailableWarning,
             stacklevel=3,
         )
-        return None
 
     def detect(self, text: str) -> list[Span]:
         spans: list[Span] = []
