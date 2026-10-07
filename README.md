@@ -31,7 +31,7 @@ Ensure Node.js (version 18+ or 20+) is installed.
 
 ```bash
 # Clone the repository and enter the directory
-cd WinkNLP__POC
+cd implementation_3
 
 # Install dependencies
 npm install

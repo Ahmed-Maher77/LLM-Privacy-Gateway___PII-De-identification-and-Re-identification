@@ -48,7 +48,7 @@ export function detectPII(text: string, config?: Partial<PIIConfig>): PIIMatch[]
     rawMatches.push(...regexMatches);
   }
 
-  // 4. Caller-supplied known locations (T8)
+  // 4. Caller-supplied known locations
   if (resolved.location && resolved.knownLocations && resolved.knownLocations.length > 0) {
     for (const loc of resolved.knownLocations) {
       const trimmed = loc.trim();
@@ -72,7 +72,7 @@ export function detectPII(text: string, config?: Partial<PIIConfig>): PIIMatch[]
     }
   }
 
-  // 5. Caller-supplied known organizations (T8)
+  // 5. Caller-supplied known organizations
   if (resolved.organization && resolved.knownOrganizations && resolved.knownOrganizations.length > 0) {
     for (const org of resolved.knownOrganizations) {
       const trimmed = org.trim();

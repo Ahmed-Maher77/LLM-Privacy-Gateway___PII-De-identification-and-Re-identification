@@ -43,8 +43,8 @@ CARDINAL  742 | 97403 | 555 | four | 4321 | 4111 | 2222 | 3333 | 4321
 DURATION  day
 ```
 
-No names. No organizations. No locations. The 29 `[PERSON]` tags in the output came
-from our POS heuristic, not from this list.
+No names. No organizations. No locations. Any `[PERSON]` tags in the output come from the anchored person rules
+(`person-detector.ts`), not from this list.
 
 ## What the POS tagger *is* good for
 
@@ -71,9 +71,8 @@ street, a city, and an adjective at sentence start.
 - **Do** use POS as a *supporting signal* inside an anchored rule
   (e.g. "the `PROPN` run immediately following `my name is`").
 - **Do not** use `PROPN` alone as a PII classifier. Capitalisation is not identity.
-- **Do not** try to fix it with a denylist. `NON_PERSON_WORDS` in
-  [wink-detector.ts](../src/pii/wink-detector.ts) is a ~50-term blocklist against an
-  open vocabulary; it will always lose. It already fails on `Agent`, `Perfect`,
+- **Do not** try to fix it with a denylist. A fixed blocklist against an open vocabulary
+  always loses; the removed `NON_PERSON_WORDS` list failed on `Agent`, `Perfect`,
   `Visa`, `Log`, `System`, `Date`, `END`, `TRANSCRIPT`.
 
 ## If real name/org/location NER is required

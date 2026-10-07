@@ -42,7 +42,7 @@ Agent: You’re welcome. Have a great day.
 
 [END OF TRANSCRIPT]`;
 
-describe('Sample Regression Test (Section 2 Verification)', () => {
+describe('Sample Regression Test (large_sample.txt)', () => {
   const samplePath = path.resolve(__dirname, '../samples/large_sample.txt');
   const rawText = fs.readFileSync(samplePath, 'utf-8');
   // Normalize CRLF to LF for cross-platform comparison
@@ -73,7 +73,7 @@ describe('Sample Regression Test (Section 2 Verification)', () => {
     expect(counts['CREDIT_CARD']).toBe(1);
   });
 
-  it('masks the text matching Section 2 target output verbatim', () => {
+  it('masks the text matching the expected output verbatim', () => {
     const matches = detectPII(text, { date: true });
     const masked = maskPII(text, matches);
 

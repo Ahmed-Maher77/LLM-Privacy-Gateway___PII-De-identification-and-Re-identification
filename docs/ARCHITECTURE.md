@@ -121,4 +121,4 @@ allowing pipelines with contextual metadata to recover 100% precision and recall
 | [tests/normalizer.test.ts](../tests/normalizer.test.ts) | Dedupe / overlap absorption / offset proof |
 | [tests/masker.test.ts](../tests/masker.test.ts) | Span replacement, custom formatters |
 | [tests/output-in-file.test.ts](../tests/output-in-file.test.ts) | File + report writing |
-| [tests/sample-regression.test.ts](../tests/sample-regression.test.ts) | Exact verbatim match against Section 2 target output on `large_sample.txt` |
+| [tests/sample-regression.test.ts](../tests/sample-regression.test.ts) | Exact verbatim match against the expected masked output of `large_sample.txt` |
