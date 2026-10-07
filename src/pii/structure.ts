@@ -1,4 +1,5 @@
 import type { PIIMatch } from './types.js';
+import { KNOWN_VALUE_CONFIDENCE } from './exact-match.js';
 
 /**
  * Returns character offset ranges where heuristic (non-deterministic) entities
@@ -51,8 +52,12 @@ export function applyStructuralGuards(matches: PIIMatch[], text: string): PIIMat
   }
 
   return matches.filter((match) => {
-    // Deterministic types are never suppressed by structural guards
+    // Deterministic types and caller-supplied known values are never suppressed by
+    // structural guards: "John Smith: ..." must still mask a known John Smith.
     if (!HEURISTIC_TYPES.has(match.type)) {
+      return true;
+    }
+    if (match.method === 'rule' && match.confidence === KNOWN_VALUE_CONFIDENCE) {
       return true;
     }
 

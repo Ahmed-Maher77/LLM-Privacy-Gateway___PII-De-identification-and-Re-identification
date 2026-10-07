@@ -157,3 +157,20 @@ describe('Central PII Detector (detectPII)', () => {
     expect(strictMatches.some((m) => m.type === 'CREDIT_CARD')).toBe(false);
   });
 });
+
+describe('Leak regressions', () => {
+  const values = (text: string, config = {}) => detectPII(text, config).map((m) => m.value);
+
+  it('masks a known name even when it is a line-leading speaker label', () => {
+    expect(values('John Smith: my card is due', { knownNames: ['John Smith'] })).toContain('John Smith');
+  });
+
+  it('does not lose an anchored name when the next line starts with a capitalised word', () => {
+    expect(values('Agent: Thank you, Sarah Jenkins\nUser: bye')).toContain('Sarah Jenkins');
+  });
+
+  it('matches known values that end in punctuation', () => {
+    const config = { organization: true, knownOrganizations: ['Acme Inc.'] };
+    expect(values('We met at Acme Inc. yesterday', config)).toContain('Acme Inc.');
+  });
+});

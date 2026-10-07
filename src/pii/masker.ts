@@ -69,7 +69,7 @@ export function maskPIIWithMapping(
       entriesMap.set(placeholder, {
         placeholder,
         type: match.type,
-        index,
+        index: Math.trunc(index) || 0,
         value: match.value,
         occurrences: 1,
       });

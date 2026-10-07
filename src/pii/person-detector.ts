@@ -1,8 +1,10 @@
 import type { PIIMatch, PersonDetectorOptions } from './types.js';
 import { findExactMatches } from './exact-match.js';
 
-const NAME = String.raw`[A-Z][a-z]{1,20}(?:\s+(?:[A-Z][a-z]{1,20}|[A-Z]\.)){0,2}`;
-const FULL = String.raw`[A-Z][a-z]{1,20}(?:\s+[A-Z]\.)?\s+[A-Z][a-z]{1,20}`;
+// Name tokens are joined by spaces or tabs only: a capture that ran onto the next
+// line ("Sarah Jenkins\nUser") would fail validation and lose the real name.
+const NAME = String.raw`[A-Z][a-z]{1,20}(?:[ \t]+(?:[A-Z][a-z]{1,20}|[A-Z]\.)){0,2}`;
+const FULL = String.raw`[A-Z][a-z]{1,20}(?:[ \t]+[A-Z]\.)?[ \t]+[A-Z][a-z]{1,20}`;
 const AP = String.raw`['’]`; // straight AND curly apostrophe
 
 const ANCHORS = [
