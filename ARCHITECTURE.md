@@ -13,7 +13,7 @@ file ─▶ src/index.ts ─▶ redact() ─▶ detect()
                                       ├─ drop undesired model findings (layers/predefined.ts)
                                       ├─ every occurrence of a found value   post_processing/everyOccurrence.ts
                                       └─ merge overlaps                      post_processing/mergeSpans.ts
-                         ─▶ Placeholders (placeholders.ts) ─▶ reports/<name>__sanitized.txt
+                         ─▶ Placeholders (placeholders.ts) ─▶ reports/<name>__sanitized<ext>
 ```
 
 Source layout: `src/pii/` is the pipeline, `src/utils/` its helpers.
@@ -149,8 +149,8 @@ offsets itself. The steps below are in `utils/ner_utils/ner_helpers.ts`;
 - The model loads on the first call and the promise is reused.
 - q8 weights on the CPU (`onnxruntime-node`, its native binary is bundled).
   fp32 was slower and 4× larger.
-- onnxruntime's intra-op threads are set to `NER_THREADS` (default: half the
-  logical CPUs, one per physical core with hyper-threading). Its own default
+- onnxruntime's intra-op threads are fixed at half the logical CPUs (one per
+  physical core with hyper-threading; not configurable). Its own default
   ran about as fast as 2 threads on an 8-core / 16-thread machine.
 - `[CLS]` / `[SEP]` come from `tokenizer.encode("")` (`cls_token_id` is
   `undefined` in 4.3.0). The model takes `input_ids` and `attention_mask`

@@ -26,7 +26,7 @@ const THREADS = Math.max(1, Math.floor(os.availableParallelism() / 2));
 // ========= Regexes =========
 const PIECE_RE = /[^\s\p{P}\p{S}]+|[\p{P}\p{S}]/gu; // split text into pieces/words depends on punctuation
 const LABEL_RE = /^(?:([BI])-)?(.+)$/; // "B-PERSON" -> B, PERSON
-const LETTERS_RE = /^[\p{L}\p{M}]+$/u; // ensure each piece has at least one letter (not just punctuation, digits, or symbols)
+const LETTERS_RE = /^[\p{L}\p{M}]+$/u; // a piece made only of letters (no punctuation, digits or symbols)
 const JOINER_RE = /^[.'’-]$/; // joiner characters (apostrophes, hyphens, etc.) => "Al-Rashid"
 
 // ======== Load the tokenizer and model (once per process) =========
@@ -119,7 +119,7 @@ function windows(ps: Piece[]): Window[] {
         while (j < ps.length && tokens + ps[j].ids.length <= WINDOW_TOKENS)
             tokens += ps[j++].ids.length;
 
-        // cutStart and cutEnd flags so the system knows if a window was truncated mid-sentence
+        // cutStart / cutEnd: the window starts or ends inside the text, not at its own start or end
         out.push({
             pieces: ps.slice(i, j),
             cutStart: i > 0,

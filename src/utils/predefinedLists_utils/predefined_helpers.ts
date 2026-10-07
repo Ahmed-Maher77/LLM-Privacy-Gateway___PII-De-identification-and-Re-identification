@@ -57,11 +57,11 @@ function desiredRules({ json, file }: ListFile): Rule[] {
     }
 
     const rules: Rule[] = [];
-    for (const [key, values] of Object.entries(json)) {
+    for (const [typeName, values] of Object.entries(json)) {
         // check the type and values are valid
-        if (!ENTITY_TYPES.includes(key as EntityType)) {
+        if (!ENTITY_TYPES.includes(typeName as EntityType)) {
             throw new ListError(
-                `${file}: unknown type "${key}". Known: ${ENTITY_TYPES.join(", ")}.`,
+                `${file}: unknown type "${typeName}". Known: ${ENTITY_TYPES.join(", ")}.`,
             );
         }
         if (
@@ -69,10 +69,10 @@ function desiredRules({ json, file }: ListFile): Rule[] {
             values.some((v) => typeof v !== "string")
         ) {
             throw new ListError(
-                `${file}: "${key}" must be an array of strings.`,
+                `${file}: "${typeName}" must be an array of strings.`,
             );
         }
-        const type = key as EntityType;
+        const type = typeName as EntityType;
         const entries = (values as string[])
             .map((v) => v.trim())
             .filter(Boolean);
@@ -87,7 +87,7 @@ function desiredRules({ json, file }: ListFile): Rule[] {
                 ? entries.flatMap(nameParts)
                 : entries
                       .map((v) => v.replace(LEGAL_SUFFIX_RE, ""))
-                      .filter((v, i) => v !== entries[i] && v.length >= 2); 
+                      .filter((v, i) => v !== entries[i] && v.length >= 2);
         if (parts.length === 0) continue;
         const cased = parts.flatMap((p) => [
             p[0].toUpperCase() + p.slice(1),
@@ -99,7 +99,7 @@ function desiredRules({ json, file }: ListFile): Rule[] {
             part: true,
         });
         if (type !== "PERSON") continue;
-        
+
         // Parts of the entries, lowercased, ex: "Mohsen Saad" -> "mohsen", "saad"
         const lowercase = [
             ...new Set(parts.map((p) => p.toLowerCase())),

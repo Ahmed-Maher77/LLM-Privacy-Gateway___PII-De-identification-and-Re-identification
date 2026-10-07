@@ -102,10 +102,10 @@ pre-defined list still matches.
   production machine. Almost all of the time is the model's
   own compute, and its threads compete with other load on the CPU, so large
   files vary most. `npm run dev` adds about 1.7 s of `npm`/`tsx` start-up.
-- **CPU threads:** the model uses half the logical CPUs (`NER_THREADS`);
-  running several instances at once on one machine will slow each down.
+- **CPU threads:** the model always uses half the logical CPUs (not
+  configurable); running several instances at once on one machine will slow
+  each down.
 - **Whole document in memory**, 2,000,000-character limit, no streaming.
 - **Redaction is one-way.** Originals are not stored or encrypted.
-- **`reports/` is not git-ignored.**
 - **CLI only.** A service would still need an HTTP API, PII-free logging and
   metrics.

@@ -147,10 +147,12 @@ Read once at startup; `.env` is loaded and git-ignored (see `.env.example`).
 | `NER_MODEL`         | `gravitee-io/bert-small-pii-detection` | must be listed in `src/utils/ner_utils/ner_models.ts` and fetched |
 | `NER_MIN_SCORE`     | `0.5`                                  | name spans scored below it are dropped                       |
 | `NER_WINDOW_TOKENS` | `384`                                  | model window in sub-tokens, at most 510                      |
-| `NER_THREADS`       | half the logical CPUs                  | onnxruntime threads                                          |
 | `NER_OVERLAP_TOKENS` | `32`                                  | sub-tokens two model windows share                           |
 | `DESIRED_PREDEFINED_LIST` | `desired-predefined-list.json`   | the desired list, in `config/`                               |
 | `UNDESIRED_PREDEFINED_LIST` | `undesired-predefined-list.json` | the undesired list, in `config/`                           |
+
+The model always uses half the logical CPUs as onnxruntime threads; this is
+not configurable.
 
 ## Library use
 
