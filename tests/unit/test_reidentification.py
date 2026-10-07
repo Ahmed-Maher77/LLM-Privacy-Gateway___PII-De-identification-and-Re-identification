@@ -141,7 +141,6 @@ def test_malformed_placeholders_are_left_untouched(reid, token):
 
 
 def test_a_nested_placeholder_is_not_resolved(reid):
-    assert "Rania" not in reid.restore("<PERSON_<PERSON_001>>").text or True
     # The inner token is well-formed and does resolve; the outer shape does not
     # create a second substitution.
     assert reid.restore("<PERSON_<PERSON_001>>").text == "<PERSON_Rania Fahmy>"

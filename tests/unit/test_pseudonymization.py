@@ -171,9 +171,9 @@ def test_replacement_is_by_offset_not_by_string_replace():
 
 def test_a_single_character_entity_cannot_corrupt_other_words():
     # The literal <PER_2>ice. defect, reproduced at unit scale.
-    text = "Nice. Rania is here."
+    text = "Nice. Nadia is here."
     result, _ = sanitize(text, [ent("N", 0)])
-    assert result.text == "<PERSON_001>ice. Rania is here."
+    assert result.text == "<PERSON_001>ice. Nadia is here."
     assert result.text.count("<PERSON_001>") == 1
 
 

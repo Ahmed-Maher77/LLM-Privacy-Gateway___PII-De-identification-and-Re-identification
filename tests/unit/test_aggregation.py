@@ -269,6 +269,29 @@ def test_post_conditions_detect_a_broken_resolver(monkeypatch):
         agg.aggregate([ent(0, 11)], TEXT)
 
 
+def test_a_displaced_span_does_not_leave_the_text_it_covered_unprotected():
+    # The long NER span knocks out the presidio PERSON, then loses to the
+    # higher-priority domain span inside it; the PERSON must be reconsidered.
+    text = "I spoke to Rania Fahmy FleetCore team today."
+
+    def at(surface, etype, detector, priority):
+        start = text.index(surface)
+        return DetectedEntity(
+            entity_type=etype, text=surface, start=start, end=start + len(surface),
+            confidence=0.9, detector=detector, priority=priority, source="",
+        )
+
+    result = AGG.aggregate(
+        [
+            at("Rania Fahmy FleetCore", "PERSON", "ner", 40),
+            at("Rania Fahmy", "PERSON", "presidio", 60),
+            at("FleetCore", "INTERNAL_SYSTEM", "domain", 80),
+        ],
+        text,
+    )
+    assert [e.text for e in result.entities] == ["Rania Fahmy", "FleetCore"]
+
+
 def test_word_boundary_can_be_disabled_by_configuration():
     agg = EntityAggregator(AggregationConfig(require_word_boundary=False, min_person_chars=1))
     result = agg.aggregate([ent(0, 3, detector="domain", priority=80)], TEXT)

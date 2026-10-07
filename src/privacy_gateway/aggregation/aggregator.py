@@ -334,6 +334,20 @@ class EntityAggregator:
                 selected[clash] = winner
             dropped.append(RejectedEntity(loser, "overlap", "resolve"))
 
+        # A winner that displaces an incumbent frees text the incumbent had
+        # claimed, and the candidates the incumbent knocked out are not revisited
+        # above. Re-admit any loser that no longer overlaps a selection, highest
+        # priority first, so no detected span is left protected by nothing.
+        readmitted = True
+        while readmitted:
+            readmitted = False
+            for rejected in sorted(dropped, key=lambda r: (-r.entity.priority, self._sort_key(r.entity))):
+                e = rejected.entity
+                if all(e.end <= c.start or c.end <= e.start for c in selected):
+                    selected.append(e)
+                    dropped.remove(rejected)
+                    readmitted = True
+
         selected.sort(key=lambda e: e.start)
         return selected, dropped
 
