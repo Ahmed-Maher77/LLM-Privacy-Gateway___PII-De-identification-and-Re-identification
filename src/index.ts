@@ -1,7 +1,8 @@
 // CLI entry point => npm run dev <file>
 // Detects and redacts PII in <file>, fully in-process   ==> Requires the NER model: npm run fetch:model
 
-// output contract => REDACTED text goes to reports/<name>__sanitized<ext>
+// output contract => REDACTED text goes to reports/<name>__sanitized<ext>;
+// reports/<name>__report.json lists the detected spans, including their original values
 
 import "dotenv/config"; // first: the NER settings are read from the environment on import
 import fs from "node:fs";

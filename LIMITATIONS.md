@@ -4,7 +4,7 @@ Known drawbacks of the PII redaction pipeline (`src/pii/`), as of 2026-09-30.
 
 ## 1. Accuracy
 
-Measured on 10 hand-labelled files in `test_data/` (2026-09-30), with
+Measured on the 10 files in `test_data/` that have labels in `test_data/labels/` (2026-09-30), with
 the shipped pre-defined list (only `"Acme Corp"`):
 
 |                                           | Found             | Characters leaked | Over-masked characters | Precision                 |
@@ -24,11 +24,11 @@ masked.
   held out and not used for tuning. Real transcripts may do worse. There is no test or
   evaluation tooling in the repository any more, so a change to the rules
   or lists is not measured automatically.
-- **Names the model doesn't know are missed**, unless they are listed: "I am
-  Shankar.", "Angela Osei", "Gerald Locke" (the model labels them as not a
+- **Names the model doesn't know are missed**, unless they are listed: "Angela Osei",
+  "Gerald Locke" (the model labels them as not a
   name at any threshold). The removed name registries used to catch these.
   **The pre-defined list is the fix**: listing a person's full name also
-  covers each part of it ("Shankar Iyer" masks "Shankar" alone).
+  covers each part of it ("Angela Osei" masks "Osei" alone).
 - **Lowercase speech-to-text is still the weak spot.** Names that are also
   common words are missed when the model misses them: "will" and "will
   mensah" in `asr_sample.txt`. Listing "Will Mensah" catches "will mensah"
@@ -106,6 +106,8 @@ pre-defined list still matches.
   configurable); running several instances at once on one machine will slow
   each down.
 - **Whole document in memory**, 2,000,000-character limit, no streaming.
-- **Redaction is one-way.** Originals are not stored or encrypted.
+- **Redaction is one-way.** No placeholder-to-original mapping is kept, but
+  `reports/<name>__report.json` lists each detected original value in plain
+  text, unencrypted: protect or delete it.
 - **CLI only.** A service would still need an HTTP API, PII-free logging and
   metrics.

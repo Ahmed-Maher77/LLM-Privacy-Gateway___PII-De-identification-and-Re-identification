@@ -1,4 +1,4 @@
-// Write the JSON report to a file contains: input and output metadata, performance metrics, and detected PII spans
+// Write reports/<name>__report.json: input and output metadata, performance metrics, and the detected PII spans with their original values
 
 import path from "node:path";
 import { writeReportFile } from "./reportFile";

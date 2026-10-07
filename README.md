@@ -19,7 +19,7 @@ flowchart TD
     Filter --> Combine
     
     Combine --> Repeat["Post-Processing: Every-Occurrence\n(Propagate found names & parts across document)"]
-    Repeat --> Merge["Post-Processing: Boundary Merge\n(Unify overlapping & adjacent spans)"]
+    Repeat --> Merge["Post-Processing: Boundary Merge\n(Unify overlapping spans)"]
     
     Merge --> Placeholder["Placeholder Replacement\n(Assign consistent &lt;PERSON_N&gt;, &lt;ORGANIZATION_N&gt;)"]
     
@@ -76,7 +76,7 @@ Each entry matches **whole** and **in part**:
   explicitly.
 
 This is the most reliable way to cover names you know in advance (customers,
-staff): the model misses some names ("I am Shankar."), especially in
+staff): the model misses some names ("Angela Osei", "Gerald Locke"), especially in
 lowercase speech-to-text. **Companies are masked only from this list**:
 automatic company detection mostly flagged products, acronyms and headings.
 
@@ -126,14 +126,16 @@ npm run dev <file>             # writes reports/<name>__sanitized<ext> and repor
 npm run typecheck              # verify TypeScript types
 ```
 
-After the fetch, runs need no network. The CLI writes only the **redacted**
-text and never prints original values. Exit codes:
+After the fetch, runs need no network. The CLI writes the **redacted**
+text to `reports/<name>__sanitized<ext>` and never prints original values, but
+`reports/<name>__report.json` lists every detected value in plain text: treat
+it as sensitive (`reports/` is git-ignored). Exit codes:
 
 | Code | Meaning |
 | --- | --- |
 | 0 | done |
-| 1 | no input file, file not found, or input over 2,000,000 characters; also an invalid `NER_*` value in `.env` (rejected at start-up with its message) |
-| 2 | the NER model is missing or won't load (run `npm run fetch:model`), or a list file is missing or malformed |
+| 1 | no input file, file not found, or input over 2,000,000 characters; also an invalid `NER_MIN_SCORE`, `NER_WINDOW_TOKENS` or `NER_OVERLAP_TOKENS` value in `.env` (rejected at start-up with its message) |
+| 2 | the NER model is missing, unknown (`NER_MODEL`) or won't load (run `npm run fetch:model`), or a list file is missing or malformed |
 | 3 | unexpected error |
 
 On any error nothing is written.
@@ -170,9 +172,10 @@ first call and is reused, so later calls in the same process are much faster.
 
 ## Measured numbers (2026-09-30)
 
-On 10 hand-labelled synthetic transcripts (`test_data/`), with the
-shipped list (only `"Acme Corp"`), against the previous 4-layer pipeline
-(pre-defined list, name registries, regex, NER, wink-nlp) scored on names and
+On the 10 hand-labelled synthetic transcripts in `test_data/` (labels in
+`test_data/labels/`), with the shipped list (only `"Acme Corp"`), against the
+earlier 4-layer version of this pipeline (pre-defined list, name registries,
+regex, NER, wink-nlp; published alongside it as `implementation_4`) scored on names and
 companies only:
 
 |                                                  | This pipeline     | Previous pipeline |
@@ -184,9 +187,9 @@ companies only:
 | Names found, normally cased files                | 98.9%             | 99.7%             |
 | Name characters leaked, lowercase speech-to-text | 2.8%              | 4.3%              |
 
-The 3 names found before and missed now ("Angela Osei", "Gerald Locke",
-"Shankar") were found only by the name registries, which are gone; the model
-labels them as not a name at any threshold. Listing those three plus "Will
+The names found before and missed now (including "Angela Osei" and "Gerald
+Locke") were found only by the name registries, which are gone; the model
+labels them as not a name at any threshold. Listing those names plus "Will
 Mensah" in the pre-defined list gives 99.5% found, 0.2% leaked, 96.8%
 precision: that is the intended way to close the gap. The
 set is small and synthetic; see [LIMITATIONS.md](LIMITATIONS.md).

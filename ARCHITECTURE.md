@@ -4,7 +4,8 @@ English-only name and company redaction for support transcripts. Two
 independent detection layers find values; an every-occurrence step and one
 merge step combine them; every value is replaced with a numbered placeholder.
 Everything runs in-process: no Docker, no service, no network at run time.
-Nothing is stored: redaction is one-way.
+Redaction is one-way: no placeholder-to-original mapping is kept, but the JSON
+report (`reports/<name>__report.json`) lists each detected value in plain text.
 
 ```text
 file ─▶ src/index.ts ─▶ redact() ─▶ detect()
@@ -13,7 +14,7 @@ file ─▶ src/index.ts ─▶ redact() ─▶ detect()
                                       ├─ drop undesired model findings (layers/predefined.ts)
                                       ├─ every occurrence of a found value   post_processing/everyOccurrence.ts
                                       └─ merge overlaps                      post_processing/mergeSpans.ts
-                         ─▶ Placeholders (placeholders.ts) ─▶ reports/<name>__sanitized<ext>
+                         ─▶ Placeholders (placeholders.ts) ─▶ reports/<name>__sanitized<ext> and reports/<name>__report.json
 ```
 
 Source layout: `src/pii/` is the pipeline, `src/utils/` its helpers.
@@ -30,7 +31,7 @@ src/
 │  ├─ generate_reports/          the sanitized text and the JSON report
 │  └─ types.ts
 └─ utils/
-   ├─ envGetter.ts               typed .env reads
+   ├─ envGetter.ts               typed .env reads (NER_MODEL is read in ner_models.ts)
    ├─ ner_utils/                 model loading, pieces, windows, labels (ner_helpers.ts);
    │                             pinned models (ner_models.ts); the common-word list (vocabulary.ts)
    └─ predefinedLists_utils/     list loading (loadLists.ts), list rules (predefined_helpers.ts),
