@@ -18,7 +18,7 @@ def _card_span(text: str):
         (s for s in detect_patterns(text) if s.label == "CREDIT_CARD"),
         None,
     )
-from pii.vault import PseudonymVault, link_person_identities, restore
+from pii.vault import PseudonymVault, restore
 
 TRANSCRIPT = """Ahmed Farid   0:31
 Content Creation is fine.
@@ -216,23 +216,6 @@ class TestVault:
             Span(10, 21, "PERSON", "Ahmed Farid", identity=identity)
         )
         assert vault.mapping[placeholder] == "Ahmed Farid"
-
-    def test_unambiguous_surname_links_to_full_name(self):
-        spans = [
-            Span(0, 11, "PERSON", "Ahmed Farid", source="model"),
-            Span(20, 25, "PERSON", "Farid", source="model"),
-        ]
-        assert len({span.identity for span in link_person_identities(spans)}) == 1
-
-    def test_ambiguous_first_name_stays_separate(self):
-        """'Ahmed' belongs to three people, so it must not merge into one."""
-        spans = [
-            Span(0, 11, "PERSON", "Ahmed Farid", source="model"),
-            Span(20, 31, "PERSON", "Ahmed Maher", source="model"),
-            Span(40, 45, "PERSON", "Ahmed", source="model"),
-        ]
-        identities = {span.identity for span in link_person_identities(spans)}
-        assert len(identities) == 3
 
 
 class TestRestore:

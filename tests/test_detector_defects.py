@@ -12,7 +12,6 @@ from __future__ import annotations
 import pytest
 
 from pii import LeakDetected, PIIMiddleware, Span
-from pii.entities import EntityIndex
 from pii.middleware import assign_identities
 from pii.patterns import detect_patterns
 from pii.policy import resolve_types

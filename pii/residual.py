@@ -54,10 +54,6 @@ class Finding:
     def preview(self) -> str:
         return mask(self.text)
 
-    @property
-    def digest(self) -> str:
-        return digest(self.text)
-
 
 def mask(value: str) -> str:
     """Mask a value for display.

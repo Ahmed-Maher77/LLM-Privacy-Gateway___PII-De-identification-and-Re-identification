@@ -76,7 +76,6 @@ BASELINE_PATH = FIXTURE_DIR / "baseline.json"
 DEFAULT_SANITIZED_DIR = PROJECT_ROOT / "reports" / "sanitized"
 DEFAULT_REPORT_MD = PROJECT_ROOT / "reports" / "evaluation_report.md"
 DEFAULT_REPORT_JSON = PROJECT_ROOT / "reports" / "evaluation.json"
-PLACEHOLDER_RE = re.compile(r"\{\{([A-Z][A-Z0-9_]*_\d+)\}\}")
 
 # What a regression is. Pinning every number at 1.0, as the previous baseline
 # did, detects any drop but conveys no headroom and cannot distinguish a

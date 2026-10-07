@@ -12,14 +12,6 @@ from .spans import Span
 # rendering, unlike ``<PER_1>`` which chat models happily eat as an HTML tag.
 PLACEHOLDER_RE = re.compile(r"\{\{\s*(?P<label>[A-Z][A-Z0-9_]*?)_(?P<index>\d+)\s*\}\}")
 
-# Kept for callers that imported it. Restoration no longer uses it: matching
-# "any uppercase token plus digits in almost any bracket" also matches XML
-# (<SECTION_1>), config templates (${DB_1}) and form scaffolds ([SSN_1]) that
-# a model may legitimately emit. See restore_pattern().
-LOOSE_PLACEHOLDER_RE = re.compile(
-    r"(?:\{\{|\[\[|\{|\[|<)\s*(?P<label>[A-Z][A-Z0-9_]*?)[_\s](?P<index>\d+)\s*(?:\}\}|\]\]|\}|\]|>)"
-)
-
 # What we hunt for in the INPUT. Deliberately wider than what we restore:
 # for a defence you want maximum recall, so this also covers ${...} and %{...}
 # and lowercase labels.
@@ -31,9 +23,8 @@ INPUT_TEMPLATE_RE = re.compile(
 
 ESCAPE_LABEL = "PLACEHOLDER_LITERAL"
 
-# Lowercase and parenthesised on purpose. Neither PLACEHOLDER_RE nor
-# LOOSE_PLACEHOLDER_RE can match this shape, because both require an uppercase
-# run immediately before the index -- so even if a model re-brackets it as
+# Lowercase and parenthesised on purpose. PLACEHOLDER_RE cannot match this
+# shape, because it requires an uppercase run immediately before the index -- so even if a model re-brackets it as
 # {{redacted-template-token-3}} it still cannot be restored into a real name.
 ESCAPE_TEMPLATE = "(literal-template-{index})"
 
@@ -141,63 +132,8 @@ class PseudonymVault:
             self.escapes[sentinel] = literal
         return sentinel
 
-    def surface_forms(self, placeholder: str) -> set[str]:
-        return self._surface_forms.get(placeholder, set())
-
     def all_surface_forms(self) -> dict[str, set[str]]:
         return dict(self._surface_forms)
-
-
-def link_person_identities(spans: list[Span]) -> list[Span]:
-    """Fold partial person names onto the full name when it is unambiguous.
-
-    "Farid" becomes the same entity as "Ahmed Farid" -- but "Ahmed" stays
-    separate, because Farid, Maher and Hamed all share it and guessing would
-    merge three different people into one.
-    """
-    full_names: dict[str, list[str]] = {}
-    for span in spans:
-        if span.label != "PERSON" or span.identity:
-            continue
-        tokens = _normalize(span.text).split()
-        if len(tokens) > 1:
-            full_names.setdefault(" ".join(tokens), []).extend(tokens)
-
-    # token -> the full names containing it; only a unique owner may claim it.
-    owners: dict[str, set[str]] = {}
-    for full_name, tokens in full_names.items():
-        for token in tokens:
-            owners.setdefault(token, set()).add(full_name)
-
-    linked: list[Span] = []
-    for span in spans:
-        if span.label != "PERSON" or span.identity:
-            linked.append(span)
-            continue
-
-        key = _normalize(span.text)
-        tokens = key.split()
-        target = key
-        if key in full_names:
-            target = key
-        elif len(tokens) == 1:
-            candidates = owners.get(key, set())
-            if len(candidates) == 1:
-                target = next(iter(candidates))
-
-        linked.append(
-            Span(
-                start=span.start,
-                end=span.end,
-                label=span.label,
-                text=span.text,
-                score=span.score,
-                source=span.source,
-                identity=f"PERSON:{target}",
-            )
-        )
-
-    return linked
 
 
 def restore_pattern(mapping: Mapping[str, str]) -> re.Pattern[str]:

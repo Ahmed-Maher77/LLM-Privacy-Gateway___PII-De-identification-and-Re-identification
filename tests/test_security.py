@@ -14,7 +14,6 @@ import pytest
 
 from pii import PIIMiddleware, detect_patterns, scan_residual
 from pii.custom_patterns import PatternConfigError, _load_cached, build_rules, load_config
-from pii.errors import LeakDetected, PlaceholderInjection
 from pii.middleware import _reconcile_names, audit
 from pii.policy import (
     DEFAULT_ALLOWLIST,

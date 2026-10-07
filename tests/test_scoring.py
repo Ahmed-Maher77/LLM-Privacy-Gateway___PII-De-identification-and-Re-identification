@@ -14,7 +14,6 @@ from pii.spans import Span
 from pii.vault import ESCAPE_LABEL
 from tools.scoring import (
     WILDCARD_LABEL,
-    Alignment,
     Counts,
     GoldSpan,
     PredSpan,

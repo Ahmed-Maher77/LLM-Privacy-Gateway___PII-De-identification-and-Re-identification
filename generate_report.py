@@ -23,7 +23,6 @@ from pii.reporting import (
     summarize_findings,
     summarize_leaks,
     summarize_mapping,
-    write_json,
     write_text,
 )
 from pii.residual import explain, severity_counts
@@ -161,7 +160,7 @@ def generate_report(
         # for the leak it is reporting.
         report["sanitized_input_withheld"] = f"verification status={analysis.status}"
 
-    write_json(
+    write_text(
         report_path,
         json.dumps(report, indent=2, ensure_ascii=True),
         contains_secrets=include_secrets,

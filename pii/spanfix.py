@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import re
 
-from .context import NON_NAME_POS, DocumentContext
+from .context import DocumentContext
 from .policy import is_name_initial
 from .spans import Span
 
@@ -355,8 +355,6 @@ def _is_name_like(
         return False
 
     tokens = surface.split()
-    if not tokens:
-        return False
 
     if not forced:
         # "ICH E6", "SOC 2", "BX-4471": every token is an acronym or a code, so
@@ -403,14 +401,4 @@ def _is_name_like(
         return False
 
     # The tagger sees no proper noun anywhere in the span.
-    verdict = context.looks_like_name(start, end)
-    if verdict is False:
-        return False
-
-    if context.has_pos:
-        tags = [context.pos_at(offset) for offset in range(start, end)]
-        meaningful = [tag for tag in tags if tag]
-        if meaningful and all(tag in NON_NAME_POS for tag in meaningful):
-            return False
-
-    return True
+    return context.looks_like_name(start, end) is not False

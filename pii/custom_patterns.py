@@ -67,10 +67,6 @@ class CustomPatternConfig:
     replace_builtins: bool = False
     source: Path | None = None
 
-    @property
-    def labels(self) -> frozenset[str]:
-        return frozenset(rule.label for rule in self.rules)
-
 
 EMPTY_CONFIG = CustomPatternConfig()
 

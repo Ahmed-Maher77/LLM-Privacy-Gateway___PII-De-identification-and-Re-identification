@@ -242,13 +242,6 @@ class EntityIndex:
 
     # -- queries -----------------------------------------------------------
 
-    def entity(self, key: str) -> Entity | None:
-        return self._entities.get(key)
-
-    def aliases_of(self, key: str) -> set[str]:
-        entity = self._entities.get(key)
-        return set(entity.surfaces) if entity else set()
-
     def __len__(self) -> int:
         return len(self._entities)
 

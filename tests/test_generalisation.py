@@ -17,8 +17,8 @@ import pytest
 from pii import PIIMiddleware
 from pii.context import DocumentContext
 from pii.middleware import _mark_eponymous, audit
-from pii.patterns import DATE_PATTERN, detect_patterns
-from pii.spanfix import _is_acronym_or_code, normalize_span, normalize_spans
+from pii.patterns import detect_patterns
+from pii.spanfix import _is_acronym_or_code, normalize_span
 from pii.spans import Span
 from pii.vault import _canonical_rank
 

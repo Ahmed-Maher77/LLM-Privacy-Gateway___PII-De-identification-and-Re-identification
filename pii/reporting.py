@@ -143,8 +143,3 @@ def write_text(path: Path, payload: str, *, contains_secrets: bool) -> None:
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
         handle.write(payload)
-
-
-def write_json(path: Path, payload: str, *, contains_secrets: bool) -> None:
-    """Backwards-compatible alias for :func:`write_text`."""
-    write_text(path, payload, contains_secrets=contains_secrets)

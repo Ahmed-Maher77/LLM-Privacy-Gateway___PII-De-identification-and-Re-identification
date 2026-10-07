@@ -100,9 +100,6 @@ def _mean(values: list[int]) -> float:
     return sum(values) / len(values) if values else 0.0
 
 
-NON_NAME_POS = frozenset({"NOUN", "NUM", "ADJ", "VERB", "ADV", "ADP", "DET", "PRON", "AUX"})
-
-
 _ID_TOKEN_RE = re.compile(
     r"(?<![\w-])[A-Za-z0-9]{2,}(?:[-_/][A-Za-z0-9]+)+(?![\w-])"
 )

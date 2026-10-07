@@ -342,23 +342,6 @@ class PIIMiddleware:
             )
         return status
 
-    def describe_policy(self) -> dict:
-        """A report-friendly summary of the active policy configuration.
-
-        Exposes:
-        - Profile and redacted types.
-        - Explicit entity overrides with overlay semantics.
-        - Fixed names masked unconditionally.
-        - Deliberately unredacted and mandatory security types.
-        """
-        policy = describe_policy(
-            profile=self.profile,
-            entities=self.entities,
-            custom_labels=self._custom_labels,
-        )
-        policy["fixed_names"] = list(self.fixed_names)
-        return policy
-
     @classmethod
     def for_production(
         cls,
