@@ -1,0 +1,24 @@
+[submodule "implementation_1"]
+	path = implementation_1
+	url = ./
+	branch = implementation_1
+[submodule "implementation_2"]
+	path = implementation_2
+	url = ./
+	branch = implementation_2
+[submodule "implementation_3"]
+	path = implementation_3
+	url = ./
+	branch = implementation_3
+[submodule "implementation_4"]
+	path = implementation_4
+	url = ./
+	branch = implementation_4
+[submodule "implementation_5"]
+	path = implementation_5
+	url = ./
+	branch = implementation_5
+[submodule "implementation_6"]
+	path = implementation_6
+	url = ./
+	branch = implementation_6
