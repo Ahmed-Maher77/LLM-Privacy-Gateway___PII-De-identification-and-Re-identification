@@ -1,7 +1,7 @@
 {
   "must_redact": [
     "Samantha Reynolds",
-    "samantha.reynolds88@gmail.com",
+    "samantha.reynolds88@mail.test",
     "+1-541-555-0199",
     "Liam Gallagher",
     "742 Evergreen Terrace, Springfield, OR 97477",
@@ -40,7 +40,7 @@
       "start": 118,
       "end": 147,
       "label": "EMAIL",
-      "text": "samantha.reynolds88@gmail.com",
+      "text": "samantha.reynolds88@mail.test",
       "entity": "",
       "origin": "derived"
     },

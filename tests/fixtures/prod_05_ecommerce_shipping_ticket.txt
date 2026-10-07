@@ -1,7 +1,7 @@
 SUPPORT TICKET: HD-2026-449102
 Status: Open | Priority: High | Channel: Web Portal
 Customer: Samantha Reynolds
-Email: samantha.reynolds88@gmail.com
+Email: samantha.reynolds88@mail.test
 Phone: +1-541-555-0199
 Assigned Agent: Liam Gallagher (Tier 2 Support)
 

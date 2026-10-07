@@ -5,7 +5,7 @@
     "POL-881920",
     "124 North Oak Street, Denver, CO 80202",
     "+1-303-555-0184",
-    "natalie.brooks@outlook.com",
+    "natalie.brooks@example.com",
     "Natalie"
   ],
   "must_keep": [
@@ -126,7 +126,7 @@
       "start": 654,
       "end": 680,
       "label": "EMAIL",
-      "text": "natalie.brooks@outlook.com",
+      "text": "natalie.brooks@example.com",
       "entity": "",
       "origin": "derived"
     },

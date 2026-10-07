@@ -414,7 +414,7 @@ class TestCredentialsAndInternational:
 
     @pytest.mark.parametrize(
         "address",
-        ["user@example.com", "s.rodriguez85@protonmail.com",
+        ["user@example.com", "s.rodriguez85@secure.example",
          "sophia.rodriguez@aegis-health.eu", "a.b@sub.domain.co.uk"],
     )
     def test_real_emails_still_match(self, address):

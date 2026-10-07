@@ -7,7 +7,7 @@ Attendees: Sarah Jenkins (Engineering Manager), Michael Chang (Lead Security Eng
 
 Sarah Jenkins: Alright everyone, thanks for hopping on the Teams call. Let's keep this quick. David, we need to finalize the onboarding setup for our new senior developer joining next Monday.
 
-David Miller: Sounds good, Sarah. I just received his verification forms. His full legal name is Marcus Aurelius Vance, born on November 14, 1988. His primary contact address is 742 Evergreen Terrace, Springfield, OR 97477, and you can reach him directly at +1 (555) 019-2834 or via email at marcus.vance.88@gmail.com.
+David Miller: Sounds good, Sarah. I just received his verification forms. His full legal name is Marcus Aurelius Vance, born on November 14, 1988. His primary contact address is 742 Evergreen Terrace, Springfield, OR 97477, and you can reach him directly at +1 (555) 019-2834 or via email at marcus.vance.88@mail.test.
 
 Michael Chang: Thanks, David. I’ll need his Social Security Number and Government ID details to complete his background clearance in the portal. Do you have those on hand?
 

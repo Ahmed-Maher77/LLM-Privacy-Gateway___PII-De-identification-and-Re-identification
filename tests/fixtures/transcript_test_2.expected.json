@@ -7,7 +7,7 @@
     "+44 20 7946 0912",
     "+49 30 1234567",
     "sophia.rodriguez@aegis-health.eu",
-    "s.rodriguez85@protonmail.com",
+    "s.rodriguez85@secure.example",
     "10 Downing Street",
     "SW1A 2AA",
     "PAG98230149",
@@ -130,7 +130,7 @@
       "start": 958,
       "end": 986,
       "label": "EMAIL",
-      "text": "s.rodriguez85@protonmail.com",
+      "text": "s.rodriguez85@secure.example",
       "entity": "",
       "origin": "derived"
     },

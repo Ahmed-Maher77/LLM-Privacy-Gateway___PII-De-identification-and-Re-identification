@@ -7,7 +7,7 @@
     "742 Evergreen Terrace",
     "97477",
     "+1 (555) 019-2834",
-    "marcus.vance.88@gmail.com",
+    "marcus.vance.88@mail.test",
     "987-65-4321",
     "DL-8829401-X",
     "122000049",
@@ -127,7 +127,7 @@
       "start": 724,
       "end": 749,
       "label": "EMAIL",
-      "text": "marcus.vance.88@gmail.com",
+      "text": "marcus.vance.88@mail.test",
       "entity": "",
       "origin": "derived"
     },
