@@ -167,3 +167,8 @@ production machine. These figures were measured with other apps using ~30% of
 the CPU, and the model's threads compete with them: large files vary most
 (229 KB warm ranged 6.1–11.8 s, and took 5.2 s in quieter tuning runs).
 `npm run dev` adds about 1.7 s of `npm` and `tsx` start-up on top of *cold*.
+
+## License
+
+Code: MIT — see [LICENSE](LICENSE). The name and place lists in `data/lists/`
+keep their source licenses (Wikidata CC0, GeoNames CC BY 4.0; see above).

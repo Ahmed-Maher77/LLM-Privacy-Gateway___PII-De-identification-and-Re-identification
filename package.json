@@ -2,7 +2,7 @@
   "name": "multilayer-pii-redaction",
   "version": "1.0.0",
   "description": "In-process multi-layer PII detection and redaction pipeline using Transformers.js, wink-nlp, regex, and name registries",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "scripts": {
     "dev": "tsx src/index.ts",
