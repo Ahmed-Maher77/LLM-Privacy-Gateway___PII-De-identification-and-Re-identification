@@ -1,6 +1,6 @@
 # Limitations
 
-Known drawbacks of the PII redaction pipeline (`src/pii/`), as of 2026-09-30.
+Known drawbacks of the PII redaction pipeline (`src/pii/`), as of 2026-10-07.
 
 ## 1. Accuracy
 
@@ -18,9 +18,9 @@ Measured with `npm run eval` on the 10 labelled files in `test_data/`:
 and spoken forms, Arabic script and checksum-failing numbers are labelled but
 counted apart ("hard"): none of the 16 is masked.
 
-- **The labelled set is small:** 11 synthetic transcripts, 4 of them
+- **The labelled set is small:** 10 synthetic transcripts, 4 of them
   lowercase speech-to-text. The threshold and filters were tuned on the
-  first 8; the 3 newer lowercase files (`asr_bank`, `asr_telecom`,
+  other 7; the 3 newer lowercase files (`asr_bank`, `asr_telecom`,
   `asr_clinic`) were not used for tuning. Real transcripts may do worse. Add anonymised real transcripts with labels
   to `test_data/` to measure them.
 - **Lowercase speech-to-text is still the weak spot.** Names that are also
@@ -80,7 +80,7 @@ wink-nlp recognises); times of day, durations and weekdays are not masked.
 | Card needs a valid Luhn checksum | A mistyped card number is missed |
 | IBAN needs a valid mod-97 checksum | A mistyped IBAN is missed |
 | International phones checked by `libphonenumber-js` | A number that isn't valid for its country code is missed |
-| Model names scored below 0.5 dropped | Weak but correct names are lost (0.1–0.6 scored the same on the test set; 0.7 lost a name) |
+| Model names scored below 0.5 dropped | Weak but correct names are lost (0.1–0.5 scored the same on the test set, 0.6 dropped one more false positive; 0.7 lost a name) |
 | Placeholder numbers | Matching numbers reveal that the same value appeared twice |
 
 ## 4. Languages
@@ -96,7 +96,7 @@ match.
 - **The model must be fetched once** (`npm run fetch:model`, 29 MB, needs
   internet). If it is missing or doesn't load, the CLI exits with code 2 and
   writes nothing.
-- **Latency and memory** (8-core laptop, median of 5; `npm run bench`
+- **Latency and memory** (8-core laptop, median of 5, measured 2026-09-30; `npm run bench`
   re-measures on any machine): *cold* is one CLI run including loading the
   lists and the model, *warm* a later call in the same process. Memory is the
   model, the name lists and Node.js.
@@ -117,7 +117,9 @@ match.
 - **The lists are a snapshot** of Wikidata and GeoNames on the build date;
   rerun `npm run build:lists` to refresh.
 - **Whole document in memory**, 2,000,000-character limit, no streaming.
-- **Redaction is one-way.** Originals are not stored or encrypted.
+- **Redaction is one-way.** No placeholder-to-value mapping is kept, but the
+  CLI's `reports/<name>__report.json` lists every detected value in plain text
+  (not encrypted): treat `reports/` as sensitive.
 - **CLI only.** A service would still need an HTTP API, PII-free logging and
   metrics.
 

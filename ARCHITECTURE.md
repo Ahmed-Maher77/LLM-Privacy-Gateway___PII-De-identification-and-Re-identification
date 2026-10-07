@@ -3,18 +3,19 @@
 English-only PII redaction for support transcripts. Four independent
 detection layers find values; one merge step combines them; every value is
 replaced with a numbered placeholder. Everything runs in-process: no Docker,
-no service, no network at run time. Nothing is stored: redaction is one-way.
+no service, no network at run time. Redaction is one-way: no mapping back is
+kept (the CLI's JSON report does list each detected value, see LIMITATIONS.md).
 
 ```text
 file ─▶ src/index.ts ─▶ redact() ─▶ detect()
                                       ├─ 1. pre-defined list   layers/predefined.ts
-                                      │     name/org lists     layers/dictionary.ts  (data/lists/)
+                                      │     name lists         layers/dictionary.ts  (data/lists/)
                                       ├─ 2. regex              layers/regex.ts
                                       ├─ 3. NER model          layers/ner.ts ──▶ models/<model>/ (local ONNX)
                                       ├─ 4. wink-nlp           layers/wink.ts
                                       ├─ every occurrence of a found value
                                       └─ merge overlaps
-                         ─▶ Placeholders (policy.ts) ─▶ reports/<name>__sanitized.txt
+                         ─▶ Placeholders (policy.ts) ─▶ reports/<name>__sanitized<ext> + reports/<name>__report.json
 ```
 
 The NER layer replaced a Presidio (spaCy) sidecar on 2026-09-30; the old

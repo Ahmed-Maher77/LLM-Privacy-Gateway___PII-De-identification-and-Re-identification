@@ -1,5 +1,5 @@
-// Layer 1 — pre-defined list contains (known customer/employee names, account emails, ...)
-      // whether that is a full name or a partial name
+// Layer 1 — pre-defined list: values always masked (known customer/employee names, account emails, ...),
+// whether that is a full name or a partial name
 
 
 import fs from "node:fs";

@@ -14,10 +14,10 @@
   ],
   "EMAIL_ADDRESS": [
     "jean.picard+novapay@example.com",
-    "jl.picard@enterprise.fr",
-    "support@novapay.io",
+    "jl.picard@example.org",
+    "support@example.com",
     "yvette.p@example.com",
-    "b.crusher@starfleet-med.org",
+    "b.crusher@example.org",
     "priya.raman@example.com"
   ],
   "PHONE_NUMBER": ["+33 6 12 34 56 78", "+1 (415) 555-0198", "+1-202-555-0147"],

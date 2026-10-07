@@ -1,5 +1,5 @@
 // Layer 3 — NER model (Transformers.js, local ONNX in models/)
-  // the main source of PERSON. The model never gives offsets: the text is
+// the main source of PERSON. The model never gives offsets: the text is
   // split into pieces by regex, the model labels pieces, and a span's offsets
   // are its pieces' offsets. Design and choices: ARCHITECTURE.md
 

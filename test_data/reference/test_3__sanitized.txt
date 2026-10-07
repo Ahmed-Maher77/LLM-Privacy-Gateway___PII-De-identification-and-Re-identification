@@ -1,5 +1,3 @@
-another totally different transcript with different content
-
 Meeting Details
 
 Title: E-Commerce Platform — Cart Service Refactoring & Performance Bottleneck Investigation

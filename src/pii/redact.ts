@@ -3,7 +3,7 @@
 // Four independent layers each return spans with offsets into the original
 // text:
 //   1. pre-defined lists  layers/predefined.ts   values you always want masked
-//                         layers/dictionary.ts   name / organisation registries (data/lists/)
+//                         layers/dictionary.ts   name registries (data/lists/)
 //   2. regex              layers/regex.ts        fixed formats, checksums
 //   3. NER model          layers/ner.ts          names (local ONNX model, Transformers.js)
 //   4. wink-nlp           layers/wink.ts         emails, natural-language dates

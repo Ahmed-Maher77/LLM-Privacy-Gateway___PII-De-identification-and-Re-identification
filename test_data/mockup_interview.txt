@@ -16,14 +16,14 @@ Agent: Thanks, Mr. Picard. Can you confirm your DOB?
 Customer: 29 Feb 1964 (yes, leap year 😅)
 
 Agent: And the email on file?
-Customer: try jean.picard+novapay@example.com — my old one was jl.picard@enterprise.fr
+Customer: try jean.picard+novapay@example.com — my old one was jl.picard@example.org
 
 Agent: Got it. What's your phone?
 Customer: +33 6 12 34 56 78 (France) or +1 (415) 555-0198 (US backup)
 
 🟨 EMAIL THREAD — Re: Account Recovery
 From: jean.picard+novapay@example.com
-To: support@novapay.io
+To: support@example.com
 Subject: Re: [Ticket #48213] — URGENT
 
 Hi team,
@@ -68,7 +68,7 @@ cookies:        _ga=GA1.2.998877665.1699999999
 🟪 AGENT NOTES (free text)
 Spoke with customer again. He mentioned his crypto wallet address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Also his Twitter handle @captain_picard and GitHub github.com/jlpicard-enterprise.
 
-His emergency contact: Dr. Beverly Crusher, phone +1-202-555-0147, email b.crusher@starfleet-med.org.
+His emergency contact: Dr. Beverly Crusher, phone +1-202-555-0147, email b.crusher@example.org.
 
 Note: Customer is an EU resident — GDPR applies. Verify before sharing with US team.
 

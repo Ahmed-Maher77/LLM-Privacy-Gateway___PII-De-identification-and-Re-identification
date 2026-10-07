@@ -39,7 +39,7 @@ Values you always want masked, whatever the detectors think, go in
 {
   "PERSON": ["Sarah Johnson", "Kofi Mensah"],
   "ORGANIZATION": ["Acme Corp", "Example Ltd"],
-  "EMAIL_ADDRESS": ["ops@acme.com"]
+  "EMAIL_ADDRESS": ["ops@example.com"]
 }
 ```
 
@@ -53,7 +53,7 @@ mostly flagged products, acronyms and headings, so it is not used: a company
 is masked if and only if it is listed here. Add your clients, partners and
 your own company. An entry with a legal suffix also covers the short name:
 `"Acme Corp"` masks "Acme" and "ACME" too. The short name
-matches only capitalised or in capitals; list other short forms or abbreviations explicitly.
+matches only as written in the list or in capitals; list other short forms or abbreviations explicitly.
 
 ## Name lists
 
@@ -85,11 +85,13 @@ PERSON labels are used. The model is **not** part of this repository:
 ```bash
 npm install
 npm run fetch:model            # once: the pinned NER model into models/ (needs internet)
-npm run dev -- <file>          # writes reports/<name>__sanitized<ext>
+npm run dev -- <file>          # writes reports/<name>__sanitized<ext> and reports/<name>__report.json
 ```
 
-After the fetch, runs need no network. The CLI writes only the **redacted**
-text and never prints original values. Exit codes: 1 bad input, 2 NER model
+After the fetch, runs need no network. The CLI never prints original values.
+It writes the **redacted** text, plus `reports/<name>__report.json` with
+timings, counts and every detected span **including its original value**, for
+review: keep `reports/` (git-ignored) as private as the input. Exit codes: 1 bad input, 2 NER model
 missing or failed to load (run `npm run fetch:model`), 3 unexpected error. On
 any error nothing is written.
 
@@ -149,7 +151,7 @@ found, 2.8% of name characters leaked, 100% name precision. Every type other
 than PERSON is at 100% found and 100% precision. The set is small and
 synthetic; see [LIMITATIONS.md](LIMITATIONS.md).
 
-Speed on an 8-core laptop (median of 5; *cold* = the first call in a new
+Speed on an 8-core laptop, measured 2026-09-30 (median of 5; *cold* = the first call in a new
 process, as in one CLI run, including loading the lists and the model; *warm*
 = a later call in the same process, as in library use):
 

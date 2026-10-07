@@ -1,5 +1,5 @@
 // Layer 4 — wink-nlp
-  // a second opinion on emails and dates (natural-language dates such as "the 5th of April, 2026")
+// a second opinion on emails and dates (natural-language dates such as "the 5th of April, 2026")
 
 
 import winkNLP, { type ItemEntity } from "wink-nlp";
