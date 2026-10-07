@@ -3,13 +3,10 @@ node_modules/
 
 # Temp files
 *.tmp
-.msg.txt
-.git_commit_msg.txt
 
 # Environment configuration — never commit real secrets
 .env
 .env.*
-!.env.example
 
 # TypeScript build output
 dist/
@@ -35,7 +32,6 @@ Thumbs.db
 
 # Local/confidential test transcripts — real internal meeting recordings
 test_data/test_*.txt
-!test_data/test_result.txt
 
 # Duplicate backup files
 test_data/*copy*.txt

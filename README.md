@@ -84,7 +84,6 @@ The detection engine supports configurable entity filtering via `PIIMaskConfig`:
 │   └── pii-masker.test.ts            # Unit test suite (Node test runner via tsx)
 ├── test_data/
 │   └── mockup_interview.txt          # Synthetic multi-format test transcript
-├── .env.example                      # Template environment variables
 ├── .gitattributes                    # Cross-platform line ending normalization
 ├── .gitignore                        # Comprehensive ignore rules
 ├── package.json                      # Scripts and dependencies
@@ -136,14 +135,6 @@ console.log(sanitized);
 
 ```bash
 npm install
-```
-
-### Configuration
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env
 ```
 
 ### Running the Pipeline
