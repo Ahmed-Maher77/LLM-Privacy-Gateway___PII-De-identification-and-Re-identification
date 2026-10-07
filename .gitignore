@@ -30,7 +30,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local/confidential test transcripts — real internal meeting recordings
+# Local-only test transcripts (kept out of the repository)
 test_data/test_*.txt
 
 # Duplicate backup files

@@ -1,4 +1,4 @@
-import winkNLP from "wink-nlp";
+import winkNLP, { type ItemEntity, type ItemToken } from "wink-nlp";
 import model from "wink-eng-lite-web-model";
 import type { PIIMaskConfig, PIIMatch, PIIType } from "./types";
 
@@ -37,7 +37,7 @@ export function detectPII(
   // Compute exact character start and end offsets for all tokens in a single O(N) pass
   let pos = 0;
   const tokenOffsets: { start: number; end: number }[] = [];
-  doc.tokens().each((token: any) => {
+  doc.tokens().each((token: ItemToken) => {
     const spaces = token.out(its.precedingSpaces) as string;
     const val = token.out(its.value) as string;
     const start = pos + spaces.length;
@@ -48,19 +48,16 @@ export function detectPII(
 
   const matches: PIIMatch[] = [];
 
-  doc.entities().each((entity: any) => {
+  doc.entities().each((entity: ItemEntity) => {
+    // The model also emits types outside PIIType (e.g. CARDINAL, DURATION);
+    // they have no key in finalConfig, so the check below skips them.
     const type = entity.out(its.type) as PIIType;
 
     if (!finalConfig[type]) {
       return;
     }
 
-    const span = entity.out(its.span) as [number, number];
-    if (!span || span.length !== 2) {
-      return;
-    }
-
-    const [startTok, endTok] = span;
+    const [startTok, endTok] = entity.out(its.span) as [number, number];
     const startOffset = tokenOffsets[startTok];
     const endOffset = tokenOffsets[endTok];
 

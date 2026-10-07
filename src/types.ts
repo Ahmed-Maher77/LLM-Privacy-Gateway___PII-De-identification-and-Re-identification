@@ -19,19 +19,7 @@ export interface PIIMatch {
     source?: string;
 }
 
-export interface PIIMaskConfig {
-    EMAIL?: boolean;
-    URL?: boolean;
-    DATE?: boolean;
-    MONEY?: boolean;
-    TIME?: boolean;
-    PHONE?: boolean;
-    IP_ADDRESS?: boolean;
-    PERSON?: boolean;
-    LOCATION?: boolean;
-    ORGANIZATION?: boolean;
-    MENTION?: boolean;
-}
+export type PIIMaskConfig = Partial<Record<PIIType, boolean>>;
 
 export interface JsonReportInput {
     inputPath: string;

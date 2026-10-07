@@ -22,7 +22,7 @@ flowchart TD
 
     subgraph S3["3. Masking Layer"]
         D["Span Ordering & Overlap Resolution"]
-        E["Categorical Replacement ([EMAIL], [PERSON], etc.)"]
+        E["Categorical Replacement ([EMAIL], [DATE], etc.)"]
         D --> E
     end
 
@@ -45,28 +45,25 @@ flowchart TD
    - **Entity Recognition & Policy Filtering**: Extracts named entities and filters them against the active configuration flags.
 3. **Masking Layer**:
    - **Span Ordering & Overlap Resolution**: Sorts entity matches ascending by offset and prunes overlapping spans to avoid corrupting text replacements.
-   - **Categorical Replacement**: Sequentially substitutes sensitive spans with standard bracketed placeholders (e.g., `[EMAIL]`, `[DATE]`, `[PERSON]`).
+   - **Categorical Replacement**: Sequentially substitutes sensitive spans with standard bracketed placeholders (e.g., `[EMAIL]`, `[DATE]`, `[URL]`).
 4. **Output & Audit Layer**: Generates sanitized text output alongside execution telemetry and structured detection metadata.
 
 ---
 
 ## Supported Entity Types & Configuration
 
-The detection engine supports configurable entity filtering via `PIIMaskConfig`:
+The detection engine supports configurable entity filtering via `PIIMaskConfig`. Only the entity types that `wink-eng-lite-web-model` recognizes are actually detected:
 
 | Entity Type | Description | Default Enabled | Placeholder |
 |---|---|:---:|---|
 | `EMAIL` | Email addresses | Yes | `[EMAIL]` |
 | `URL` | Web links and domain references | Yes | `[URL]` |
 | `DATE` | Calendar dates, days, and references | Yes | `[DATE]` |
-| `PHONE` | International and local phone numbers | No | `[PHONE]` |
-| `PERSON` | Individual names | No | `[PERSON]` |
-| `LOCATION` | Cities, countries, addresses | No | `[LOCATION]` |
-| `ORGANIZATION`| Company and institution names | No | `[ORGANIZATION]` |
 | `MENTION` | Social media handles / @-mentions | No | `[MENTION]` |
 | `TIME` | Timestamps and time expressions | No | `[TIME]` |
 | `MONEY` | Currency values and monetary expressions | No | `[MONEY]` |
-| `IP_ADDRESS` | IPv4 / IPv6 addresses | No | `[IP_ADDRESS]` |
+
+`PIIMaskConfig` also accepts `PHONE`, `PERSON`, `LOCATION`, `ORGANIZATION` and `IP_ADDRESS`, but the model does not produce these entity types, so enabling them currently has no effect.
 
 ---
 
@@ -105,13 +102,11 @@ const text = "Contact John Doe at john.doe@example.com before tomorrow.";
 const matches = detectPII(text, {
   EMAIL: true,
   DATE: true,
-  PERSON: true,
 });
 
 console.log(matches);
 // Output:
 // [
-//   { type: 'PERSON', value: 'John Doe', start: 8, end: 16, source: 'wink-nlp' },
 //   { type: 'EMAIL', value: 'john.doe@example.com', start: 20, end: 40, source: 'wink-nlp' },
 //   { type: 'DATE', value: 'tomorrow', start: 48, end: 56, source: 'wink-nlp' }
 // ]
@@ -119,7 +114,7 @@ console.log(matches);
 // 2. Redact PII safely
 const sanitized = maskPII(matches, text);
 console.log(sanitized);
-// "Contact [PERSON] at [EMAIL] before [DATE]."
+// "Contact John Doe at [EMAIL] before [DATE]."
 ```
 
 ---
@@ -146,7 +141,7 @@ npm run dev
 ```
 
 Output files will be generated in the `reports/` folder:
-- `reports/<filename>.sanitized.txt`: The redacted text file.
+- `reports/<filename>__sanitized.txt`: The redacted text file.
 - `reports/<filename>__report.json`: Execution time, span counts, and detected span details.
 
 ### Running Tests
