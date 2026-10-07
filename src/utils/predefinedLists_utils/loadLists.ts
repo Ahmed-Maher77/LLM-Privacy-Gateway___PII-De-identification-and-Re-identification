@@ -12,7 +12,8 @@ function readList(envName: string, fallback: string): ListFile {
     const file = path.join(CONFIG_DIR, stringFromEnv(envName, fallback));
     if (!fs.existsSync(file)) throw new ListError(`${file} is missing (${envName} in .env names it).`);
     try {
-        return { json: JSON.parse(fs.readFileSync(file, "utf-8")), file };
+        // A BOM (e.g. from Windows editors) is not JSON
+        return { json: JSON.parse(fs.readFileSync(file, "utf-8").replace(/^﻿/, "")), file };
     } catch {
         throw new ListError(`${file} is not valid JSON.`);
     }
