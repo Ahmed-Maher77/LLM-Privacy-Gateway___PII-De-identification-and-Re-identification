@@ -412,7 +412,7 @@ repaired *is* a boundary defect: under partial credit, `<PER_2>ania Fahmy`
 scores as a near-hit and the prototype would report ~80% recall while corrupting
 the document.
 
-Measured on 22 excerpts / 168 scored spans, commit `823d901`. Twelve of those
+Measured on 22 excerpts / 168 scored spans, commit `bfff63c`. Twelve of those
 excerpts came from a real meeting transcript that has since been removed from
 the repository, so the shipped gold set is now the 10 SME excerpts (58 scored
 spans) and these numbers cannot be reproduced from it:
