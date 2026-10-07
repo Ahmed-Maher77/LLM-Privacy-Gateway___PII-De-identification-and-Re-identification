@@ -211,3 +211,7 @@ figures above were measured with the CPU busy with other work (the 4-layer
 pipeline measured 8.6 s cold / 7.0 s warm at 229 KB under lighter load).
 Measure on the production machine before relying on these. `npm run dev`
 adds about 1.7 s of `npm` and `tsx` start-up on top of _cold_.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
