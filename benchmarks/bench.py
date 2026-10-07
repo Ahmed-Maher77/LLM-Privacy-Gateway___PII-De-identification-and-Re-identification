@@ -148,7 +148,6 @@ def run_overhead(
     per_document: dict[str, dict[str, object]] = {}
     for name, text in documents:
         totals: list[float] = []
-        stages: dict[str, list[float]] = {}
         chars = 0
         entities = 0
         for index in range(runs):
@@ -165,7 +164,6 @@ def run_overhead(
             if chars
             else None,
         }
-        _ = stages
 
     end_rss = rss_mb()
     return {

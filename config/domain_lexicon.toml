@@ -28,11 +28,6 @@ terms = [
 ]
 confidence = 0.92
 
-[organizations]
-# Vendors and partners that are NOT public companies.
-terms = []
-confidence = 0.88
-
 [projects]
 terms = []
 confidence = 0.85
@@ -49,11 +44,6 @@ confidence = 0.90
 [contracts]
 terms = []
 confidence = 0.90
-
-[internal_domains]
-# Any email address or URL on these domains is internal by definition.
-terms = []
-confidence = 0.95
 
 [patterns]
 # Additional regular expressions, as [type, pattern, confidence, rule-id].

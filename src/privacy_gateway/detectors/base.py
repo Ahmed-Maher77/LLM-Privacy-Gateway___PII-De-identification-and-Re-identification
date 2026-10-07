@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import importlib
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
 
 from ..entities.entity import DetectedEntity
@@ -45,7 +45,6 @@ class DetectionContext:
     """Everything a detector may need beyond the text itself."""
 
     conversation_id: str = ""
-    metadata: Mapping[str, Any] = field(default_factory=dict)
 
 
 @runtime_checkable

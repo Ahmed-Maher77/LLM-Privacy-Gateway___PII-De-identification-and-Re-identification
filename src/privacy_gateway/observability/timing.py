@@ -53,7 +53,7 @@ class Timings:
                         "aggregate", "policy", "injection_guard"}
         )
         llm = self.stages.get("llm.invoke", 0.0) + self.stages.get("llm.retry", 0.0)
-        restoration = self.stages.get("restore", 0.0) + self.stages.get("scan.output", 0.0)
+        restoration = self.stages.get("scan.output", 0.0)
         total = self.total
         return {
             # Prototype-compatible keys.

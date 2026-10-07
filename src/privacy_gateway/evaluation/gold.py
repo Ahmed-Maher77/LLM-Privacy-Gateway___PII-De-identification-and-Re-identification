@@ -21,7 +21,7 @@ from __future__ import annotations
 import hashlib
 import itertools
 import json
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -48,9 +48,6 @@ class GoldSpan:
     @property
     def scored(self) -> bool:
         return self.certainty not in EXCLUDED_CERTAINTY
-
-    def key(self) -> tuple[int, int, str]:
-        return (self.start, self.end, self.entity_type)
 
 
 @dataclass(frozen=True, slots=True)
@@ -251,10 +248,6 @@ def excerpt(
         source_char_end=end,
         **kw,
     )
-
-
-def entity_types(documents: Sequence[GoldDocument]) -> set[str]:
-    return {e.entity_type for d in documents for e in d.entities}
 
 
 #: Minimum share of gold spans identified independently of the detectors.
