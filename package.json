@@ -2,6 +2,7 @@
   "name": "winknlp-pii-poc",
   "version": "1.0.0",
   "description": "Evaluation of WinkNLP and deterministic rules for PII detection",
+  "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

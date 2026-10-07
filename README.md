@@ -357,3 +357,7 @@ When attempting to detect person names via POS `PROPN`, capitalized sentence sta
    - If local execution is mandatory, evaluate a dedicated lightweight ONNX transformer model (such as Xenova/transformers.js running a quantized `bert-base-NER` or `gliner`) which natively detects `PERSON`, `LOC`, and `ORG` with high F1.
    - For simple known domains, allow custom dictionary matching alongside WinkNLP custom entities (`learnCustomEntities`).
 3. **Preserve Decoupled Masking**: Keep detection findings as structured JSON spans, separate from policy-driven text transformation.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
