@@ -1,8 +1,8 @@
 // Write the JSON report to a file containing: input and output metadata, performance metrics, and detected PII spans
 
 import path from "node:path";
-import type { JsonReportInput } from "../types";
-import { writeReportFile } from "./writeReportFile";
+import type { JsonReportInput } from "../types.js";
+import { writeReportFile } from "./writeReportFile.js";
 
 export function writeJsonReport(input: JsonReportInput): string {
     const countsByType: Record<string, number> = {};

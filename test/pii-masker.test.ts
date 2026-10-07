@@ -92,6 +92,27 @@ test("maskPII safely handles overlapping or duplicated spans without corrupting 
   assert.equal(masked, "Important meeting with [PERSON] at [TIME].");
 });
 
+test("maskPII masks the full extent of partially overlapping spans", () => {
+  const text = "Contact John Doe Smith today.";
+  const partialMatches: PIIMatch[] = [
+    { type: "PERSON", value: "John Doe", start: 8, end: 16 },
+    { type: "PERSON", value: "Doe Smith", start: 13, end: 22 },
+  ];
+
+  const masked = maskPII(partialMatches, text);
+  assert.equal(masked, "Contact [PERSON] today.");
+});
+
+test("detectPII keeps exact offsets when the text starts with a byte-order mark", () => {
+  const text = "﻿Reach me at jo@example.com please.";
+  const matches = detectPII(text, { EMAIL: true });
+
+  const emailMatch = matches.find((m) => m.type === "EMAIL");
+  assert.ok(emailMatch);
+  assert.equal(emailMatch.value, "jo@example.com");
+  assert.equal(maskPII(matches, text), "﻿Reach me at [EMAIL] please.");
+});
+
 test("maskPII returns original text if matches are empty", () => {
   const text = "No sensitive data here.";
   const masked = maskPII([], text);

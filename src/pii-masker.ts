@@ -1,6 +1,6 @@
 import winkNLP, { type ItemEntity, type ItemToken } from "wink-nlp";
 import model from "wink-eng-lite-web-model";
-import type { PIIMaskConfig, PIIMatch, PIIType } from "./types";
+import type { PIIMaskConfig, PIIMatch, PIIType } from "./types.js";
 
 const nlp = winkNLP(model);
 const its = nlp.its;
@@ -34,13 +34,16 @@ export function detectPII(
 
   const doc = nlp.readDoc(text);
 
-  // Compute exact character start and end offsets for all tokens in a single O(N) pass
+  // Compute exact character start and end offsets for all tokens in a single O(N) pass.
+  // wink-nlp drops or normalises a few characters (a BOM, U+2028, \v, \f), so each
+  // token is re-anchored on the original text rather than trusting the running sum.
   let pos = 0;
   const tokenOffsets: { start: number; end: number }[] = [];
   doc.tokens().each((token: ItemToken) => {
     const spaces = token.out(its.precedingSpaces) as string;
     const val = token.out(its.value) as string;
-    const start = pos + spaces.length;
+    const found = text.indexOf(val, pos);
+    const start = found === -1 ? pos + spaces.length : found;
     const end = start + val.length;
     tokenOffsets.push({ start, end });
     pos = end;
@@ -98,8 +101,9 @@ export function maskPII(
   let lastIndex = 0;
 
   for (const match of sortedMatches) {
-    // Prevent overlapping span corruption: ignore spans that fall within previous mask range
+    // An overlapping span joins the previous mask, extending it if it reaches further
     if (match.start < lastIndex) {
+      lastIndex = Math.max(lastIndex, match.end);
       continue;
     }
 

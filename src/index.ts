@@ -1,6 +1,6 @@
-import { writeJsonReport } from "./generate_reports/writeJsonReport";
-import { writeSanitizedReport } from "./generate_reports/writeSanitizedReport";
-import { detectPII, maskPII } from "./pii-masker";
+import { writeJsonReport } from "./generate_reports/writeJsonReport.js";
+import { writeSanitizedReport } from "./generate_reports/writeSanitizedReport.js";
+import { detectPII, maskPII } from "./pii-masker.js";
 import fs from "node:fs";
 
 const inputPath = "test_data/mockup_interview.txt";
