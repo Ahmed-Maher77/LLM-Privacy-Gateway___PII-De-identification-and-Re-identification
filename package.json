@@ -2,7 +2,7 @@
   "name": "winknlp",
   "version": "1.0.0",
   "description": "PII detection and sanitization pipeline powered by wink-nlp",
-  "license": "ISC",
+  "license": "MIT",
   "author": "",
   "type": "module",
   "main": "dist/index.js",

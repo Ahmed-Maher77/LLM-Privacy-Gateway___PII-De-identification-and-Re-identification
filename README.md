@@ -171,4 +171,4 @@ The [`test_data/`](./test_data/) directory contains a synthetic fixture (`mockup
 
 ## License
 
-[ISC](./package.json)
+MIT — see [LICENSE](LICENSE).
