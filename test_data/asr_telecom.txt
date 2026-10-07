@@ -1,8 +1,8 @@
 agent: thank you for calling skyline mobile you're speaking with fatima how can i help
-caller: hello yes my name is youssef el hamed and my internet has been down since sunday
+caller: hello yes my name is youssef el masry and my internet has been down since sunday
 agent: sorry to hear that can you spell your first name please
-caller: y o u s s e f and the last name is el hamed two words
-agent: thank you mister el hamed and your date of birth for security
+caller: y o u s s e f and the last name is el masry two words
+agent: thank you mister el masry and your date of birth for security
 caller: 12/03/1985
 agent: and what's the account number
 caller: it's seven seven three nine two zero one
@@ -13,7 +13,7 @@ caller: my wife mariam called yesterday and they told her the same thing
 agent: i see a note from mariam abdelrahman yes
 caller: that's her she works from home so we really need it
 agent: i understand i'll add a credit for three days to your bill
-caller: thank you and can you send the details to youssef.elhamed@outlook.com
+caller: thank you and can you send the details to youssef.elmasry@example.com
 agent: sure and i'll text you at plus two zero one zero one two three four five six seven eight
 caller: yes that's my mobile
 agent: is there anything else i can help with

@@ -1,14 +1,14 @@
 {
   "PERSON": [
     "fatima",
-    "youssef el hamed",
-    "el hamed",
+    "youssef el masry",
+    "el masry",
     { "value": "youssef", "in": "mister youssef salam" },
     { "value": "y o u s s e f", "hard": true },
     "mariam abdelrahman",
     "mariam"
   ],
-  "EMAIL_ADDRESS": ["youssef.elhamed@outlook.com"],
+  "EMAIL_ADDRESS": ["youssef.elmasry@example.com"],
   "PHONE_NUMBER": [
     "02 2735 5541",
     { "value": "plus two zero one zero one two three four five six seven eight", "hard": true }

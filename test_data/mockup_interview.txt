@@ -16,13 +16,13 @@ Agent: Thanks, Mr. Picard. Can you confirm your DOB?
 Customer: 29 Feb 1964 (yes, leap year 😅)
 
 Agent: And the email on file?
-Customer: try jean.picard+novapay@protonmail.com — my old one was jl.picard@enterprise.fr
+Customer: try jean.picard+novapay@example.com — my old one was jl.picard@enterprise.fr
 
 Agent: Got it. What's your phone?
 Customer: +33 6 12 34 56 78 (France) or +1 (415) 555-0198 (US backup)
 
 🟨 EMAIL THREAD — Re: Account Recovery
-From: jean.picard+novapay@protonmail.com
+From: jean.picard+novapay@example.com
 To: support@novapay.io
 Subject: Re: [Ticket #48213] — URGENT
 
@@ -41,7 +41,7 @@ Card details (for verification):
 Visa 4539 1488 0343 6467, exp 09/27, CVV 331
 IBAN: FR76 3000 6000 0112 3456 7890 189
 
-Also, my mother Yvette Picard is the beneficiary. Her contact is yvette.p@orange.fr.
+Also, my mother Yvette Picard is the beneficiary. Her contact is yvette.p@example.com.
 
 — Jean-Luc
 
@@ -90,7 +90,7 @@ Priya Raman: I'm calling because there's a charge on my statement I don't recogn
 
 Daniel Okafor: I'm sorry to hear that. That's definitely something we can look into. Let me pull up your account. Could you verify your email address for me?
 
-Priya Raman: Sure, it's priya.raman@outlook.com.
+Priya Raman: Sure, it's priya.raman@example.com.
 
 Daniel Okafor: Got it. And for security, can you confirm the last four digits of the phone number on file?
 
@@ -114,7 +114,7 @@ Daniel Okafor: Alright, Priya, I've submitted the dispute. You'll receive a prov
 
 Priya Raman: Okay, and how long does the investigation usually take?
 
-Daniel Okafor: Typically 7 to 10 business days. We'll email you the outcome, and if we need anything else from you, we'll reach out at priya.raman@outlook.com.
+Daniel Okafor: Typically 7 to 10 business days. We'll email you the outcome, and if we need anything else from you, we'll reach out at priya.raman@example.com.
 
 Priya Raman: Got it. Should I cancel my card just in case?
 

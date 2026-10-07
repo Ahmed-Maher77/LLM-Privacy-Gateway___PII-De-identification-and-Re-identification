@@ -10,7 +10,7 @@
     { "value": "bill", "in": "my brother bill might" },
     { "value": "bill", "in": "bill would need" }
   ],
-  "EMAIL_ADDRESS": ["kwame.asante79@gmail.com"],
+  "EMAIL_ADDRESS": ["kwame.asante79@example.org"],
   "PHONE_NUMBER": [
     "+233 24 555 0198",
     { "value": "oh two four four one two three four five six", "hard": true }

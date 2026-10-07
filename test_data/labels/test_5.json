@@ -1,7 +1,7 @@
 {
   "PERSON": ["Mona", "Hassan", "Eman", "Kareem", "David", "Robert Charles Miller", "Robert", "Miller"],
   "ORGANIZATION": ["Acme"],
-  "EMAIL_ADDRESS": ["robert.miller88@gmail.com"],
+  "EMAIL_ADDRESS": ["robert.miller88@example.com"],
   "PHONE_NUMBER": ["+1 (617) 555-0142"],
   "CREDIT_CARD": [{ "value": "4532 0192 8472 9104", "hard": true }],
   "IBAN_CODE": [{ "value": "US3300010001234567890123", "hard": true }],

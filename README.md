@@ -132,18 +132,18 @@ non-overlapping. Inputs over 2,000,000 characters throw `InputTooLargeError`;
 a missing or broken model throws `ModelLoadError`. The model loads on the
 first call and is reused, so later calls in the same process are much faster.
 
-## Measured numbers (2026-09-30)
+## Measured numbers (2026-10-07)
 
 With `npm run eval` on the labelled files in `test_data/`. Against the
-previous pipeline, on the 7 files it has saved output for:
+previous pipeline, on the 6 files it has saved output for:
 
 | | This pipeline | Previous pipeline (spaCy NER) |
 | --- | --- | --- |
-| All PII found / characters leaked / precision | 99.2% / 0.4% / 98.7% | 98.7% / 0.7% / 94.2% |
-| Names found / characters leaked / precision | 99.1% / 0.5% / 98.5% | 98.5% / 0.9% / 97.9% |
+| All PII found / characters leaked / precision | 99.0% / 0.5% / 98.3% | 98.3% / 0.9% / 92.8% |
+| Names found / characters leaked / precision | 98.8% / 0.7% / 98.1% | 98.1% / 1.3% / 97.3% |
 | Name characters leaked, lowercase speech-to-text | 10.8% | 24.3% |
 
-On all 11 files: 99.3% of PII found, 0.3% of characters leaked, 98.8%
+On all 10 files: 99.1% of PII found, 0.4% of characters leaked, 98.6%
 precision. On the 4 lowercase speech-to-text files alone: 95.1% of names
 found, 2.8% of name characters leaked, 100% name precision. Every type other
 than PERSON is at 100% found and 100% precision. The set is small and

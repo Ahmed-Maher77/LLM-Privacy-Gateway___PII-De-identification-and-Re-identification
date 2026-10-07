@@ -4,14 +4,14 @@ Known drawbacks of the PII redaction pipeline (`src/pii/`), as of 2026-09-30.
 
 ## 1. Accuracy
 
-Measured with `npm run eval` on the 11 labelled files in `test_data/`:
+Measured with `npm run eval` on the 10 labelled files in `test_data/`:
 
 | | Found | Characters leaked | Over-masked characters | Precision |
 | --- | --- | --- | --- | --- |
-| Names, all files | 99.2% (357 / 360) | 0.4% (11 / 2602) | 22 | 98.6% (5 false positives) |
-| Names, normally cased files | 99.7% (318 / 319) | — | — | — |
+| Names, all files | 98.9% (282 / 285) | 0.6% (11 / 1793) | 22 | 98.2% (5 false positives) |
+| Names, normally cased files | 99.6% (243 / 244) | — | — | — |
 | Names, lowercase speech-to-text (4 files) | 95.1% (39 / 41) | 2.8% (8 / 282) | 0 | 100% (no false positives) |
-| All types | 99.3% (416 / 419) | 0.3% (11 / 3477) | 22 | 98.8% |
+| All types | 99.1% (340 / 343) | 0.4% (11 / 2655) | 22 | 98.6% |
 
 "Found" counts a value as found if it is masked completely, as any type.
 "Over-masked" counts characters masked that belong to no label. Spelled-out
@@ -130,8 +130,8 @@ match.
   would not happen today. Treat it as a rough reference.
 - Precision counts a masked span as correct if it overlaps a labelled value,
   so extra words masked *with* a name don't lower it. They are counted
-  separately as over-masked characters (the "over" column: 22 on the 7 files
-  the old pipeline has output for, against its 202; also 22 on all 11). All
+  separately as over-masked characters (the "over" column: 22 on the 6 files
+  the old pipeline has output for, against its 202; also 22 on all 10). All
   22 are the false positives "Lua" and "Sarahville".
   `--details` lists such spans.
 - `npm run check` only detects that output *changed*; whether a change is

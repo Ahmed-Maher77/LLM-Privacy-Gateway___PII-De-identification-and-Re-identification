@@ -22,7 +22,7 @@ agent: got it i've updated that and um do you want the replacement card sent to 
 caller: yes please the jordan river apartments one unit twelve
 agent: okay and to be frank mister <PERSON_3> i'd also recommend setting up text alerts
 caller: sure sure can you send them to my email too it's <EMAIL_ADDRESS_1>
-agent: yep <PERSON_5> eight two at gmail dot com got it
+agent: yep <PERSON_5> eight two at example dot com got it
 caller: yeah that's it
 agent: and is there anything else i can help with today
 caller: uh my brother will might call about his account he's will <PERSON_3> too but a different account

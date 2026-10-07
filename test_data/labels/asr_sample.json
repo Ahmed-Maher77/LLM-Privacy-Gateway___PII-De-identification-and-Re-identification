@@ -12,8 +12,8 @@
     { "value": "grace", "in": "need grace to call" }
   ],
   "EMAIL_ADDRESS": [
-    "kofi.mensah82@gmail.com",
-    { "value": "kofi dot mensah eight two at gmail dot com", "hard": true }
+    "kofi.mensah82@example.com",
+    { "value": "kofi dot mensah eight two at example dot com", "hard": true }
   ],
   "PHONE_NUMBER": ["617 555 0142", "857-555-0193"],
   "CREDIT_CARD": ["4539 1488 0343 6467"],
