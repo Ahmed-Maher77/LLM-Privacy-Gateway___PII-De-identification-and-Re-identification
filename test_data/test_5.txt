@@ -35,11 +35,11 @@ Plaintext
 
 [15:12:30] Agent (David): Thank you Mr. Miller. And what is the primary email address on file?
 
-[15:12:38] Customer (Robert): It is robert.miller88@gmail.com.
+[15:12:38] Customer (Robert): It is robert.miller88@example.com.
 
 [15:12:45] Agent (David): Got it. Now for account security, I need to verify two forms of government identification and your secondary security info. Could you provide your US Social Security Number and your Passport Number?
 
-[15:13:02] Customer (Robert): Yes, my Social Security Number is 482-91-0394. My US Passport number is A38291049.
+[15:13:02] Customer (Robert): Yes, my Social Security Number is 000-91-0394. My US Passport number is A38291049.
 
 [15:13:18] Agent (David): Perfect. Lastly, to verify the flight booking that triggered the fraud alert, please confirm the credit card number and IBAN used for the initial transaction attempt.
 
@@ -53,9 +53,9 @@ PERSON: "Robert Charles Miller" (Detected by dictionary given-name anchor + look
 
 PHONE_NUMBER: "+1 (617) 555-0142" (Matched by international phone regex with country code and area brackets).
 
-EMAIL_ADDRESS: "robert.miller88@gmail.com" (Matched by RFC-compliant email regex).
+EMAIL_ADDRESS: "robert.miller88@example.com" (Matched by RFC-compliant email regex).
 
-US_SSN: "482-91-0394" (Matched by keyword tail social security with group capture or raw \d{3}-\d{2}-\d{4} pattern).
+US_SSN: "000-91-0394" (Matched by keyword tail social security with group capture or raw \d{3}-\d{2}-\d{4} pattern).
 
 US_PASSPORT: "A38291049" (Matched by passport keyword prefix + group 1 capture [A-Z0-9]{6,9}).
 

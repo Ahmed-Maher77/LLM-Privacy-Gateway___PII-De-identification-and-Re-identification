@@ -175,7 +175,7 @@ freelancer, sven@svenlarsson.dev.
 He's in Sweden, so time zones are a pain. 
 We use Square for POS. 
 My Square login is tied to my personal email, 
-which is dwhitfield78@gmail.com. 
+which is dwhitfield78@example.com. 
 Should probably fix that.
 
 [00:07:31]
@@ -252,7 +252,7 @@ SUBJECT: Thanks for listening.
 Oh — and if you need to reach me, 
 just use the business email. 
 dana@whitfieldprovisions.com. 
-Not the gmail. Please not the gmail.
+Not the personal one. Please not the personal one.
 
 [00:10:19]
 MODERATOR: Got it. We're stopping the recording now.

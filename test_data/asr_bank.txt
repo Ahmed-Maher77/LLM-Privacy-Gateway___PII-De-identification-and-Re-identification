@@ -16,7 +16,7 @@ agent: bill would need his own authorization i'm afraid
 caller: fine fine that's okay
 agent: and is oh two four four one two three four five six still your number
 caller: no use my new one it's +233 24 555 0198
-agent: got it and i have kwame.asante79@gmail.com as your email is that right
+agent: got it and i have kwame.asante79@example.com as your email is that right
 caller: yes that's right
 agent: perfect you're all set mister asante i hope you have a good rest of your day
 caller: thanks hope bye

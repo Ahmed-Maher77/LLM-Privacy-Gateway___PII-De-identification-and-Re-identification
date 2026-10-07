@@ -6,14 +6,14 @@ agent: thank you mister el sayed and your date of birth for security
 caller: 12/03/1985
 agent: and what's the account number
 caller: it's seven seven three nine two zero one
-agent: thanks and is this about the home line 02 2735 5541
+agent: thanks and is this about the home line 02 5550 0141
 caller: yes the home line
 agent: okay i can see an outage in your area it should be fixed by tomorrow
 caller: my wife mariam called yesterday and they told her the same thing
 agent: i see a note from mariam abdelrahman yes
 caller: that's her she works from home so we really need it
 agent: i understand i'll add a credit for three days to your bill
-caller: thank you and can you send the details to youssef.elsayed@outlook.com
+caller: thank you and can you send the details to youssef.elsayed@example.com
 agent: sure and i'll text you at plus two zero one zero one two three four five six seven eight
 caller: yes that's my mobile
 agent: is there anything else i can help with

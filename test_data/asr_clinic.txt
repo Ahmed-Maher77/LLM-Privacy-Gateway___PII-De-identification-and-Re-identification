@@ -7,7 +7,7 @@ caller: d l a m i n i
 agent: thanks miss dlamini and your date of birth
 caller: 09/22/1990
 agent: and your social security number for the insurance
-caller: it's 512-83-4471
+caller: it's 000-83-4471
 agent: thank you i see your appointment on the fifth of may at ten thirty
 caller: yes can we do the week after i will be travelling with my brother chidi
 agent: of course dr hughes has a slot on 05/12/2026 at two

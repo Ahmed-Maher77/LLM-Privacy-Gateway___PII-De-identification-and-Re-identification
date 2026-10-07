@@ -21,8 +21,8 @@ caller: no it changed it's 857-555-0193 now
 agent: got it i've updated that and um do you want the replacement card sent to the same address
 caller: yes please the jordan river apartments one unit twelve
 agent: okay and to be frank mister mensah i'd also recommend setting up text alerts
-caller: sure sure can you send them to my email too it's kofi.mensah82@gmail.com
-agent: yep kofi dot mensah eight two at gmail dot com got it
+caller: sure sure can you send them to my email too it's kofi.mensah82@example.com
+agent: yep kofi dot mensah eight two at example dot com got it
 caller: yeah that's it
 agent: and is there anything else i can help with today
 caller: uh my brother will might call about his account he's will mensah too but a different account

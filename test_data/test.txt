@@ -20,7 +20,7 @@ David: Number one is definitely Phishing. Specifically, "Spear Phishing." It’s
 
 Mike: When you say "looks real," what are the specific red flags they should look for? What gives it away for you?
 
-David: It’s usually a combination of things. Urgency is the big one. "Do this in the next 10 minutes or your account will be locked." Also, look at the sender's address. It might say "CEO John Smith" but the email address is john.smith@gmail.com instead of our corporate domain. And finally, hover over links. If the text says www.chase.com but the actual link goes to www.chase-secure-login.xyz, that’s a red flag.
+David: It’s usually a combination of things. Urgency is the big one. "Do this in the next 10 minutes or your account will be locked." Also, look at the sender's address. It might say "CEO John Smith" but the email address is john.smith@example.com instead of our corporate domain. And finally, hover over links. If the text says www.chase.com but the actual link goes to www.chase-secure-login.xyz, that’s a red flag.
 
 Sarah: So, we need a section on "Anatomy of a Phishing Email." Got it. What’s number two?
 

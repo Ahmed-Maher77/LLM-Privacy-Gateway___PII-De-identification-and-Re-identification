@@ -60,7 +60,7 @@ masked.
   are trimmed too.
 - **Names inside other names are masked as names:** "Whitfield" in
   "Whitfield & Co.", "Ada Lovelace Room". Names inside email addresses are
-  masked when found elsewhere (`<PERSON_1>.asante79@gmail.com`); the rest of
+  masked when found elsewhere (`<PERSON_1>.asante79@example.com`); the rest of
   the address stays visible.
 - **Only listed companies are masked.** Any company not in
   `config/desired-predefined-list.json` passes through unmasked; keep the list
