@@ -144,7 +144,7 @@ which is why the domain layer exists and why the taxonomy includes
 | Layer | Priority | What it is for | Fails how |
 |---|---|---|---|
 | **Registry** | 100 | Speaker labels parsed from the transcript. A *fact about the document*, not a guess | Not fatal — a plain document has no speaker lines |
-| **Regex** | 90 | Email, phone, URL, IP, card (Luhn-checked), IBAN, account ids | Always fatal; pure `re` cannot fail without a code defect |
+| **Regex** | 90 | Email, phone, SSN, card (any card-shaped number, IBANs excluded), date, credentials and connection strings | Always fatal; pure `re` cannot fail without a code defect |
 | **Domain** | 80 | Configurable lexicon: internal systems, customers, id formats. Only finds what it is told about | Fatal under fail-closed |
 | **Presidio** | 60 | spaCy-backed NER plus validated recognisers | Fatal under fail-closed, with the remediation in the message |
 | **NER** | 40 | `dslim/bert-base-NER`. A *signal*, never the authority | Fatal under fail-closed |
@@ -213,7 +213,7 @@ Detection and protection are different questions. Precedence, first match wins:
    closed**. That asymmetry is the whole point of the fail mode
 5. **the type's default action**
 
-Actions: `pseudonymize`, `redact`, `mask`, `allow`, `flag`, `block`.
+Actions: `pseudonymize`, `redact`, `mask`, `allow`.
 
 **`DATE` is `pseudonymize` by default (`<DATE_xxx>`).** Calendar dates, birth
 dates, and expiration dates are protected and pseudonymized reversibly. Bare
@@ -510,7 +510,7 @@ src/privacy_gateway/
   pseudonymization/  placeholders.py mapping_store.py applier.py consistency.py
   reidentification/  restorer.py drift.py output_scanner.py injection.py
   llm/               base.py ollama_client.py mock_client.py prompt.py
-  observability/     redaction.py timing.py
+  observability/     timing.py
   evaluation/        gold.py metrics.py sweep.py report.py cli.py
 config/ resources/ evaluation/gold/ benchmarks/ scripts/
 tests/  unit/ integration/ security/ regression/

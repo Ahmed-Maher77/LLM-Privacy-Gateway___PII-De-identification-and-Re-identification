@@ -164,7 +164,7 @@ gap.
   blocking is unavailable, and whole-response patterns can straddle the
   hold-back boundary. Enabling it stamps `degraded_protections` into the report.
 - **No adversarial red-teaming beyond the scripted cases** in `tests/security/`.
-- **The common-word filter is curated, not derived.** 437 words chosen for this
+- **The common-word filter is curated, not derived.** 495 words chosen for this
   domain. A deployment in another domain will need to extend it, and a company
   genuinely named after a common word must be added to the domain lexicon to be
   protected.

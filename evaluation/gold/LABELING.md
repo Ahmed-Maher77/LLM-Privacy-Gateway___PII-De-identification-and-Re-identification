@@ -28,13 +28,13 @@ orphan them.
    measured, and measured recall then approaches 100% by construction — it
    becomes "recall against what my detector already found".
 3. **Pass B — adjudicate.** Now reveal the machine candidates. Accept, reject or
-   adjust each. A span you wrote in Pass A is `human_added`; one you accepted
-   from a candidate is `human_accepted_candidate`. Boundary adjustments count as
-   `human_added`, because the final span is yours.
-4. **Record the hard calls** in `ADJUDICATION.md`.
+   adjust each. A span you wrote in Pass A has provenance `independent`; one you
+   accepted from a candidate is `accepted_candidate`. Boundary adjustments count
+   as `independent`, because the final span is yours.
+4. **Record the hard calls** under Rulings below.
 
-`test_at_least_fifteen_percent_of_spans_are_human_added` enforces step 2
-mechanically. If almost every gold span was proposed by a detector, Pass A was
+`test_the_shipped_gold_set_clears_the_circularity_floor` enforces step 2
+mechanically: at least 15% of spans must be `independent`. If almost every gold span was proposed by a detector, Pass A was
 skipped.
 
 ## Rulings
