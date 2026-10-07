@@ -73,6 +73,7 @@ The detection engine supports configurable entity filtering via `PIIMaskConfig`.
 ├── src/
 │   ├── generate_reports/
 │   │   ├── writeJsonReport.ts        # Exports structured JSON detection metrics
+│   │   ├── writeReportFile.ts        # Shared reports/ path naming and file writing
 │   │   └── writeSanitizedReport.ts   # Writes redacted plaintext to reports/
 │   ├── index.ts                      # CLI / pipeline runner entry point
 │   ├── pii-masker.ts                 # Core detection and masking logic

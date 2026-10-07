@@ -1,13 +1,10 @@
 // Write the JSON report to a file contains: input and output metadata, performance metrics, and detected PII spans
 
-import fs from "node:fs";
 import path from "node:path";
 import type { JsonReportInput } from "../types";
+import { writeReportFile } from "./writeReportFile";
 
 export function writeJsonReport(input: JsonReportInput): string {
-    const extension = path.extname(input.inputPath);
-    const baseName = path.basename(input.inputPath, extension);
-    const reportPath = path.join("reports", `${baseName}__report.json`);
     const countsByType: Record<string, number> = {};
     const countsBySource: Record<string, number> = {};
 
@@ -43,11 +40,9 @@ export function writeJsonReport(input: JsonReportInput): string {
         },
     };
 
-    fs.mkdirSync(path.dirname(reportPath), { recursive: true });
-    fs.writeFileSync(
-        reportPath,
+    return writeReportFile(
+        input.inputPath,
+        "report.json",
         `${JSON.stringify(report, null, 2)}\n`,
-        "utf-8",
     );
-    return reportPath.replace(/\\/g, "/");
 }
