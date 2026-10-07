@@ -38,7 +38,7 @@ def turn_bounds(text: str) -> list[tuple[int, int]]:
     ]
 
 
-def build_excerpts(text: str, bounds: list[tuple[int, int]]) -> list[tuple[int, int]]:
+def build_excerpts(bounds: list[tuple[int, int]]) -> list[tuple[int, int]]:
     """Group whole turns into excerpts of a workable size."""
     out: list[tuple[int, int]] = []
     start = bounds[0][0]
@@ -67,7 +67,7 @@ def main() -> int:
         source = REPO / "test_data" / name
         raw = source.read_bytes().decode("utf-8")
         normalized = normalizer.normalize(raw)
-        candidates = build_excerpts(normalized.text, turn_bounds(normalized.text))
+        candidates = build_excerpts(turn_bounds(normalized.text))
 
         if stratify:
             rich = [c for c in candidates if IDENTIFIER_RE.search(normalized.text[c[0] : c[1]])]

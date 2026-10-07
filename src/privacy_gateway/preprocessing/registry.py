@@ -170,6 +170,7 @@ class ParticipantRegistry:
             )
         if self._pattern is None:
             return
+        aliases = {a.casefold() for p in self.participants for a in p.aliases}
         for m in self._pattern.finditer(text):
             span = (m.start(), m.end())
             if span in label_spans:
@@ -181,9 +182,7 @@ class ParticipantRegistry:
             is_full = any(surface.casefold() == o.casefold() for o in owners)
             if is_full:
                 kind: MentionKind = "full_name"
-            elif surface.casefold() in {
-                a.casefold() for p in self.participants for a in p.aliases
-            }:
+            elif surface.casefold() in aliases:
                 kind = "alias"
             else:
                 kind = "token"

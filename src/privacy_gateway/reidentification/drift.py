@@ -95,6 +95,8 @@ class DriftScanner:
         self.store = store
         self._known = store.placeholders()
         self._exact = store.format.pattern
+        self._prefixes = frozenset(e.placeholder_prefix for e in store.entries())
+        self._sorted_prefixes = sorted(self._prefixes)
 
     def scan(self, text: str) -> tuple[DriftFinding, ...]:
         out: list[DriftFinding] = []
@@ -136,7 +138,7 @@ class DriftScanner:
             if not self._is_known_prefix(prefix):
                 continue
             full = next(
-                (p for p in sorted(self._prefixes()) if p == prefix or p.startswith(prefix)),
+                (p for p in self._sorted_prefixes if p == prefix or p.startswith(prefix)),
                 prefix,
             )
             guess = self.store.format.render(full, int(index))
@@ -158,9 +160,6 @@ class DriftScanner:
     #: prototype's model wrote "PER" where the placeholder said "PERSON".
     _MIN_PREFIX_CHARS = 3
 
-    def _prefixes(self) -> frozenset[str]:
-        return frozenset(e.placeholder_prefix for e in self.store.entries())
-
     def _is_known_prefix(self, candidate: str) -> bool:
         """True for a known prefix or a plausible truncation of one.
 
@@ -168,11 +167,10 @@ class DriftScanner:
         Nothing downstream uses a drift finding as a lookup key, so a false
         positive costs a line in the report, not a disclosure.
         """
-        known = self._prefixes()
-        if candidate in known:
+        if candidate in self._prefixes:
             return True
         return len(candidate) >= self._MIN_PREFIX_CHARS and any(
-            p.startswith(candidate) for p in known
+            p.startswith(candidate) for p in self._prefixes
         )
 
     @staticmethod

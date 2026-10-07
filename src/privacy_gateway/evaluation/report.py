@@ -17,6 +17,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from .metrics import MIN_SUPPORT_FOR_F1
+
 NOT_MEASURED = "not measured"
 
 
@@ -155,7 +157,7 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
             _row(["---", "---"]),
         ]
         for entity_type, count in counts.items():
-            note = " *(too few for F1)*" if count < 10 else ""
+            note = " *(too few for F1)*" if count < MIN_SUPPORT_FOR_F1 else ""
             lines.append(_row([entity_type, f"{count}{note}"]))
         lines += [
             "",

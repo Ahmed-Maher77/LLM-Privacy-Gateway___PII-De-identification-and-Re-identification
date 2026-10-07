@@ -187,7 +187,6 @@ def run_e2e(
     documents: list[tuple[str, str]], detectors: tuple[str, ...], runs: int
 ) -> dict[str, object]:
     from privacy_gateway.config import DetectorSettings, Settings
-    from privacy_gateway.errors import GatewayError
     from privacy_gateway.gateway import GatewayRequest, PrivacyGateway
     from privacy_gateway.llm.base import build_llm
     from privacy_gateway.llm.prompt import PromptWrapper
@@ -216,7 +215,7 @@ def run_e2e(
                 started = time.perf_counter()
                 llm.invoke(prompt.user, system=prompt.system or None)
                 baseline.append(time.perf_counter() - started)
-            except (GatewayError, Exception):
+            except Exception:
                 errors += 1
             try:
                 started = time.perf_counter()
@@ -228,7 +227,7 @@ def run_e2e(
                 protected_total.append(total)
                 protected_llm.append(llm_seconds)
                 protected_overhead.append(total - llm_seconds)
-            except (GatewayError, Exception):
+            except Exception:
                 errors += 1
 
         out[name] = {

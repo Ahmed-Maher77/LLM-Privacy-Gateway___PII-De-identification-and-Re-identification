@@ -60,7 +60,7 @@ def cmd_sweep(args: argparse.Namespace) -> int:
         filtered_gold, filtered_pred = without_speaker_lines(gold, predictions)
         no_speaker[config.key] = evaluate(filtered_gold, filtered_pred).to_dict()
 
-    run_id = f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"
+    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out_dir = Path(args.out) / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 

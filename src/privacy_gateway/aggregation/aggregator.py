@@ -49,9 +49,8 @@ class RejectedEntity:
 
 
 #: Per-type ceilings tighter than ``max_entity_chars``. DATE is the case that
-#: matters: it defaults to policy ALLOW, so a rejected DATE candidate costs
-#: nothing, while an oversized one can win overlap resolution against a real
-#: entity underneath it and then sail through unprotected. Presidio's
+#: matters: an oversized one can win overlap resolution against a real entity
+#: underneath it. Presidio's
 #: SpacyRecognizer has been observed returning a 35-character DATE_TIME span
 #: ("09:00 - Ahmed Hassan: Good morning") on a single mis-parsed line; a real
 #: date/time expression is essentially never that long.
@@ -61,9 +60,9 @@ DEFAULT_MAX_CHARS_BY_TYPE: Mapping[str, int] = {"DATE": 25}
 @dataclass(frozen=True, slots=True)
 class AggregationConfig:
     min_entity_chars: int = 2
-    #: Below this length, a statistical-detector PERSON-like span needs
-    #: near-certain confidence to survive: real three-letter first names
-    #: ("Kim", "Ana", "Leo") are common enough that this floor is kept low.
+    #: Below this length a PERSON-like span is rejected outright: real
+    #: three-letter first names ("Kim", "Ana", "Leo") are common enough that
+    #: this floor is kept low.
     min_person_chars: int = 3
     #: Below this length, a statistical-detector span of any OTHER capitalised
     #: type needs near-certain confidence. Set higher than the person floor
@@ -97,7 +96,7 @@ class AggregationResult:
     stats: Mapping[str, int] = field(default_factory=dict)
 
 
-_PERSON_LIKE = frozenset({"PERSON", "EMPLOYEE", "STAKEHOLDER", "CUSTOMER"})
+_NAME_LIKE = frozenset({"PERSON", "EMPLOYEE", "STAKEHOLDER", "CUSTOMER"})
 
 #: Types whose members are proper nouns in English and are therefore
 #: capitalised. Used only to filter statistical detectors.
@@ -185,7 +184,7 @@ class EntityAggregator:
             # Person names are never under 3 characters (e.g. "Kim", "Ana", "Leo"
             # are 3 characters). Reject any 1-2 character person-like entity to prevent
             # fragments or abbreviations like "No" from entering the mapping.
-            if repaired.entity_type in _PERSON_LIKE and len(surface) < cfg.min_person_chars:
+            if repaired.entity_type in _NAME_LIKE and len(surface) < cfg.min_person_chars:
                 rejected.append(RejectedEntity(repaired, SpanVerdict.TOO_SHORT, "clean"))
                 continue
 
@@ -202,7 +201,7 @@ class EntityAggregator:
             # Person-like types were already held to their own floor above.
             if (
                 repaired.detector in _STATISTICAL
-                and repaired.entity_type in _CAPITALISED_TYPES - _PERSON_LIKE
+                and repaired.entity_type in _CAPITALISED_TYPES - _NAME_LIKE
                 and len(surface) < cfg.min_capitalised_chars
                 and repaired.confidence < cfg.short_entity_confidence
             ):

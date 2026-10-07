@@ -30,8 +30,8 @@ from dataclasses import dataclass, field
 from ..entities.entity import DetectedEntity
 from .gold import GoldDocument, GoldSet, GoldSpan
 
-#: Types excluded from scoring on both sides. Dates are policy-allowed by
-#: default and would otherwise dominate every count.
+#: Types excluded from scoring on both sides. Dates would otherwise dominate
+#: every count.
 EXCLUDED_TYPES: frozenset[str] = frozenset({"DATE"})
 
 #: Below this many gold spans a per-type F1 has a confidence interval wider
@@ -197,7 +197,7 @@ def evaluate_document(
     covered = 0
     total_chars = 0
     covered_indices: set[int] = set()
-    for _i, p in enumerate(pred):
+    for p in pred:
         covered_indices.update(range(p.start, p.end))
     leaked_docs = 0
     for g in gold:

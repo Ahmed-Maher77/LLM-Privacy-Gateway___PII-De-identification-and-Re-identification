@@ -11,9 +11,9 @@ differently here:
 2. **Aggregation strategy is ``max``, not ``simple``.** ``simple`` is precisely
    the strategy that emits sub-word pieces for this model.
 3. **The input is chunked.** ``dslim/bert-base-NER`` truncates at 512 tokens;
-   a 14 KB transcript is roughly 4000, so today the back half of both sample
-   transcripts is invisible to this layer. That is a correctness bug at any
-   input size, not a scaling concern.
+   a 14 KB transcript is roughly 4000, so without chunking most of a long
+   transcript would be invisible to this layer. That is a correctness bug at
+   any input size, not a scaling concern.
 
 Generic NER is a *signal*, not the privacy authority: its label set (PER/ORG/
 LOC/MISC) has no concept of an internal system, a customer identifier or a

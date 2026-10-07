@@ -2,8 +2,8 @@
 
 Each detector runs **once per document**; configurations are then evaluated as
 set-unions over that cache. So configurations E, F and G -- the combinations --
-cost essentially nothing beyond the four base runs, and comparing seven
-configurations does not mean seven full pipeline executions.
+cost essentially nothing beyond the four base runs, and comparing eight
+configurations does not mean eight full pipeline executions.
 
 A configuration whose detectors are unavailable is recorded as ``skipped`` with
 a reason. It is never silently omitted and never zero-filled: a missing
@@ -21,7 +21,6 @@ from ..aggregation.aggregator import EntityAggregator
 from ..config import Settings
 from ..detectors.base import DetectionContext, build_detector
 from ..entities.entity import DetectedEntity
-from ..errors import GatewayError
 from ..preprocessing.registry import ParticipantRegistry
 from ..preprocessing.transcript import TranscriptParser
 from .gold import GoldDocument, GoldSet
@@ -117,7 +116,7 @@ def populate_cache(
         try:
             detector = build_detector(name, settings.detectors, **kwargs)
             detector.warmup()
-        except (GatewayError, Exception) as exc:
+        except Exception as exc:
             cache.failures[name] = f"{type(exc).__name__}: unavailable"
             continue
 
