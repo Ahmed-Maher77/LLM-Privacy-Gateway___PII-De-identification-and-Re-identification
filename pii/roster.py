@@ -44,6 +44,9 @@ SPEAKER_PATTERNS = (
     re.compile(rf"^[ \t]*\**{_NAME}\**[ \t]*:(?![\d/])", re.MULTILINE),
 )
 
+# Title spellings bound to a surname, with and without the period.
+TITLE_FORMS = ("Mr.", "Ms.", "Mrs.", "Dr.", "Mr", "Ms", "Mrs", "Dr")
+
 # Capitalised tokens that are ordinary words far more often than they are
 # names. Propagating these alone would shred the transcript.
 # Trimmed from 137 entries. These guard single-token roster propagation --
@@ -437,7 +440,7 @@ def propagate_names(
         # "Ms. Raman" and "Mr. Raman" unmasked whenever two participants
         # shared a surname and the document never wrote a title beside
         # either full name.
-        for title in ("Mr.", "Ms.", "Mrs.", "Dr.", "Mr", "Ms", "Mrs", "Dr"):
+        for title in TITLE_FORMS:
             title_prefix = rf"(?i)(?<!\w){re.escape(title.rstrip('.'))}\.?[ \t]+"
             full_pattern = re.compile(title_prefix + rf"{re.escape(full_name)}(?!\w)")
             if full_pattern.search(text):
@@ -455,7 +458,7 @@ def propagate_names(
     # left as plaintext.
     for norm_surname, owners in surname_owners.items():
         surname = owners[0].split()[-1].rstrip(".,;:")
-        for title in ("Mr.", "Ms.", "Mrs.", "Dr.", "Mr", "Ms", "Mrs", "Dr"):
+        for title in TITLE_FORMS:
             if (title, norm_surname) in confirmed_titles:
                 # Already emitted above, from a "Title FullName" match --
                 # better evidence than anything ownership alone can offer.

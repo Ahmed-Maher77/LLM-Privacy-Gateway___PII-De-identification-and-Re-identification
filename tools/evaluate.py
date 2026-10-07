@@ -52,6 +52,7 @@ if sys.platform == "win32":
     if callable(reconfig_err):
         reconfig_err(encoding="utf-8")
 
+from generate_report import parse_entity_override  # noqa: E402
 from pii import PIIMiddleware  # noqa: E402
 from pii.policy import _normalize, describe_policy  # noqa: E402
 from tools.scoring import (  # noqa: E402
@@ -636,19 +637,6 @@ def regressions_against(scores: list[DocumentScore], baseline: dict) -> list[str
     return problems
 
 
-def _entity_override(raw: str) -> tuple[str, bool]:
-    """Parse "KEY=true"/"KEY=false" for --entity.
-
-    Key validation is left to ``PIIMiddleware`` itself, so a typo raises the
-    same error here as it would from a Python caller.
-    """
-    key, sep, value = raw.partition("=")
-    normalized = value.strip().casefold()
-    if not sep or normalized not in {"true", "false"}:
-        raise argparse.ArgumentTypeError(f"expected KEY=true|false, got {raw!r}")
-    return key.strip(), normalized == "true"
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score redaction across the labelled corpus.")
     parser.add_argument("--only", default=None, help="score a single fixture by exact name")
@@ -658,7 +646,7 @@ def main() -> int:
     parser.add_argument(
         "--entity",
         action="append",
-        type=_entity_override,
+        type=parse_entity_override,
         default=[],
         dest="entities",
         metavar="KEY=true|false",

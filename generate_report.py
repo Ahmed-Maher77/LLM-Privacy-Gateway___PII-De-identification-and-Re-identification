@@ -15,7 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from pii import PIIMiddleware
-from pii.errors import EXIT_OK, EXIT_USAGE, PIIError
+from pii.errors import EXIT_LEAK, EXIT_OK, EXIT_REVIEW, EXIT_USAGE, PIIError
 from pii.policy import DEFAULT_PROFILE
 from pii.reporting import (
     WARNING_TEXT,
@@ -86,7 +86,6 @@ def generate_report(
     llm_skipped = None
 
     if analysis.status == "clean":
-        sanitized_path.parent.mkdir(parents=True, exist_ok=True)
         write_text(sanitized_path, analysis.sanitized, contains_secrets=False)
 
     if skip_llm:
@@ -178,9 +177,9 @@ def generate_report(
 
     exit_code = EXIT_OK
     if analysis.status == "failed":
-        exit_code = 3
+        exit_code = EXIT_LEAK
     elif analysis.status == "review" and strict:
-        exit_code = 4
+        exit_code = EXIT_REVIEW
 
     return ReportOutcome(
         path=report_path,
@@ -190,7 +189,7 @@ def generate_report(
     )
 
 
-def _entity_override(raw: str) -> tuple[str, bool]:
+def parse_entity_override(raw: str) -> tuple[str, bool]:
     """Parse "KEY=true"/"KEY=false" for --entity.
 
     Key validation is left to ``PIIMiddleware`` itself, so a typo raises the
@@ -220,7 +219,7 @@ def main() -> int:
     parser.add_argument(
         "--entity",
         action="append",
-        type=_entity_override,
+        type=parse_entity_override,
         default=[],
         dest="entities",
         metavar="KEY=true|false",
@@ -261,7 +260,6 @@ def main() -> int:
 
     if not args.input_file.is_file():
         parser.error(f"no such file: {args.input_file}")
-        return EXIT_USAGE
 
     report_path = args.report or Path("reports") / f"{args.input_file.stem}_run.json"
 

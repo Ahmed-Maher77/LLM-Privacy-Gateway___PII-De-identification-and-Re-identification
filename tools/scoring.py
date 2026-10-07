@@ -15,8 +15,8 @@ positives once it is set. Until then they are reported as ``unverified``, which
 is an honest "nobody has looked at this yet" rather than a silent pass.
 
 This module is deliberately free of model imports so its tests run in the fast
-suite: it may read ``pii.spans``, ``pii.vault`` and ``pii.patterns``, but never
-``pii.middleware``.
+suite: it may read ``pii.policy``, ``pii.spans``, ``pii.vault`` and
+``pii.patterns``, but never ``pii.middleware``.
 """
 
 from __future__ import annotations
@@ -456,6 +456,12 @@ def boundary_exact_rate(matches: Sequence[Match]) -> float:
     return sum(1 for m in matches if m.exact) / len(matches)
 
 
+def pred_key(match: Match) -> str:
+    # Fall back to the normalized surface when no identity was minted, so
+    # two unlinked mentions of one name still count as agreeing.
+    return match.pred.identity or f"~{_normalize(match.pred.text)}"
+
+
 def cluster_metrics(matches: Sequence[Match]) -> ClusterScore:
     """Pairwise agreement between gold entity clusters and minted identities.
 
@@ -466,11 +472,6 @@ def cluster_metrics(matches: Sequence[Match]) -> ClusterScore:
     usable = [m for m in matches if m.gold.entity]
     if len(usable) < 2:
         return ClusterScore()
-
-    def pred_key(match: Match) -> str:
-        # Fall back to the normalized surface when no identity was minted, so
-        # two unlinked mentions of one name still count as agreeing.
-        return match.pred.identity or f"~{_normalize(match.pred.text)}"
 
     same_gold_same_pred = same_gold_diff_pred = 0
     diff_gold_same_pred = 0
@@ -530,8 +531,7 @@ def extract_json_blocks(text: str) -> list[str]:
     """Pull balanced ``{...}`` blocks out of prose, ignoring placeholders.
 
     ``{{PERSON_1}}`` is a placeholder, not an object, so its braces must not
-    open or close a block. Lifted from the production harness, where this
-    logic was the one piece worth keeping verbatim.
+    open or close a block.
     """
     blocks: list[str] = []
     i = 0
@@ -599,7 +599,7 @@ def check_assertions(result, gold: Sequence[GoldSpan], assertions: dict) -> list
     alignment = align(gold, preds, gold_complete=True)
     for match in alignment.matches:
         if match.gold.entity:
-            key = match.pred.identity or f"~{_normalize(match.pred.text)}"
+            key = pred_key(match)
             by_entity[match.gold.entity].add(key)
 
     if assertions.get("byte_identical"):

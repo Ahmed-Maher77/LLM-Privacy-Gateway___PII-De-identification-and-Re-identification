@@ -23,6 +23,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from .patterns import HANDLE_PATTERN
 from .policy import _normalize
 
 # Titles that precede a name. Stripped for identity so "Dr. Adeyemi" and
@@ -257,7 +258,6 @@ HONORIFIC_PREFIX_RE = re.compile(
 
 # Name-shaped tokens inside an email local part: david.lee@ -> {david, lee}.
 EMAIL_LOCAL_RE = re.compile(r"[^\W\d_]{3,}")
-HANDLE_RE = re.compile(r"(?<![\w.])@[a-z0-9][a-z0-9._-]{2,}", re.IGNORECASE)
 
 
 def names_from_emails(text: str, email_pattern: re.Pattern[str]) -> set[str]:
@@ -267,18 +267,9 @@ def names_from_emails(text: str, email_pattern: re.Pattern[str]) -> set[str]:
     david.lee@example.org. The address is already being masked, so the name
     inside it is known PII and costs nothing to learn.
     """
-    names: set[str] = set()
-    for match in email_pattern.finditer(text):
-        local = match.group().split("@", 1)[0]
-        for token in EMAIL_LOCAL_RE.findall(local):
-            if len(token) >= 3:
-                names.add(token.capitalize())
-    for match in HANDLE_RE.finditer(text):
-        handle = match.group()[1:]
-        for token in EMAIL_LOCAL_RE.findall(handle):
-            if len(token) >= 3:
-                names.add(token.capitalize())
-    return names
+    local_parts = [match.group().split("@", 1)[0] for match in email_pattern.finditer(text)]
+    local_parts += [match.group()[1:] for match in HANDLE_PATTERN.finditer(text)]
+    return {token.capitalize() for local in local_parts for token in EMAIL_LOCAL_RE.findall(local)}
 
 
 def has_honorific_prefix(text: str, start: int) -> bool:
