@@ -46,7 +46,7 @@ npm install
 ```bash
 npm test
 ```
-Runs 57 unit and regression tests across 9 test suites (Vitest).
+Runs 60 unit and regression tests across 9 test suites (Vitest).
 
 ### Run Interactive / Sample Demo CLI
 ```bash

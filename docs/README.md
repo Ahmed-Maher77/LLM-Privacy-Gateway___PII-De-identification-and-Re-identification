@@ -17,7 +17,7 @@ The pipeline combines **WinkNLP** with **deterministic regex and anchored lingui
 - **Person detection** uses conversational linguistic anchors + shape validation (`person-detector.ts`), yielding **100% precision with 0 false positives** on the reference transcript. Legacy PROPN POS heuristic remains configurable.
 - **SSN, Credit Card, and Address** are fully masked via deterministic rules (shape-first with scored validity), preventing PII disclosure leaks ([KI-002](./KNOWN-ISSUES.md#ki-002), [KI-003](./KNOWN-ISSUES.md#ki-003), [KI-004](./KNOWN-ISSUES.md#ki-004)).
 - **Document structure is preserved**: structural guards protect headers, speaker prefixes, and bracketed markers ([KI-006](./KNOWN-ISSUES.md#ki-006)).
-- **All 57 unit and regression tests pass** across 9 suites.
+- **All 60 unit and regression tests pass** across 9 suites.
 
 ## Reproduce the reference run
 
