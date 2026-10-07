@@ -42,3 +42,7 @@ git commit -m "Bump 02-ts-lists-transformersjs-ner"
 ```
 
 To pull the latest commit of every branch: `git submodule update --remote`.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Each implementation carries the same license.
