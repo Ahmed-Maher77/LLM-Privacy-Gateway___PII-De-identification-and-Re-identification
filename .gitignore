@@ -30,7 +30,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local-only test transcripts (kept out of the repository)
+# Local test inputs (not tracked)
 test_data/test_*.txt
 
 # Duplicate backup files

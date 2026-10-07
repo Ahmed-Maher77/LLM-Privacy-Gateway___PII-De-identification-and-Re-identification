@@ -27,8 +27,8 @@ flowchart TD
     end
 
     subgraph S4["4. Output & Audit Layer"]
-        F["Sanitized Document (.sanitized.txt)"]
-        G["Audit Report (.json metrics)"]
+        F["Sanitized Document (__sanitized.txt)"]
+        G["Audit Report (__report.json)"]
     end
 
     A --> B
@@ -41,7 +41,7 @@ flowchart TD
 
 1. **Ingestion Layer**: Ingests unstructured plaintext documents, conversational logs, or transcripts.
 2. **Detection Layer**:
-   - **Tokenization & Offset Indexing**: Parses text into tokens and builds character offset maps in a single $O(N)$ pass using wink-nlp's span token index.
+   - **Tokenization & Offset Indexing**: Parses text into tokens and builds character offset maps in a single $O(N)$ pass by accumulating each token's preceding spaces and value.
    - **Entity Recognition & Policy Filtering**: Extracts named entities and filters them against the active configuration flags.
 3. **Masking Layer**:
    - **Span Ordering & Overlap Resolution**: Sorts entity matches ascending by offset and prunes overlapping spans to avoid corrupting text replacements.
@@ -124,8 +124,8 @@ console.log(sanitized);
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- `npm` or `yarn`
+- [Node.js](https://nodejs.org/) (v22 or higher recommended; `npm test` relies on Node's built-in test-file globbing)
+- `npm`
 
 ### Installation
 
@@ -135,14 +135,14 @@ npm install
 
 ### Running the Pipeline
 
-Run the pipeline against the default synthetic test fixture (`test_data/mockup_interview.txt`):
+Run the pipeline against the synthetic fixture set in `src/index.ts` (`test_data/mockup_interview.txt`), using the configuration defined in that file:
 
 ```bash
 npm run dev
 ```
 
 Output files will be generated in the `reports/` folder:
-- `reports/<filename>__sanitized.txt`: The redacted text file.
+- `reports/<filename>__sanitized<ext>` (e.g. `reports/mockup_interview__sanitized.txt`): The redacted text file.
 - `reports/<filename>__report.json`: Execution time, span counts, and detected span details.
 
 ### Running Tests
@@ -165,7 +165,7 @@ npm run build
 
 ## Testing & Fixtures
 
-The [`test_data/`](./test_data/) directory contains synthetic fixtures designed to evaluate entity recognition and redaction accuracy across various scenarios (emails, dates, phone numbers, international formats). All test data is purely synthetic and contains no confidential or real personal information.
+The [`test_data/`](./test_data/) directory contains a synthetic fixture (`mockup_interview.txt`) mixing emails, dates, money, phone numbers, IDs and international formats; only the entity types listed above are detected and redacted. All test data is purely synthetic and contains no confidential or real personal information.
 
 ---
 

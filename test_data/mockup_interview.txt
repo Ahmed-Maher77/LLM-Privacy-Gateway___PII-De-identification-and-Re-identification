@@ -1,5 +1,5 @@
 Scenario
-You've been asked to build a PII detection/redaction pipeline for a fintech customer support platform. The transcript below is a merged export from chat, email, and voice-to-text, containing overlapping identities, aliases, international formats, and obfuscated PII.
+Synthetic test transcript for a fintech customer support platform: a merged export from chat, email, and voice-to-text, containing overlapping identities, aliases, international formats, and obfuscated PII.
 
 Test Case ID: SME-PII-ULT-001
 Environment: Staging
@@ -23,7 +23,7 @@ Customer: +33 6 12 34 56 78 (France) or +1 (415) 555-0198 (US backup)
 
 🟨 EMAIL THREAD — Re: Account Recovery
 From: jean.picard+novapay@example.com
-To: support@novapay.io
+To: support@example.com
 Subject: Re: [Ticket #48213] — URGENT
 
 Hi team,
@@ -35,7 +35,7 @@ Billing address:
 75002 Paris, France
 
 US address (for the backup card):
-1600 Amphitheatre Parkway, Mountain View, CA 94043
+100 Example Street, Springfield, CA 90000
 
 Card details (for verification):
 Visa 4539 1488 0343 6467, exp 09/27, CVV 331
@@ -66,9 +66,9 @@ last_login_ip:  203.0.113.45
 geo:            48.8566° N, 2.3522° E
 cookies:        _ga=GA1.2.998877665.1699999999
 🟪 AGENT NOTES (free text)
-Spoke with customer again. He mentioned his crypto wallet address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Also his Twitter handle @captain_picard and GitHub github.com/jlpicard-enterprise.
+Spoke with customer again. He mentioned his crypto wallet address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Also his Twitter handle @captain_picard and GitHub github.com/example-user.
 
-His emergency contact: Dr. Beverly Crusher, phone +1-202-555-0147, email b.crusher@starfleet-med.org.
+His emergency contact: Dr. Beverly Crusher, phone +1-202-555-0147, email b.crusher@example.com.
 
 Note: Customer is an EU resident — GDPR applies. Verify before sharing with US team.
 
