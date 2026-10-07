@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from ..entities.entity import DetectedEntity
 from .gold import GoldDocument, GoldSet, GoldSpan
@@ -327,27 +327,16 @@ def without_speaker_lines(
     gold: GoldSet, predictions: Mapping[str, Sequence[DetectedEntity]]
 ) -> tuple[GoldSet, dict[str, list[DetectedEntity]]]:
     """Drop everything that sits on a speaker-label line, from both sides."""
-    from .gold import GoldDocument as _Doc
-
     documents = []
     filtered: dict[str, list[DetectedEntity]] = {}
     for doc in gold:
         lines = speaker_label_spans(doc.text)
         documents.append(
-            _Doc(
-                doc_id=doc.doc_id,
-                text=doc.text,
+            replace(
+                doc,
                 entities=tuple(
                     e for e in doc.entities if not on_speaker_line(e.start, e.end, lines)
                 ),
-                source_file=doc.source_file,
-                source_sha256=doc.source_sha256,
-                source_char_start=doc.source_char_start,
-                source_char_end=doc.source_char_end,
-                labeler=doc.labeler,
-                labeled_at=doc.labeled_at,
-                guideline_version=doc.guideline_version,
-                split=doc.split,
             )
         )
         filtered[doc.doc_id] = [

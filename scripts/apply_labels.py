@@ -13,6 +13,7 @@ labels live in reviewable source rather than in an opaque data file.
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from pathlib import Path
 
 from privacy_gateway.evaluation.gold import GoldDocument, GoldSet, GoldSpan
@@ -139,18 +140,12 @@ def label_document(doc: GoldDocument) -> GoldDocument:
             )
 
     spans.sort(key=lambda s: s.start)
-    return GoldDocument(
-        doc_id=doc.doc_id,
-        text=doc.text,
+    return replace(
+        doc,
         entities=tuple(spans),
-        source_file=doc.source_file,
-        source_sha256=doc.source_sha256,
-        source_char_start=doc.source_char_start,
-        source_char_end=doc.source_char_end,
         labeler=LABELER,
         labeled_at=LABELED_AT,
         guideline_version="1.0",
-        split=doc.split,
     )
 
 
