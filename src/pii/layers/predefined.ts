@@ -2,20 +2,18 @@
 // mask the desired-list matches, and drop undesired words from the model spans
 
 
-import { Rule, type PIISpan } from "../types";
+import type { PIISpan } from "../types";
 import { lineOf } from "../../utils/predefinedLists_utils/text_helpers";
 import { isUndesired, load } from "../../utils/predefinedLists_utils/loadLists";
 
-export { isUndesired } from "../../utils/predefinedLists_utils/loadLists";
+export { isUndesired };
 export { ListError } from "../../utils/predefinedLists_utils/predefined_helpers";
 
 
 // ======== Detect desired-list matches in text =========
 export function detectPredefined(text: string): PIISpan[] {
     const spans: PIISpan[] = [];
-    const desiredList: Rule[] = load().desired;
-
-    for (const { type, pattern, part, lowercaseLinesOnly } of desiredList) {
+    for (const { type, pattern, part, lowercaseLinesOnly } of load().desired) {
         for (const m of text.matchAll(pattern)) {
             if (part && isUndesired(m[0])) continue;
             if (lowercaseLinesOnly && /\p{Lu}/u.test(lineOf(text, m.index)))
