@@ -89,8 +89,10 @@ function desiredRules({ json, file }: ListFile): Rule[] {
                       .map((v) => v.replace(LEGAL_SUFFIX_RE, ""))
                       .filter((v, i) => v !== entries[i] && v.length >= 2);
         if (parts.length === 0) continue;
+        // As listed, title-cased and upper-cased, so "SARAH JOHNSON" also covers "Sarah"
         const cased = parts.flatMap((p) => [
             p[0].toUpperCase() + p.slice(1),
+            p[0].toUpperCase() + p.slice(1).toLowerCase(),
             p.toUpperCase(),
         ]);
         rules.push({
