@@ -5,6 +5,7 @@ import { detectWithRegex } from './regex-detector.js';
 import { detectPersons } from './person-detector.js';
 import { applyStructuralGuards } from './structure.js';
 import { normalizeMatches } from './normalizer.js';
+import { findExactMatches } from './exact-match.js';
 
 /**
  * Main PII detection entry point.
@@ -49,51 +50,13 @@ export function detectPII(text: string, config?: Partial<PIIConfig>): PIIMatch[]
   }
 
   // 4. Caller-supplied known locations
-  if (resolved.location && resolved.knownLocations && resolved.knownLocations.length > 0) {
-    for (const loc of resolved.knownLocations) {
-      const trimmed = loc.trim();
-      if (!trimmed) continue;
-      const re = new RegExp(String.raw`\b${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\b`, 'g');
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(text)) !== null) {
-        const start = m.index;
-        const end = start + m[0].length;
-        if (text.slice(start, end) === m[0]) {
-          rawMatches.push({
-            type: 'LOCATION',
-            value: m[0],
-            start,
-            end,
-            method: 'rule',
-            confidence: 0.99,
-          });
-        }
-      }
-    }
+  if (resolved.location) {
+    rawMatches.push(...findExactMatches(text, resolved.knownLocations, 'LOCATION'));
   }
 
   // 5. Caller-supplied known organizations
-  if (resolved.organization && resolved.knownOrganizations && resolved.knownOrganizations.length > 0) {
-    for (const org of resolved.knownOrganizations) {
-      const trimmed = org.trim();
-      if (!trimmed) continue;
-      const re = new RegExp(String.raw`\b${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\b`, 'g');
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(text)) !== null) {
-        const start = m.index;
-        const end = start + m[0].length;
-        if (text.slice(start, end) === m[0]) {
-          rawMatches.push({
-            type: 'ORGANIZATION',
-            value: m[0],
-            start,
-            end,
-            method: 'rule',
-            confidence: 0.99,
-          });
-        }
-      }
-    }
+  if (resolved.organization) {
+    rawMatches.push(...findExactMatches(text, resolved.knownOrganizations, 'ORGANIZATION'));
   }
 
   // 6. Apply structural guards (KI-006: protects bracketed markers and line-leading labels from heuristic false positives)

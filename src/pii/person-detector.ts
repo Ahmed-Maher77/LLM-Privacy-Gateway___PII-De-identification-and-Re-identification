@@ -1,4 +1,5 @@
 import type { PIIMatch, PersonDetectorOptions } from './types.js';
+import { findExactMatches } from './exact-match.js';
 
 const NAME = String.raw`[A-Z][a-z]{1,20}(?:\s+(?:[A-Z][a-z]{1,20}|[A-Z]\.)){0,2}`;
 const FULL = String.raw`[A-Z][a-z]{1,20}(?:\s+[A-Z]\.)?\s+[A-Z][a-z]{1,20}`;
@@ -77,10 +78,6 @@ export function isPlausibleName(value: string): boolean {
   return true;
 }
 
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 /**
  * Detects Person names using linguistic anchors, shape validation,
  * and optional caller-provided known names.
@@ -97,31 +94,8 @@ export function detectPersons(
     return [];
   }
 
-  const matches: PIIMatch[] = [];
-
   // 1. Caller-supplied exact names (highest confidence)
-  if (options?.knownNames && options.knownNames.length > 0) {
-    for (const name of options.knownNames) {
-      const trimmed = name.trim();
-      if (!trimmed) continue;
-      const re = new RegExp(String.raw`\b${escapeRegex(trimmed)}\b`, 'g');
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(text)) !== null) {
-        const start = m.index;
-        const end = start + m[0].length;
-        if (text.slice(start, end) === m[0]) {
-          matches.push({
-            type: 'PERSON',
-            value: m[0],
-            start,
-            end,
-            method: 'rule',
-            confidence: 0.99,
-          });
-        }
-      }
-    }
-  }
+  const matches = findExactMatches(text, options?.knownNames, 'PERSON');
 
   // 2. Anchored detection
   for (const anchor of ANCHORS) {
