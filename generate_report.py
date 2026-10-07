@@ -71,8 +71,7 @@ def generate_report(
         analysis = middleware.analyze(input_text)
     anonymization_seconds = time.perf_counter() - start_anonymize
 
-    # Default out of test_data/: that directory is tracked, and two sanitized
-    # side-files had already been committed from it.
+    # Default out of test_data/, which holds local working copies of inputs.
     #
     # Failed and review results may still contain PII. Never persist their
     # candidate output as a sanitized side-file; the JSON report records that
@@ -209,10 +208,8 @@ def main() -> int:
         epilog="Exit codes: 0 clean, 2 usage, 3 leak detected, 4 review required, 5 detector missing.",
     )
     parser.add_argument("input_file", type=Path)
-    # Per-input by default. A single rolling "latest_run.json" meant each run
-    # destroyed the previous audit trail, and the reports for the three
-    # documents under review had already been overwritten when we went
-    # looking for them.
+    # Per-input by default: a single rolling "latest_run.json" meant each run
+    # destroyed the previous audit trail.
     parser.add_argument("--report", type=Path, default=None)
     parser.add_argument("--model", default="gpt-oss:120b-cloud")
     parser.add_argument("--profile", default=DEFAULT_PROFILE)

@@ -1,6 +1,5 @@
-# The external review could not reproduce the evaluation and had no way to
-# tell "you skipped uv sync" from "this does not work". That is what this
-# exists to answer.
+# Reproducible evidence from a clean checkout: a failure here separates
+# "you skipped uv sync" from "this does not work".
 #
 # Two jobs, because they cost very different amounts. The fast job loads no
 # model weights at all -- every model-backed fixture is module-scoped and

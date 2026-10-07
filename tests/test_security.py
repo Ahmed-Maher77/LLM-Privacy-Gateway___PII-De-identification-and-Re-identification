@@ -35,7 +35,7 @@ from pii.vault import PseudonymVault, find_template_literals, restore, restore_p
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 TRANSCRIPT = FIXTURES / "transcript_test.txt"
 
-# Every value that survived the audited run, plus the ones the brief listed.
+# Every value that survived an earlier run, plus other known-sensitive values.
 LEAKED_VALUES = (
     "4532-0192-8834-5610",
     "482",
@@ -521,7 +521,7 @@ class TestNameIdentityReconciliation:
         ]
 
     def test_ambiguous_first_name_is_kept(self):
-        """Three colleagues share "Ahmed", so it must not fold into any one."""
+        """Three people share "Ahmed", so it must not fold into any one."""
         names = ["Ahmed", "Ahmed Farid", "Ahmed Maher"]
         assert "Ahmed" in _reconcile_names(names)
 

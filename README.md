@@ -244,12 +244,11 @@ rest would have been a quiet downgrade of protection:
 - **Placeholder literals** — the injection defence.
 
 `JOB_TITLE` and `MEETING_TITLE` are detected under every profile and redacted
-under none. Products, compliance terms and card brands (`github`, `chrome`,
-`IP`, `MAC`, `CVV`, `PCI`, `DSS`, `VAT`, `SWIFT`, `BIC`, `Microsoft Teams`,
-`Master Card`) are allowlisted **token-wise**, so multi-word names match --
-this is what stops `PCI-DSS` being mangled into `{{ORG_5}}-DSS`. Allowlisting
-the word `SWIFT` does not suppress an actual BIC code, because pattern spans
-are exempt from the allowlist. Allowlisting `mac` never suppresses an actual MAC address, because
+under none. Products and platforms (`github`, `chrome`, `Microsoft Teams`,
+`Mastercard`) are allowlisted **token-wise**, so multi-word names match, and
+short all-caps tokens (`PCI`, `DSS`, `CVV`, `SWIFT`) are treated as acronyms,
+not organizations -- this is what stops `PCI-DSS` being mangled into
+`{{ORG_5}}-DSS`. Neither suppresses an actual BIC code or MAC address, because
 pattern spans are exempt from the allowlist.
 
 `DURATION`, `TIME` and `AMOUNT` are detected (the pattern rules are unchanged)
@@ -292,7 +291,7 @@ Fixed names are **unconditional caller instructions**: a name on this list is
 masked wherever it appears -- even if `PERSON` is disabled in `profile="minimal"`
 or via `entities={"person": False}`. The caller has already asserted that this
 surface is a person, bypassing inference entirely. Every variant `name_variants()`
-produces (first name, surname, initials, the inverted "Surname, First" form) is
+produces (first name, surname, the "First L." shorthand, the inverted "Surname, First" form) is
 masked case-insensitively, and audited at the verification gate. It applies
 whether or not `use_roster` is enabled, and composes with the roster rather than
 replacing it. Aliasing ("Bob" for "Robert Smith") is not supported; pass both
@@ -301,7 +300,7 @@ forms explicitly if you need it.
 ### Production deployment contract
 
 ```python
-middleware = PIIMiddleware.for_production(strict=True)
+middleware = PIIMiddleware.for_production()
 ```
 
 For production workloads, `PIIMiddleware.for_production()` enforces a strict,
@@ -332,7 +331,7 @@ fail-closed deployment contract:
   sanitized text is withheld entirely when status is `failed`, so the report
   cannot become the delivery vehicle for the leak it reports.
 - **Fail-closed means do not transmit.** `generate_report.py` skips the LLM
-  call on a failed verification; exiting non-zero *after* sending data to a
+  call unless verification is `clean`; exiting non-zero *after* sending data to a
   third party is a postmortem, not a control.
 - **Degradation is visible.** A missing spaCy model warns and is recorded in
   `report["detectors"]`; a clean run without it is a weaker claim.
@@ -347,7 +346,7 @@ do not auto-render links or auto-execute anything from it.
 `chmod 0o600` is close to advisory on Windows, this project's home platform.
 The control that bites there is the parent directory ACL:
 
-```powershell
+```bat
 icacls reports /inheritance:r /grant:r "%USERNAME%":(OI)(CI)F
 ```
 
@@ -368,7 +367,7 @@ export PII_PATTERNS_CONFIG=/etc/pii/patterns.toml
 
 - Python 3.12 or newer
 - [uv](https://docs.astral.sh/uv/)
-- [Ollama](https://ollama.com/) running locally with the model used by `main.py`
+- [Ollama](https://ollama.com/); the default model `gpt-oss:120b-cloud` is an Ollama Cloud model (`generate_report.py --model` selects another)
 
 ## Installation
 
@@ -378,7 +377,7 @@ uv run python -m spacy download en_core_web_lg
 cp .env.example .env
 ```
 
-Configure any optional environment variables in `.env` (such as `HF_TOKEN` for Hugging Face downloads or `PII_TORCH_THREADS` to tune CPU thread concurrency).
+Configure any optional environment variables in `.env` (such as `HF_TOKEN` for Hugging Face downloads or `PII_TORCH_THREADS` to cap PyTorch threads in `PIIMiddleware.for_production()`).
 
 The first run downloads `urchade/gliner_multi_pii-v1`. The spaCy model is
 optional; without it the ensemble falls back to GLiNER alone, warns, and
@@ -389,9 +388,9 @@ records the reduced coverage in the report.
 ```bash
 uv run python main.py
 
-uv run python generate_report.py test_data/transcript_test.txt --skip-llm
-uv run python generate_report.py test_data/transcript_test.txt --strict --explain
-uv run python generate_report.py test_data/transcript_test.txt --include-secrets
+uv run python generate_report.py test_data/sme_meeting_transcript.txt --skip-llm
+uv run python generate_report.py test_data/sme_meeting_transcript.txt --strict --explain
+uv run python generate_report.py test_data/sme_meeting_transcript.txt --include-secrets
 ```
 
 `--skip-llm` verifies without calling the LLM. `--explain` prints every residual
@@ -478,7 +477,7 @@ fails if any pool value appears anywhere in `pii/`, and another regenerates the
 corpus at the committed seed and asserts byte-equality, so a failing document
 cannot be hand-edited into passing.
 
-It currently **fails 2 checks out of 64 (62 passed, 96.9%)** that the tuned
+It currently **fails 2 of the 64 checks in `tests/test_holdout.py` (62 passed, 96.9%)** that the tuned
 corpus reports as clean -- down from seven initially, and four in earlier
 revisions. The surviving failures are:
 1. `test_no_leaks[holdout_06_noisy_asr]`: an entirely uncapitalized, unpunctuated
@@ -531,8 +530,8 @@ it. Use process-level workers, or a `threading.local()` middleware factory.
 When deploying multi-worker processes on CPU, note that PyTorch defaults to using all
 logical CPU cores per worker process for GEMM operations (`torch.get_num_threads()`).
 Running multiple concurrent worker processes without limiting intra-op parallelism
-causes CPU thread contention and cache thrashing. Set `torch.set_num_threads(max(1, os.cpu_count() // num_workers))`
-or `OMP_NUM_THREADS=1` per worker to ensure linear multi-process throughput. Empirical
+causes CPU thread contention and cache thrashing. `PIIMiddleware.for_production()` caps this at half the logical CPUs; set
+`PII_TORCH_THREADS=max(1, cpu_count // num_workers)` per worker to ensure linear multi-process throughput. Empirical
 cold start, latency by document size bucket, and worker memory metrics are tracked in
 [`reports/benchmark.md`](reports/benchmark.md).
 
@@ -555,12 +554,6 @@ The vault never touching disk is a deliberate property, not an omission. The
 residual risk is worth stating: Python strings are not zeroable and may persist
 in freed heap, swap or a core dump.
 
-`0o600` is close to advisory on Windows, this project's home platform. The
-control that bites there is the parent directory ACL:
-
-```
-icacls reports /inheritance:r /grant:r "%USERNAME%":(OI)(CI)F
-```
 
 ## Tests
 
@@ -600,12 +593,16 @@ more than any history fix.
 - `pii/errors.py` — exception hierarchy and exit codes
 - `pii/detector.py`, `pii/spacy_detector.py` — model ensemble
 - `pii/roster.py`, `pii/spans.py`, `pii/chunking.py` — supporting machinery
+- `pii/context.py`, `pii/entities.py`, `pii/spanfix.py` — document evidence, entity resolution, span-edge normalisation
 - `tools/evaluate.py` — corpus scorer, tiered metrics, reports
 - `tools/scoring.py` — span alignment, per-label counts, cluster metrics
 - `tools/derive_gold_spans.py` — migrate string labels to offsets
 - `tools/make_holdout.py` — generate the held-out corpus
 - `tools/report.py` — markdown and JSON artefacts, masked by default
-- `tests/` — 498 fast tests (619 total tests across unit, security, holdout, and regression suites)
+- `tools/benchmark.py` — cold start, latency, throughput, memory
+- `tools/import_corpus.py` — stage real documents for labelling
+- `test_data/sme_meeting_transcript.txt` — synthetic sample input for `main.py`
+- `tests/` — 493 fast tests (617 total tests across unit, security, holdout, and regression suites)
 
 ## License
 

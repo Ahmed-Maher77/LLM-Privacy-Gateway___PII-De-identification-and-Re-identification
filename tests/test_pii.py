@@ -1,4 +1,4 @@
-"""Regression tests, written against the failures in the pod meeting run."""
+"""Regression tests for roster propagation, chunking, patterns and restoration."""
 
 from __future__ import annotations
 

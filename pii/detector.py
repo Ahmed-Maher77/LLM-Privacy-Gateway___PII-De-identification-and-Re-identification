@@ -2,7 +2,7 @@
 
 Replaces ``dslim/bert-base-NER``, whose CoNLL-2003 training set (English news
 from 2003) mislabels non-Western names badly enough that "Rania Fahmy" came
-back as the three fragments 'R', '##an' and '##ia Fah'.
+back as three meaningless sub-word fragments.
 
 ``urchade/gliner_multi_pii-v1`` is multilingual, trained for PII specifically,
 and zero-shot: entity types are plain-language labels, so adding a category is

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-# Exit codes, documented in the README and both CLIs' --help.
+# Exit codes, documented in generate_report.py --help (and 0/3/4 in the README).
 EXIT_OK = 0
 EXIT_ERROR = 1
 EXIT_USAGE = 2

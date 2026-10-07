@@ -478,7 +478,7 @@ class PIIMiddleware:
         # Titles come last and are filtered against the people already found.
         # A title span is dropped by the profile filter, so one that swallowed
         # a name would take the name out of the redaction set with it and leak
-        # it -- "Lala Maher head show" matched as a job title, and the surname
+        # it -- "Lala Okafor head show" matched as a job title, and the surname
         # survived in plaintext.
         if self.use_titles:
             collected.extend(
@@ -824,7 +824,7 @@ def _id_field_spans(text: str, context: DocumentContext) -> list[Span]:
 def _demote_org_like_persons(spans: list[Span], roster: list[str]) -> list[Span]:
     """Demote PERSON spans to ORG if they end in corporate nouns and aren't in the roster.
 
-    Fixes D-12 ("TechNova Support" -> PERSON, "Tal Exampleco" -> PERSON).
+    Fixes "TechNova Support" -> PERSON and "Tal Exampleco" -> PERSON.
     """
 
     corporate_endings = frozenset(
@@ -986,7 +986,7 @@ def _reconcile_names(names: list[str], *, protect: frozenset[str] = frozenset())
 
     Keeping only the full name is enough: ``name_variants`` already generates
     "Sarah" and "J. Smith" from "John Smith", and every occurrence inherits
-    that one identity. Ambiguous tokens are left alone, so three colleagues
+    that one identity. Ambiguous tokens are left alone, so three people
     sharing the first name "Ahmed" still get three placeholders.
 
     ``protect`` holds normalized fixed names: a caller who explicitly listed

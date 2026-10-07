@@ -10,8 +10,7 @@ false`), so a labeller has a form to fill in rather than a blank file, and so
 added.
 
 The imported documents are never copied into ``tests/fixtures/``. A domain
-corpus almost certainly contains real PII, and this repository's own history
-records what happens when that distinction is not enforced mechanically.
+corpus almost certainly contains real PII.
 Point ``--out`` outside the repository, or at a
 path this repository's ``.gitignore`` already excludes, and it stays there.
 

@@ -1,7 +1,7 @@
 """Derive offset-anchored gold spans from the existing string labels.
 
-The corpus carries 270 ``must_redact`` strings written by hand. Entity-level
-scoring needs character offsets, and retyping 270 labels by hand would be both
+The corpus carries several hundred ``must_redact`` strings written by hand.
+Entity-level scoring needs character offsets, and retyping them by hand would be both
 tedious and a fresh source of error. Every one of those strings can be located
 in its source mechanically, so this does that once and writes the result back
 into the sidecar.

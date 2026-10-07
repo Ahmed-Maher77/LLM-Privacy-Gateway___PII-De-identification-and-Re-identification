@@ -132,7 +132,7 @@ class EntityIndex:
 
         "Adeyemi" joins "Samuel Adeyemi" because exactly one full name owns
         that token. "Ahmed" joins nothing, because Farid, Maher and Hamed all
-        answer to it and picking one would merge three colleagues into one.
+        answer to it and picking one would merge three people into one.
         """
         for label in {entity.label for entity in self._entities.values()}:
             full_names = {
