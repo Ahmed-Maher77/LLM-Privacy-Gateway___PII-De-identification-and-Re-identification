@@ -88,7 +88,7 @@ allowing pipelines with contextual metadata to recover 100% precision and recall
 | Change default on/off per category | [src/pii/config.ts](../src/pii/config.ts) | `DEFAULT_PII_CONFIG`. |
 | Change overlap / precedence between engines | [src/pii/normalizer.ts](../src/pii/normalizer.ts) | Documented rules 1-4 in the file header. |
 | Change mask format or enable numbered/reversible masking | [src/pii/masker.ts](../src/pii/masker.ts) | `maskPIIWithMapping()` / `maskPII()` (`options.numbered`, `options.numberingStrategy`), `unmaskPII()`. |
-| Change what the demo runs | [src/demo.ts](../src/demo.ts) | `USE_FILE_INPUT`, `FILE_PATH`, and the config object passed to `detectPII`. |
+| Change what the demo runs | [src/demo.ts](../src/demo.ts) | `FILE_PATH` and the config object passed to `detectPII`. |
 | Change output location / report shape | [src/sanitizer-output.ts](../src/sanitizer-output.ts) | Writes output `.txt` and JSON audit report in `sanitized_output/`. |
 
 ## Invariants — Do not break these

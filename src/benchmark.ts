@@ -8,7 +8,6 @@ interface BenchmarkMetrics {
   avgMs: number;
   minMs: number;
   maxMs: number;
-  p50Ms: number;
   p95Ms: number;
   throughputOpsPerSec: number;
 }
@@ -34,7 +33,6 @@ function generateSyntheticCorpus(count: number): string[] {
 }
 
 function runBenchmark(
-  name: string,
   corpus: string[],
   fn: (text: string) => void
 ): BenchmarkMetrics {
@@ -61,7 +59,6 @@ function runBenchmark(
   const minMs = latencies[0] ?? 0;
   const maxMs = latencies[count - 1] ?? 0;
   const avgMs = totalMs / count;
-  const p50Ms = latencies[Math.floor(count * 0.5)] ?? 0;
   const p95Ms = latencies[Math.floor(count * 0.95)] ?? 0;
   const throughputOpsPerSec = (count / (totalMs / 1000));
 
@@ -70,7 +67,6 @@ function runBenchmark(
     avgMs,
     minMs,
     maxMs,
-    p50Ms,
     p95Ms,
     throughputOpsPerSec,
   };
@@ -106,15 +102,15 @@ export function runAllBenchmarks(): void {
   for (const scale of scales) {
     const corpus = generateSyntheticCorpus(scale);
 
-    const regexResults = runBenchmark('Regex Engine', corpus, (text) => {
+    const regexResults = runBenchmark(corpus, (text) => {
       detectWithRegex(text);
     });
 
-    const winkResults = runBenchmark('WinkNLP Engine', corpus, (text) => {
+    const winkResults = runBenchmark(corpus, (text) => {
       detectWithWinkNLP(text);
     });
 
-    const combinedResults = runBenchmark('Combined Hybrid Engine', corpus, (text) => {
+    const combinedResults = runBenchmark(corpus, (text) => {
       detectPII(text);
     });
 

@@ -16,7 +16,6 @@ export function getWinkNLPInstance() {
 interface TokenOffset {
   start: number;
   end: number;
-  value: string;
 }
 
 /**
@@ -66,6 +65,7 @@ export function detectWithWinkNLP(
   }
 
   const doc = nlp.readDoc(text);
+  const tokens = doc.tokens();
   const matches: PIIMatch[] = [];
 
   // Step 1: Pre-calculate token character offsets
@@ -74,13 +74,13 @@ export function detectWithWinkNLP(
   const tokenOffsets: TokenOffset[] = [];
   let currentOffset = 0;
 
-  doc.tokens().each((token: ItemToken) => {
+  tokens.each((token: ItemToken) => {
     const precedingSpaces = token.out(its.precedingSpaces) as string;
     const value = token.out(its.value) as string;
     const start = currentOffset + precedingSpaces.length;
     const end = start + value.length;
 
-    tokenOffsets.push({ start, end, value });
+    tokenOffsets.push({ start, end });
     currentOffset = end;
   });
 
@@ -129,7 +129,7 @@ export function detectWithWinkNLP(
   // This evaluates whether WinkNLP's POS tagger can be leveraged for name detection
   // and documents its empirical precision/recall tradeoffs.
   if (options?.extractProperNounsAsPerson) {
-    let currentPropnGroup: { startTokenIdx: number; endTokenIdx: number; tokens: string[] } | null = null;
+    let currentPropnGroup: { startTokenIdx: number; endTokenIdx: number } | null = null;
 
     const flushGroup = () => {
       if (currentPropnGroup) {
@@ -162,19 +162,13 @@ export function detectWithWinkNLP(
 
     const numTokens = tokenOffsets.length;
     for (let i = 0; i < numTokens; i++) {
-      const token = doc.tokens().itemAt(i);
-      const pos = token.out(its.pos) as string;
+      const pos = tokens.itemAt(i).out(its.pos) as string;
 
       if (pos === 'PROPN') {
         if (!currentPropnGroup) {
-          currentPropnGroup = {
-            startTokenIdx: i,
-            endTokenIdx: i,
-            tokens: [tokenOffsets[i]!.value],
-          };
+          currentPropnGroup = { startTokenIdx: i, endTokenIdx: i };
         } else {
           currentPropnGroup.endTokenIdx = i;
-          currentPropnGroup.tokens.push(tokenOffsets[i]!.value);
         }
       } else {
         flushGroup();

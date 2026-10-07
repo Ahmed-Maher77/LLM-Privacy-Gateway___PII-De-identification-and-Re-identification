@@ -14,10 +14,7 @@ export function isValidLuhn(val: string): boolean {
   let shouldDouble = false;
 
   for (let i = digits.length - 1; i >= 0; i--) {
-    const char = digits[i];
-    if (!char) continue;
-    let digit = parseInt(char, 10);
-    if (Number.isNaN(digit)) return false;
+    let digit = Number(digits[i]);
 
     if (shouldDouble) {
       digit *= 2;
@@ -74,16 +71,12 @@ function isValidPhone(matchStr: string): boolean {
 /**
  * Trims common trailing punctuation attached to URLs or tokens at sentence boundaries.
  */
-function trimTrailingPunctuation(str: string): { trimmed: string; removedCount: number } {
+function trimTrailingPunctuation(str: string): string {
   let trimmed = str;
-  let removedCount = 0;
-
   while (/[.,:;?!)>\]}\\'"]$/.test(trimmed)) {
     trimmed = trimmed.slice(0, -1);
-    removedCount++;
   }
-
-  return { trimmed, removedCount };
+  return trimmed;
 }
 
 interface RegexRule {
@@ -127,7 +120,7 @@ const REGEX_RULES: RegexRule[] = [
     type: 'PHONE',
     regex: /(?:(?:\(\+\d{1,3}\)|\+\d{1,3})[\s.-]?(?:\(?\d{2,4}\)?[\s.-]?)?\d{3,4}[\s.-]?\d{3,4}(?:[\s.-]?\d{1,4})?|\(\d{3}\)[\s.-]?\d{3}[\s.-]?\d{4}|\b\d{3}[-.]\d{3}[-.]\d{4}\b|\b01[0125]\d{8}\b)/g,
     confidence: 0.95,
-    validator: (m) => isValidPhone(m),
+    validator: isValidPhone,
     trimTrailing: true,
   },
 
@@ -208,8 +201,7 @@ export function detectWithRegex(
       let end = start + rawVal.length;
 
       if (rule.trimTrailing) {
-        const { trimmed } = trimTrailingPunctuation(rawVal);
-        rawVal = trimmed;
+        rawVal = trimTrailingPunctuation(rawVal);
         end = start + rawVal.length;
       }
 

@@ -27,9 +27,7 @@ export function output_in_file(
 ): OutputResult {
   const outputDir = path.resolve(process.cwd(), options?.outputDir ?? 'sanitized_output');
 
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
+  fs.mkdirSync(outputDir, { recursive: true });
 
   // 1. Write the masked text to sanitized_output.txt
   const outputPath = path.join(outputDir, options?.filename ?? 'sanitized_output.txt');

@@ -240,7 +240,7 @@ export function evaluateEngine(
 
   for (const testCase of dataset) {
     const matches = detectFn(testCase.text);
-    const expected = [...testCase.expected];
+    const expected = testCase.expected;
 
     const matchedExpectedIndices = new Set<number>();
 
@@ -330,65 +330,19 @@ export function runFullEvaluation(): void {
   console.log(`  Anchored Cohort:   ${anchoredCases.length} cases (linguistic triggers, structured formats)`);
   console.log(`  Unanchored Cohort: ${unanchoredCases.length} cases (open-prose names without anchors)\n`);
 
-  // Detectors for Person Strategies
-  const runOff = (t: string) =>
-    detectPII(t, {
-      person: false,
-      email: true,
-      phone: true,
-      url: true,
-      ipAddress: true,
-      creditCard: true,
-      ssn: true,
-      address: true,
-    });
-
-  const runAnchored = (t: string) =>
-    detectPII(t, {
-      person: true,
-      personStrategy: 'anchored',
-      email: true,
-      phone: true,
-      url: true,
-      ipAddress: true,
-      creditCard: true,
-      ssn: true,
-      address: true,
-    });
-
-  const runPropn = (t: string) =>
-    detectPII(t, {
-      person: true,
-      personStrategy: 'propn',
-      email: true,
-      phone: true,
-      url: true,
-      ipAddress: true,
-      creditCard: true,
-      ssn: true,
-      address: true,
-    });
-
+  // Detectors for Person Strategies; every other category uses the default config
+  const runOff = (t: string) => detectPII(t, { person: false });
+  const runAnchored = (t: string) => detectPII(t);
+  const runPropn = (t: string) => detectPII(t, { personStrategy: 'propn' });
   const runAnchoredWithKnown = (t: string) =>
-    detectPII(t, {
-      person: true,
-      personStrategy: 'anchored',
-      knownNames: ['Barack Obama', 'Ahmed', 'Tim Cook'],
-      email: true,
-      phone: true,
-      url: true,
-      ipAddress: true,
-      creditCard: true,
-      ssn: true,
-      address: true,
-    });
+    detectPII(t, { knownNames: ['Barack Obama', 'Ahmed', 'Tim Cook'] });
 
   // Evaluate across cohorts
-  const matrix = [
-    { strategy: 'off (person: false)', name: 'off' },
-    { strategy: 'anchored (default)', name: 'anchored' },
-    { strategy: 'propn (legacy POS)', name: 'propn' },
-    { strategy: 'anchored + knownNames', name: 'anchored+known' },
+  const strategies: Array<{ strategy: string; name: string; run: (t: string) => PIIMatch[] }> = [
+    { strategy: 'off (person: false)', name: 'off', run: runOff },
+    { strategy: 'anchored (default)', name: 'anchored', run: runAnchored },
+    { strategy: 'propn (legacy POS)', name: 'propn', run: runPropn },
+    { strategy: 'anchored + knownNames', name: 'anchored+known', run: runAnchoredWithKnown },
   ];
 
   console.log('---------------------------------------------------------------------------------------------------');
@@ -401,13 +355,6 @@ export function runFullEvaluation(): void {
     `|${'-'.repeat(26)}|${'-'.repeat(14)}|${'-'.repeat(12)}|${'-'.repeat(12)}|${'-'.repeat(11)}|${'-'.repeat(11)}|${'-'.repeat(11)}|${'-'.repeat(11)}|`
   );
 
-  const runnerMap: Record<string, (t: string) => PIIMatch[]> = {
-    off: runOff,
-    anchored: runAnchored,
-    propn: runPropn,
-    'anchored+known': runAnchoredWithKnown,
-  };
-
   const cohorts: Array<{ label: string; data: EvaluationTestCase[] }> = [
     { label: 'Anchored', data: anchoredCases },
     { label: 'Unanchored', data: unanchoredCases },
@@ -415,10 +362,9 @@ export function runFullEvaluation(): void {
   ];
 
   for (const c of cohorts) {
-    for (const m of matrix) {
+    for (const m of strategies) {
       if (c.label === 'Anchored' && m.name === 'anchored+known') continue; // Redundant on anchored
-      const fn = runnerMap[m.name]!;
-      const summary = evaluateEngine(m.strategy, fn, c.data);
+      const summary = evaluateEngine(m.strategy, m.run, c.data);
       const personCat = summary.byCategory['PERSON'] ?? { tp: 0, fp: 0, fn: 0, precision: 0, recall: 0, f1: 0 };
       console.log(
         `| ${m.strategy.padEnd(24)} | ${c.label.padEnd(12)} | ${formatPercent(summary.overall.precision).padEnd(10)} | ${formatPercent(summary.overall.recall).padEnd(10)} | ${personCat.tp.toString().padEnd(9)} | ${personCat.fp.toString().padEnd(9)} | ${formatPercent(personCat.precision).padEnd(9)} | ${formatPercent(personCat.recall).padEnd(9)} |`

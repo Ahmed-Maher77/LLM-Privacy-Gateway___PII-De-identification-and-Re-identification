@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   detectWithRegex,
-  isValidLuhn,
   isIssuableSSN,
   hasCardBrandPrefix,
 } from '../src/pii/regex-detector.js';

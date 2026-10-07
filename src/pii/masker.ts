@@ -1,5 +1,6 @@
 import type { EntityMap, EntityMappingEntry, MaskOptions, MaskResult, PIIMatch } from './types.js';
 import { normalizeMatches } from './normalizer.js';
+import { escapeRegex } from './exact-match.js';
 
 /**
  * Masks detected PII spans and generates an entity map for reversible de-anonymization.
@@ -26,11 +27,8 @@ export function maskPIIWithMapping(
     };
   }
 
-  // Ensure matches are normalized, non-overlapping, and validated
-  const normalized = normalizeMatches(matches, text);
-
-  // Sort ascending by start offset to assign entity numbers in natural reading order
-  const inOrder = [...normalized].sort((a, b) => a.start - b.start);
+  // Normalized matches are non-overlapping and sorted by start offset (natural reading order)
+  const inOrder = normalizeMatches(matches, text);
 
   const isNumbered = options?.numbered ?? false;
   const indexBase = options?.indexBase ?? 1;
@@ -40,48 +38,38 @@ export function maskPIIWithMapping(
   const entityToPlaceholder = new Map<string, string>();
   const entityMap: EntityMap = {};
   const entriesMap = new Map<string, EntityMappingEntry>();
-  const matchPlaceholders = new Map<PIIMatch, string>();
+  const placed: { match: PIIMatch; placeholder: string }[] = [];
 
   for (const match of inOrder) {
+    const key = `${match.type}:::${match.value}`;
+    const shared = strategy === 'entity' ? entityToPlaceholder.get(key) : undefined;
     let placeholder: string;
+    let index = 0;
 
     if (!isNumbered) {
       placeholder = `[${match.type}]`;
-    } else if (strategy === 'entity') {
+    } else if (shared) {
       // Coreference-aware: identical entity values share the same numbered token
-      const key = `${match.type}:::${match.value}`;
-      if (entityToPlaceholder.has(key)) {
-        placeholder = entityToPlaceholder.get(key)!;
-      } else {
-        const currentCount = typeCounters[match.type] ?? (indexBase - 1);
-        const nextCount = currentCount + 1;
-        typeCounters[match.type] = nextCount;
-        placeholder = `[${match.type}_${nextCount}]`;
-        entityToPlaceholder.set(key, placeholder);
-      }
+      placeholder = shared;
     } else {
-      // Occurrence-based: every appearance receives an incremented sequential number
-      const currentCount = typeCounters[match.type] ?? (indexBase - 1);
-      const nextCount = currentCount + 1;
-      typeCounters[match.type] = nextCount;
-      placeholder = `[${match.type}_${nextCount}]`;
+      // New entity, or occurrence-based numbering: take the next sequential number
+      index = (typeCounters[match.type] ?? indexBase - 1) + 1;
+      typeCounters[match.type] = index;
+      placeholder = `[${match.type}_${index}]`;
+      entityToPlaceholder.set(key, placeholder);
     }
 
-    matchPlaceholders.set(match, placeholder);
+    placed.push({ match, placeholder });
     entityMap[placeholder] = match.value;
 
     const existingEntry = entriesMap.get(placeholder);
     if (existingEntry) {
       existingEntry.occurrences += 1;
     } else {
-      const matchIndex = isNumbered
-        ? Number.parseInt(placeholder.slice(placeholder.lastIndexOf('_') + 1, -1), 10) || 0
-        : 0;
-
       entriesMap.set(placeholder, {
         placeholder,
         type: match.type,
-        index: matchIndex,
+        index,
         value: match.value,
         occurrences: 1,
       });
@@ -91,14 +79,10 @@ export function maskPIIWithMapping(
   const formatMask = options?.formatMask;
 
   // Substitute in descending order by start offset so index shifts do not corrupt replacements
-  const descending = [...inOrder].sort((a, b) => b.start - a.start);
   let result = text;
 
-  for (const match of descending) {
-    const defaultPlaceholder = matchPlaceholders.get(match) ?? `[${match.type}]`;
-    const replacement = formatMask
-      ? formatMask(match, defaultPlaceholder)
-      : defaultPlaceholder;
+  for (const { match, placeholder } of placed.reverse()) {
+    const replacement = formatMask ? formatMask(match, placeholder) : placeholder;
 
     match.placeholder = replacement;
     result = result.slice(0, match.start) + replacement + result.slice(match.end);
@@ -156,11 +140,7 @@ export function unmaskPII(
   // Sort placeholders descending by length so longer tokens match before prefixes
   placeholders.sort((a, b) => b.length - a.length);
 
-  const escaped = placeholders.map((p) =>
-    p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  );
-
-  const pattern = new RegExp(escaped.join('|'), 'g');
+  const pattern = new RegExp(placeholders.map(escapeRegex).join('|'), 'g');
   return maskedText.replace(pattern, (matched) => entityMap[matched] ?? matched);
 }
 
