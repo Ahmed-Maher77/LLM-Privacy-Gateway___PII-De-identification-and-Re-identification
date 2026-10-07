@@ -117,7 +117,7 @@ describe('Central PII Detector (detectPII)', () => {
   });
 
   it('enables DATE detection only when explicitly configured', () => {
-    const text = 'Meeting on April 1, 1976 with tim@apple.com.';
+    const text = 'Meeting on April 1, 1976 with tim@example.com.';
 
     // By default, date is false
     const defaultMatches = detectPII(text);

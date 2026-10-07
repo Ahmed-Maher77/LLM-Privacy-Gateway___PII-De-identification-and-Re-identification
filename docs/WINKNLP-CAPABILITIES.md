@@ -38,7 +38,7 @@ Running wink directly over `samples/large_sample.txt`, the *entire* NER output i
 
 ```text
 DATE      2023-10-27 | today | 04/12/1985
-EMAIL     mike.rodriguez88@gmail.com | m.rodriguez@acmecorp.com
+EMAIL     mike.rodriguez88@example.com | m.rodriguez@acmecorp.com
 CARDINAL  742 | 97403 | 555 | four | 4321 | 4111 | 2222 | 3333 | 4321
 DURATION  day
 ```

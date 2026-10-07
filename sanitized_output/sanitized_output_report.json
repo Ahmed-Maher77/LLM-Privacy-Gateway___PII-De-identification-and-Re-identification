@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-10-06T01:34:46.327Z",
-  "originalLength": 1399,
+  "timestamp": "2026-10-07T11:00:20.549Z",
+  "originalLength": 1401,
   "sanitizedLength": 1308,
   "entitiesFound": 15,
   "outputFile": "sanitized_output/sanitized_output.txt",
@@ -79,9 +79,9 @@
     },
     {
       "type": "EMAIL",
-      "value": "mike.rodriguez88@gmail.com",
+      "value": "mike.rodriguez88@example.com",
       "start": 623,
-      "end": 649,
+      "end": 651,
       "method": "regex",
       "confidence": 0.99,
       "placeholder": "[EMAIL_1]"
@@ -89,8 +89,8 @@
     {
       "type": "EMAIL",
       "value": "m.rodriguez@acmecorp.com",
-      "start": 737,
-      "end": 761,
+      "start": 739,
+      "end": 763,
       "method": "regex",
       "confidence": 0.99,
       "placeholder": "[EMAIL_2]"
@@ -98,8 +98,8 @@
     {
       "type": "ADDRESS",
       "value": "742 Evergreen Terrace, Springfield, OR 97403",
-      "start": 885,
-      "end": 929,
+      "start": 887,
+      "end": 931,
       "method": "regex",
       "confidence": 0.9,
       "placeholder": "[ADDRESS_1]"
@@ -107,8 +107,8 @@
     {
       "type": "PHONE",
       "value": "(555) 123-4567",
-      "start": 988,
-      "end": 1002,
+      "start": 990,
+      "end": 1004,
       "method": "regex",
       "confidence": 0.95,
       "placeholder": "[PHONE_1]"
@@ -116,8 +116,8 @@
     {
       "type": "PHONE",
       "value": "555-987-6543",
-      "start": 1044,
-      "end": 1056,
+      "start": 1046,
+      "end": 1058,
       "method": "regex",
       "confidence": 0.95,
       "placeholder": "[PHONE_2]"
@@ -125,8 +125,8 @@
     {
       "type": "CREDIT_CARD",
       "value": "4111 2222 3333 4321",
-      "start": 1208,
-      "end": 1227,
+      "start": 1210,
+      "end": 1229,
       "method": "regex",
       "confidence": 0.85,
       "placeholder": "[CREDIT_CARD_1]"
@@ -134,8 +134,8 @@
     {
       "type": "PERSON",
       "value": "Sarah",
-      "start": 1330,
-      "end": 1335,
+      "start": 1332,
+      "end": 1337,
       "method": "rule",
       "confidence": 0.85,
       "placeholder": "[PERSON_2]"
@@ -150,7 +150,7 @@
     "[PERSON_5]": "Rodriguez",
     "[DATE_2]": "04/12/1985",
     "[SSN_1]": "000-12-3456",
-    "[EMAIL_1]": "mike.rodriguez88@gmail.com",
+    "[EMAIL_1]": "mike.rodriguez88@example.com",
     "[EMAIL_2]": "m.rodriguez@acmecorp.com",
     "[ADDRESS_1]": "742 Evergreen Terrace, Springfield, OR 97403",
     "[PHONE_1]": "(555) 123-4567",
@@ -218,7 +218,7 @@
       "placeholder": "[EMAIL_1]",
       "type": "EMAIL",
       "index": 1,
-      "value": "mike.rodriguez88@gmail.com",
+      "value": "mike.rodriguez88@example.com",
       "occurrences": 1
     },
     {

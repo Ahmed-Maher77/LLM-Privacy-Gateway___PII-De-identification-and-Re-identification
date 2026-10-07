@@ -12,7 +12,7 @@ Agent: I can help with that, Mr. Rodriguez. Can you please verify your identity?
 
 User: Yes, that’s correct. My social security number is 000-12-3456 if you need that.
 
-Agent: Thank you. I see the account associated with email mike.rodriguez88@gmail.com. Is that correct?
+Agent: Thank you. I see the account associated with email mike.rodriguez88@example.com. Is that correct?
 
 User: Yes, but please send the reset link to my work email instead: m.rodriguez@acmecorp.com.
 
