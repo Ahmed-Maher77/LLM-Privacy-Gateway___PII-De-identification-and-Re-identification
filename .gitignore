@@ -48,13 +48,11 @@ artifacts/
 # fixture there is synthetic. test_data/ contains unredacted local working copies,
 # ad-hoc tests, and real transcripts that must never be pushed to a repository.
 test_data/*
-!test_data/pod_meeting.txt
 !test_data/sme_meeting_transcript.txt
 scratch/
 
-# Agent and editor local state / internal handoffs
-.claude/settings.local.json
-docs/antigravity-*.md
+# Agent and editor local state
+.claude/
 
 # Local pattern overrides
 pii_patterns.toml

@@ -1,6 +1,6 @@
 """Regression tests for the six held-out defects and the new policy surface.
 
-Each test here corresponds to a defect recorded in docs/review-response.md,
+Each test here corresponds to a defect found by an external review,
 or to a config gap the same review raised (per-entity policy, fixed names).
 None of these were tuned against tests/holdout/ -- every fixture below is
 hand-written from the defect's description, and tests/holdout/ is scored

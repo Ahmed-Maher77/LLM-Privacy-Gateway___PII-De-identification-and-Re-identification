@@ -489,7 +489,6 @@ revisions. The surviving failures are:
    without adjacent full names avoid guessing an ambiguous entity merge.
 
 Both are reported and retained as explicit limitations rather than tuned against.
-See `docs/review-response.md` §9 for details.
 
 ## Limitations
 
@@ -511,9 +510,8 @@ Stated plainly, because these matter more than the numbers above.
   back by design; the calling application controls who sees them.
 
 Before trusting this on a real workload: assemble a domain-representative
-labelled sample (`tools/import_corpus.py` stages the documents;
-`docs/labelling-protocol.md` is the checklist for labelling them), have a
-human review redaction behaviour on it, and measure latency, throughput and
+labelled sample (`tools/import_corpus.py` stages the documents for labelling),
+have a human review redaction behaviour on it, and measure latency, throughput and
 memory on your own hardware (`tools/benchmark.py`).
 
 ## Concurrency
@@ -578,14 +576,11 @@ pull-request check cheap.
 
 ## Handling real transcripts
 
-`reports/` and sanitized side-files are gitignored and were untracked from the
-index. Verified that no real credentials reached committed history.
-
-Note that `test_data/pod_meeting.txt` and `sme_meeting_transcript.txt` are real
-meeting transcripts containing colleague names, and are still tracked in a
-public repository. That is a separate decision for the repository owner. **If
-this repo ever processes a transcript containing real credentials, rewrite
-history, force-push, and notify the people named in it** — and accept that
+`reports/` and sanitized side-files are gitignored. Everything under
+`test_data/` except the synthetic `sme_meeting_transcript.txt` is ignored, so
+local working copies of real transcripts stay out of the repository. **If a
+transcript with real names or credentials is ever committed, rewrite history,
+force-push, and notify the people named in it** — and accept that
 forks and caches retain the old objects, which is why redact-by-default matters
 more than any history fix.
 
@@ -610,7 +605,6 @@ more than any history fix.
 - `tools/derive_gold_spans.py` — migrate string labels to offsets
 - `tools/make_holdout.py` — generate the held-out corpus
 - `tools/report.py` — markdown and JSON artefacts, masked by default
-- `docs/review-response.md` — point-by-point response to the external review
 - `tests/` — 498 fast tests (619 total tests across unit, security, holdout, and regression suites)
 
 ## License
