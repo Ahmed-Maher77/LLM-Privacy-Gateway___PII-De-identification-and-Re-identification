@@ -41,7 +41,7 @@ function problems(text: string, spans: PIISpan[], layer: string): string[] {
     return out;
 }
 
-async function check(name: string, text: string): Promise<{ failures: string[]; ner: PIISpan[] }> {
+async function check(text: string): Promise<{ failures: string[]; ner: PIISpan[] }> {
     const ner = await detectNer(text);
     const failures = [...problems(text, ner, "ner"), ...problems(text, await detect(text), "pipeline")];
     return { failures, ner };
@@ -59,7 +59,7 @@ async function main() {
         ["emoji and non-BMP characters", NON_BMP.join("\n")],
         ["CRLF line endings", NON_BMP.join("\r\n") + "\r\n" + fs.readFileSync("test_data/test_5.txt", "utf-8")],
     ]) {
-        const { failures, ner } = await check(name, text);
+        const { failures, ner } = await check(text);
         report(name, failures, `  (${ner.length} NER spans)`);
     }
 
@@ -72,7 +72,7 @@ async function main() {
     for (let k = 150; k < 150 + positions; k++) {
         const prefix = `${filler.slice(0, k).join(" ")}\nMy name is `;
         const text = `${prefix}Sarah Johnson and I called.`;
-        const { failures, ner } = await check(`boundary ${k}`, text);
+        const { failures, ner } = await check(text);
         boundaryFailures.push(...failures);
         // Found if every letter of the name is inside a PERSON span (one span or one per word)
         const covered = (i: number) => text[i] === " " || ner.some((s) => s.type === "PERSON" && s.start <= i && i < s.end);
@@ -82,7 +82,7 @@ async function main() {
 
     const big = sampleText(229 * 1024);
     const started = performance.now();
-    const { failures, ner } = await check("229 KB", big);
+    const { failures, ner } = await check(big);
     report(`${(big.length / 1024).toFixed(0)} KB file`, failures, `  (${ner.length} NER spans, ${(performance.now() - started).toFixed(0)} ms for NER + pipeline)`);
 
     if (failed > 0) {

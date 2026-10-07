@@ -1,6 +1,6 @@
 // NER models we can run: the pinned files `npm run fetch:model` downloads,
 // and the model label that means PERSON. Only names come from the model:
-// regex covers every other type (DESIGN.md).
+// regex covers every other type (ARCHITECTURE.md).
 
 import path from "node:path";
 

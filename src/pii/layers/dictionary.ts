@@ -8,8 +8,6 @@ import { isEnglishWord } from "./wink";
 import type { Lists, PIISpan, Word } from "../types";
 import { isCapitalised, isAllCaps, hasInnerCapital, lineOf, words, isGiven, isSurnameLike, adjacent, TITLES, NEVER_NAMES, PARTICLES, isNameShaped, PLACE_WORDS, ORGANIZATION_WORDS } from "./dictionary_helpers";
 
-export { PLACE_WORDS, ORGANIZATION_WORDS } from "./dictionary_helpers";
-
 
 const LIST_DIR = path.resolve(__dirname, "../../../data/lists");
 

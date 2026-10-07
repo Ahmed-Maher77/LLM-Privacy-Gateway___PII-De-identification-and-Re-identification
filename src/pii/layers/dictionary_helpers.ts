@@ -66,19 +66,19 @@ const lineOf = (text: string, at: number) =>
         (text.indexOf("\n", at) + 1 || text.length + 1) - 1,
     );
 
-// ========= Check if a word is shaped like a name (contains only letters, apostrophes, hyphens, and periods) =========
+// ========= Check if a word is shaped like a name (letters, apostrophes and hyphens only) =========
 const isNameShaped = (w: string) => /^\p{L}[\p{L}'’-]*$/u.test(w);
 
-/** Only spaces/tabs, or a hyphen, between two words on the same line. */
+/** Only one or two spaces/tabs between two words on the same line. */
 const adjacent = (text: string, a: Word, b: Word) =>
     /^[ \t]{1,2}$/.test(text.slice(a.end, b.start));
 
-// ========= Check if a word is one of the known names (included in pre-defined lists) ==========
+// ========= Check if a word is a known given name (from the data/lists name registry) ==========
 function isGiven(w: string, l: Lists): boolean {
     return l.given.has(w.toLowerCase());
 }
 
-// ======== Check if a word is one of the known surnames (included in pre-defined lists) ==========
+// ======== Check if a word is a known surname (from the data/lists name registry) ==========
 function isSurnameLike(w: string, l: Lists): boolean {
     const lower = w.toLowerCase();
     if (l.surnames.has(lower) || l.given.has(lower)) return true;

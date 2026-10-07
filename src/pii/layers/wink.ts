@@ -2,7 +2,7 @@
   // a second opinion on emails and dates (natural-language dates such as "the 5th of April, 2026")
 
 
-import winkNLP from "wink-nlp";
+import winkNLP, { type ItemEntity } from "wink-nlp";
 import model from "wink-eng-lite-web-model";
 import type { EntityType, PIISpan } from "../types";
 
@@ -52,7 +52,7 @@ export function detectWink(text: string): PIISpan[] {
 
   
   const spans: PIISpan[] = [];
-  doc.entities().each((e: any) => {
+  doc.entities().each((e: ItemEntity) => {
     const type = WINK_TYPES[e.out(its.type) as string];
     if (!type) return;
     const [first, last] = e.out(its.span) as [number, number];

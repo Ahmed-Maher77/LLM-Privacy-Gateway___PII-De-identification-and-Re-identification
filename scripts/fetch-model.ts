@@ -12,8 +12,8 @@ import { DEFAULT_NER_MODEL, MODELS_DIR, NER_MODELS } from "../src/pii/layers/ner
 
 const HUB = "https://huggingface.co";
 
-function sha256Of(file: string): string {
-    return crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+function sha256Of(data: Buffer): string {
+    return crypto.createHash("sha256").update(data).digest("hex");
 }
 
 // ======== Download one file to a temporary name, check it, then move it in place =========
@@ -21,7 +21,7 @@ async function download(url: string, target: string, sha256: string): Promise<vo
     const res = await fetch(url);
     if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
     const data = Buffer.from(await res.arrayBuffer());
-    const actual = crypto.createHash("sha256").update(data).digest("hex");
+    const actual = sha256Of(data);
     if (actual !== sha256) throw new Error(`${url}: SHA-256 is ${actual}, expected ${sha256}`);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(`${target}.part`, data);
@@ -36,7 +36,7 @@ async function main() {
     const dir = path.join(MODELS_DIR, id);
     for (const file of model.files) {
         const target = path.join(dir, file.to ?? file.from);
-        if (fs.existsSync(target) && sha256Of(target) === file.sha256) {
+        if (fs.existsSync(target) && sha256Of(fs.readFileSync(target)) === file.sha256) {
             console.log(`ok       ${file.to ?? file.from}`);
             continue;
         }

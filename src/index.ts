@@ -3,10 +3,10 @@
 
 // output contract => REDACTED text goes to reports/<name>__sanitized<ext>
 
+import "dotenv/config";
 import fs from "node:fs";
 import { writeSanitizedReport } from "./pii/generate_reports/writeSanitizedReport";
 import { writeJsonReport } from "./pii/generate_reports/writeJsonReport";
-import "dotenv/config";
 import { redact, InputTooLargeError } from "./pii/redact";
 import { ModelLoadError } from "./pii/layers/ner";
 
@@ -15,7 +15,6 @@ import { ModelLoadError } from "./pii/layers/ner";
 async function main() {
     const args = process.argv.slice(2);
 
-    // ensure file path is provided
     if (args.length === 0) {
         console.error("No input file specified.");
         process.exit(1);
@@ -23,7 +22,6 @@ async function main() {
 
     const filePath = args[0];
 
-    // check file existence
     if (!fs.existsSync(filePath)) {
         console.error(`File not found: ${filePath}`);
         process.exit(1);
@@ -32,16 +30,13 @@ async function main() {
     const text = fs.readFileSync(filePath, "utf-8");
 
     try {
-        // Redact the text and measure the time taken
         const startTime = performance.now();
         const { text: redacted, spans, metrics } = await redact(text);
         const elapsed = performance.now() - startTime;
 
-        // Write the sanitized report
         const writtenPath = writeSanitizedReport(filePath, redacted);
 
-        // Write a json report with the elapsed time and output path
-        const jsonReport = writeJsonReport({
+        const reportPath = writeJsonReport({
             inputPath: filePath,
             inputChars: text.length,
             totalMs: elapsed,
@@ -54,7 +49,7 @@ async function main() {
         console.error(
             `\nProcessed ${text.length} chars in ${elapsed.toFixed(0)} ms -> ${writtenPath}`,
         );
-        console.error(`JSON report -> ${jsonReport}`);
+        console.error(`JSON report -> ${reportPath}`);
     } catch (err) {
         // if the NER model is missing or won't load
         if (err instanceof ModelLoadError) {
