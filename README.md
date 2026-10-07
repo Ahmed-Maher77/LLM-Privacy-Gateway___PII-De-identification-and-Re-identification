@@ -534,4 +534,4 @@ tests/  unit/ integration/ security/ regression/ evaluation/ _helpers/
 
 ## 19. License
 
-No license has been specified yet.
+MIT — see [LICENSE](LICENSE).
