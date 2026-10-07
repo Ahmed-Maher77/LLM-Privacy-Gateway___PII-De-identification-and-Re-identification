@@ -1,24 +1,24 @@
-[submodule "implementation_1"]
-	path = implementation_1
+[submodule "01-python-gliner-spacy-gateway"]
+	path = 01-python-gliner-spacy-gateway
 	url = ./
-	branch = implementation_1
-[submodule "implementation_2"]
-	path = implementation_2
+	branch = 01-python-gliner-spacy-gateway
+[submodule "02-ts-lists-transformersjs-ner"]
+	path = 02-ts-lists-transformersjs-ner
 	url = ./
-	branch = implementation_2
-[submodule "implementation_3"]
-	path = implementation_3
+	branch = 02-ts-lists-transformersjs-ner
+[submodule "03-ts-winknlp-regex-rules-poc"]
+	path = 03-ts-winknlp-regex-rules-poc
 	url = ./
-	branch = implementation_3
-[submodule "implementation_4"]
-	path = implementation_4
+	branch = 03-ts-winknlp-regex-rules-poc
+[submodule "04-ts-multilayer-lists-regex-ner-winknlp"]
+	path = 04-ts-multilayer-lists-regex-ner-winknlp
 	url = ./
-	branch = implementation_4
-[submodule "implementation_5"]
-	path = implementation_5
+	branch = 04-ts-multilayer-lists-regex-ner-winknlp
+[submodule "05-python-presidio-bert-qwen-gateway"]
+	path = 05-python-presidio-bert-qwen-gateway
 	url = ./
-	branch = implementation_5
-[submodule "implementation_6"]
-	path = implementation_6
+	branch = 05-python-presidio-bert-qwen-gateway
+[submodule "06-ts-winknlp-lite"]
+	path = 06-ts-winknlp-lite
 	url = ./
-	branch = implementation_6
+	branch = 06-ts-winknlp-lite
