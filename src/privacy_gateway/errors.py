@@ -49,7 +49,7 @@ class AggregationInvariantError(GatewayError):
 
     Always fatal, in both fail modes: overlapping or misaligned spans are
     precisely the state that produces corrupted output such as
-    ``<PER_2>ehal Fahmy``.
+    ``<PER_2>ania Fahmy``.
     """
 
     exit_code = 4

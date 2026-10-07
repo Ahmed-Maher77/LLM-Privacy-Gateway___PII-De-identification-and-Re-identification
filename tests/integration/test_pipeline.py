@@ -158,7 +158,7 @@ def test_the_assertion_helper_itself_detects_a_planted_leak():
     # Negative control. An assertion helper that has never failed is not
     # evidence, so this plants the prototype's exact failure -- a placeholder
     # glued to the remainder of the name -- and requires the helper to catch it.
-    planted = "Contact <PER_2>ehal Fahmy about it."
+    planted = "Contact <PER_2>ania Fahmy about it."
     assert find_leaks(planted, ["Rania Fahmy"])
     with pytest.raises(SecretLeak):
         assert_no_secrets(planted, ["Rania Fahmy"], context="planted")

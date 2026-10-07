@@ -67,16 +67,17 @@ decision belongs to the policy layer, not the detectors.
 
 The previous implementation detected entities with one NER model, **discarded
 the offsets**, and anonymized with `str.replace()` on the surface strings.
-Every failure below is measured from the artifacts still in this repository
-under `tests/regression/fixtures/prototype_v0/`:
+The first three rows were measured on the prototype's run over a real meeting
+transcript that has since been removed; the last two are reproducible from
+`tests/regression/fixtures/prototype_v0/`:
 
 | Evidence | What it shows |
 |---|---|
-| 138 corrupted sites, 28 distinct | Sub-word fragments (`N`, `She`, `Al`, `Co`) became entities and were replaced document-wide: `<PER_2>ehal Fahmy`, `<PER_13>rif Badri`, `<PER_23>y` ×58 |
-| 24 invented words | `ehal`, `rif`, `honemi`, `rtana` — strings that exist nowhere in the source |
+| 138 corrupted sites, 28 distinct | Sub-word fragments became entities and were replaced document-wide, e.g. `<PER_23>y` ×58 |
+| 24 invented words | e.g. `rtana` (from `Cortana`) — strings that exist nowhere in the source |
 | 66 × U+202F, zero intact placeholders | The model rendered `<PER_2>` as `**PER 2**`; restoration was a **silent 100% no-op** |
 | `PER_10`, `PER_11`, `PER_12` | Present in the model's output, absent from its own sanitized input — hallucinated |
-| `+44 7700 900123`, `BP-28491` ×3, an internal API URL | Passed through completely unmasked |
+| `+44 7700 900123` | Passed through completely unmasked |
 
 The root cause is a single design choice, and the rebuild is organised around
 making it impossible.
@@ -132,8 +133,8 @@ backstops.
 ## 4. Why PII alone is not enough
 
 "PII" covers people. It does not cover the things a business actually cannot
-send to a third party: that the platform is called **FleetCore**, that the
-customer is **BrightPath Logistics**, that the account is **BP-28491**. A
+send to a third party: that the platform is called **FleetCore**, and that the
+customer is **BrightPath Logistics**. A
 generic NER model has no concept of these — its label set is PER/ORG/LOC/MISC —
 which is why the domain layer exists and why the taxonomy includes
 `INTERNAL_SYSTEM`, `CUSTOMER_ID`, `CONTRACT` and
@@ -156,17 +157,11 @@ reliability, and an LLM's spans are the least trustworthy thing in the pipeline.
 
 ### The NER fix, concretely
 
-On `"Rania Fahmy said hi to Hossam Badri and Lamia Aly."` the old configuration
-(`aggregation_strategy="simple"`, reading the `word` field) emits:
-
-```
-('PER','R') ('PER','##an') ('PER','##ia Fahmy') ('PER','Ho') ('PER','##ss')
-('PER','##am Badri') ('PER','La') ('PER','##mia Aly') ('PER','Co') ('LOC','##rta')
-```
-
-The current one emits `Rania Fahmy`, `Hossam Badri`, `Lamia Aly` — whole names,
+On a sentence of names the old configuration (`aggregation_strategy="simple"`,
+reading the `word` field) emits `##`-prefixed sub-word pieces and one- or
+two-letter fragments instead of whole names. The current one emits whole names,
 zero fragments. It also chunks its input, because the model truncates at 512
-tokens and the back half of both sample transcripts was previously invisible to
+tokens and the back half of a long transcript was previously invisible to
 it. That is a correctness bug at any input size, not a scaling concern.
 
 ### The Qwen layer
@@ -222,7 +217,7 @@ are filtered out at aggregation so the document's structure and chronology
 remain legible without leaking sensitive dates.
 
 **Public and excluded categories pass through in plain text.** Types such as
-`ORGANIZATION`, `LOCATION` / `ADDRESS`, `IP_ADDRESS`, `URL`, `PASSPORT`, and
+`ORGANIZATION`, `LOCATION` / `ADDRESS`, `IP_ADDRESS`, `URL` / `INTERNAL_URL`, `CUSTOMER_ID`, `PASSPORT`, and
 `ACCOUNT_IDENTIFIER` (IBAN, bank account numbers) are configured as `allow` by
 default.
 
@@ -241,8 +236,8 @@ resolved.
 ### Why tolerant matching is refused
 
 The obvious response to `**PER 2**` is to match it loosely and substitute
-anyway. That is rejected, on evidence from this repository. The committed output
-contains:
+anyway. That is rejected, on evidence from the prototype's run on the removed
+meeting transcript. Its output contained:
 
 ```
 **PER 3‑8, 20‑22, 24‑25**
@@ -370,7 +365,7 @@ Every setting is an environment variable with a safe default; see
 | `GATEWAY_PLACEHOLDER_STYLE` | `angle` | `guillemet` uses `⟦PERSON_001⟧`, which has no markdown or HTML meaning |
 | `GATEWAY_MAX_INPUT_CHARS` | `1000000` | Refused before any model call |
 
-Data, not code: `config/policy.toml` (per-type actions and thresholds),
+Data, not code: `config/policy.toml` (optional, not shipped: per-type overrides of `policy/actions.py`),
 `config/domain_lexicon.toml` (business terms), `resources/public_entities.txt`
 (allowlist), `resources/denylist.txt`, `resources/common_words.txt`.
 
@@ -382,17 +377,17 @@ uv run pytest tests/unit -q            # fast layer
 uv run pytest tests/regression -q      # the acceptance gate
 ```
 
-730 tests across unit, integration, security, regression, and evaluation suites. None requires a
+642 tests across unit, integration, security, regression, and evaluation suites. None requires a
 network or a running Ollama.
 
 The regression suite has two halves. The first pins **the evidence**: the
 prototype artifacts must keep demonstrating the defects, because a fixture that
 has quietly stopped reproducing a bug makes the rest of the suite assert
-nothing. The second runs the current pipeline over the same transcripts.
+nothing. The second runs the current pipeline over the same transcript.
 
 `assert_no_secrets` checks five ways — exact, case-folded, whitespace-squashed,
 per-token and digit-run — because the interesting leak is not a whole name but
-`<PER_2>ehal Fahmy`, where the surname sits in plain text beside a placeholder.
+`<PER_2>ania Fahmy`, where the surname sits in plain text beside a placeholder.
 A **negative-control test** plants exactly that and requires the helper to catch
 it; an assertion helper that has never failed is not evidence.
 
@@ -413,7 +408,7 @@ as set-unions over that cache, so comparing eight configurations is not eight
 pipeline runs.
 
 **Primary criterion is strict span-and-type matching**, because the defect being
-repaired *is* a boundary defect: under partial credit, `<PER_2>ehal Fahmy`
+repaired *is* a boundary defect: under partial credit, `<PER_2>ania Fahmy`
 scores as a near-hit and the prototype would report ~80% recall while corrupting
 the document.
 
@@ -435,7 +430,7 @@ spans) and these numbers cannot be reproduced from it:
 
 C, F and G are skipped because Qwen is disabled and no model was pulled. They
 are reported as skipped, never as zero — `not measured` is not a measurement of
-nothing. H is not in the brief's list; it was added because with Qwen off there
+nothing. H is not one of the seven original configurations; it was added because with Qwen off there
 would otherwise be no row for the configuration that actually ships.
 
 `Leak docs` — excerpts where at least one gold entity was missed entirely — is
@@ -459,7 +454,8 @@ responsible for, and a benchmark that cannot run without a hosted service is a
 benchmark that mostly does not run.
 
 Measured on this machine — 16 logical cores, CPU only, no CUDA — n=30 after 2
-warmups, on a 13,236-character noisy ASR meeting transcript (328 entities):
+warmups, on a 13,236-character noisy ASR meeting transcript (328 entities) since
+removed from the repository; `bench.py` now runs over every file in `test_data/`:
 
 | Configuration | Median | p95 | stdev | ms / 1000 chars | Model footprint |
 |---|---|---|---|---|---|
@@ -512,30 +508,29 @@ src/privacy_gateway/
   llm/               base.py ollama_client.py mock_client.py prompt.py
   observability/     timing.py
   evaluation/        gold.py metrics.py sweep.py report.py cli.py
-config/ resources/ evaluation/gold/ benchmarks/ scripts/
-tests/  unit/ integration/ security/ regression/
+config/ resources/ evaluation/gold/ benchmarks/ scripts/ test_data/
+tests/  unit/ integration/ security/ regression/ evaluation/ _helpers/
 ```
 
 ## 18. Production-readiness checklist
 
 | | Item | State |
 |---|---|---|
-| ✅ | Corruption class eliminated | Offset-based replacement; lossless inversion proven on both transcripts |
+| ✅ | Corruption class eliminated | Offset-based replacement; lossless inversion proven on the SME transcript |
 | ✅ | Mapping isolated from the model | Asserted five ways, with a negative control |
 | ✅ | Fail-closed by default | Detector failure aborts before any model call |
 | ✅ | Injection defence | Neutralised before detection; blocks under fail-closed |
 | ✅ | No raw values in logs | Enforced by `__repr__`, not by discipline |
 | ✅ | Configuration as data | Policy, lexicon, allowlist, denylist all external |
 | ✅ | Measured, not asserted | Evaluation sweep and latency benchmark, with provenance |
-| ✅ | Validated on realistic documents | 20 synthetic documents across interview transcripts, support tickets, config files and financial forms, run end to end against the real downstream model. Found and fixed six classes of detection gap (see `LIMITATIONS.md` and the fix commit for detail); all now pinned by test |
+| ✅ | Validated on realistic documents | The synthetic documents in `test_data/` (interview transcripts, support tickets, config files, financial forms), run end to end against the real downstream model. Each gap found is fixed and pinned by test, or documented in `LIMITATIONS.md` |
 | ⚠️ | Evaluation labels | **AI-generated, not human-verified.** Review before relying on the figures |
 | ⚠️ | Qwen layer | Implemented and unit-tested; **never run against a real model** |
-| ⚠️ | Memory growth | ~1.2 GB across 30 runs with model layers; uninvestigated |
+| ⚠️ | Memory growth | 2.6 GB footprint with model layers; steady-state RSS unmeasured |
 | ⚠️ | Over-redaction on noisy ASR | Expected and correct, but a real utility cost |
 | ❌ | Mapping persistence | In-memory only. Persisting it needs encryption at rest before multi-turn production use |
 | ❌ | Authentication / multi-tenancy | Out of scope; conversation isolation is not an authorisation boundary |
 | ❌ | Red-teaming | Only the scripted cases in `tests/security/` |
-| ❌ | Git history | Still contains unredacted meeting content from earlier commits |
 
 ## 19. License
 

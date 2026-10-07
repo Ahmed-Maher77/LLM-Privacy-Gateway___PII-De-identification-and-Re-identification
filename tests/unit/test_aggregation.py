@@ -80,9 +80,9 @@ def test_a_subword_fragment_from_a_non_expanding_detector_is_dropped():
 
 
 def test_a_single_character_person_is_dropped():
-    # The literal <PER_2> bug: "N" of "Rania" must never survive as an entity.
+    # The literal <PER_2> bug: "R" of "Rania" must never survive as an entity.
     result = AGG.aggregate([ent(0, 1, detector="ner", conf=0.99)], TEXT)
-    assert all(e.text != "N" for e in result.entities)
+    assert all(e.text != "R" for e in result.entities)
 
 
 def test_markdown_wrappers_are_trimmed():

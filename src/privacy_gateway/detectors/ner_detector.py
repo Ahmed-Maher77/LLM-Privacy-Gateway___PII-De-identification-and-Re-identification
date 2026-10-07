@@ -6,7 +6,7 @@ differently here:
 1. **Offsets come from the model, text comes from the document.** The pipeline's
    ``word`` field is passed only as ``reported_text``; ``start``/``end`` drive
    the entity. The prototype used ``word`` as a ``str.replace`` key, so the
-   sub-word fragment ``"N"`` of "Rania" was replaced at every ``N`` in the
+   one-letter sub-word fragment ``"N"`` was replaced at every ``N`` in the
    document.
 2. **Aggregation strategy is ``max``, not ``simple``.** ``simple`` is precisely
    the strategy that emits sub-word pieces for this model.
@@ -103,7 +103,7 @@ class NERDetector:
                 "ner",
                 model=self.model,
                 # "simple" splits on sub-word boundaries for this model, which
-                # is how "Hossam" became "She".
+                # is how whole names became fragments.
                 aggregation_strategy="max",
                 device=-1 if self.device == "cpu" else 0,
             )
@@ -151,8 +151,8 @@ class NERDetector:
             if score < self.score_threshold:
                 continue
 
-            # Widen a sub-word span to the whole token. This recovers "Hossam"
-            # from "She" rather than merely discarding it.
+            # Widen a sub-word span to the whole token. This recovers the whole
+            # name from a fragment rather than merely discarding it.
             start, end = expand_to_word_boundary(chunk, start, end)
             surface = chunk[start:end].strip()
             if len(surface) < self.min_chars:

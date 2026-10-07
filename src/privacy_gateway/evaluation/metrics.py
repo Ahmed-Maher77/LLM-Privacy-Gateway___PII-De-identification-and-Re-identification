@@ -3,7 +3,7 @@
 The headline criterion is **strict**: exact start, exact end, exact type. That
 is an opinionated choice and the reason is this project specifically -- the
 defect being repaired *is* a boundary defect. Under partial-credit matching,
-``<PER_2>ehal Fahmy`` scores as a near-hit on "Rania Fahmy", and the prototype
+``<PER_2>ania Fahmy`` scores as a near-hit on "Rania Fahmy", and the prototype
 would report roughly 80% recall while corrupting the document. Strict matching
 is the only criterion aligned with the property the gateway must actually hold.
 

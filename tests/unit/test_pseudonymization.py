@@ -3,7 +3,7 @@
 The two tests that matter most are
 ``test_replacement_is_by_offset_not_by_string_replace`` and
 ``test_a_single_character_entity_cannot_corrupt_other_words``: together they
-pin the exact defect that produced ``<PER_2>ehal Fahmy`` and ``<PER_2>ice.``
+pin the exact defect that produced ``<PER_2>ania Fahmy`` and ``<PER_2>ice.``
 in the prototype's committed output.
 """
 

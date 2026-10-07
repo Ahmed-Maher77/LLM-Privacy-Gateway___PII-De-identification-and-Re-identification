@@ -5,8 +5,8 @@ source text. Everything that requires the document lives here, and runs at the
 aggregation gate.
 
 The word-alignment rule is the structural defence against sub-word fragments.
-The prototype's Hugging Face layer emitted ``"She"`` (of "Hossam"), ``"N"`` (of
-"Rania") and ``"Al"`` (of "Aly"); each was then replaced everywhere it occurred.
+The prototype's Hugging Face layer emitted one- and two-letter
+fragments such as ``"N"``, ``"She"`` and ``"Al"``; each was then replaced everywhere it occurred.
 Here such a span is either expanded to the whole word -- which *improves*
 recall -- or dropped.
 """

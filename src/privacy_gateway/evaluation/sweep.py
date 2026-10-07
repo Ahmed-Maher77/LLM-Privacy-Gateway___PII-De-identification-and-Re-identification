@@ -34,7 +34,7 @@ class SweepConfig:
     detectors: frozenset[str]
 
 
-#: The configurations the brief asks for.
+#: The configurations compared.
 SWEEP: dict[str, SweepConfig] = {
     "A": SweepConfig("A", "Presidio only", frozenset({"presidio"})),
     "B": SweepConfig("B", "Generic NER only", frozenset({"ner"})),
@@ -49,7 +49,7 @@ SWEEP: dict[str, SweepConfig] = {
         "G", "All four layers",
         frozenset({"presidio", "regex", "domain", "registry", "ner", "qwen"}),
     ),
-    # Beyond the seven the brief asks for. With Qwen disabled by default, C, F
+    # Beyond the original seven. With Qwen disabled by default, C, F
     # and G cannot be measured, which would leave no row for the configuration
     # that actually ships. This is it.
     "H": SweepConfig(

@@ -81,7 +81,7 @@ def test_an_exact_match_is_a_strict_true_positive():
 
 
 def test_a_boundary_error_is_a_strict_miss():
-    # The whole point of strict matching: "<PER_2>ehal Fahmy" must not score as
+    # The whole point of strict matching: "<PER_2>ania Fahmy" must not score as
     # a near-hit on "Rania Fahmy".
     result, _ = evaluate_document(doc([span(16, 27)]), [pred(17, 27)])
     assert result.strict.tp == 0
@@ -340,7 +340,7 @@ def test_a_dirty_working_tree_is_shown():
 
 # -- sweep configuration -----------------------------------------------------
 
-def test_the_brief_configurations_are_all_present():
+def test_the_original_seven_configurations_are_all_present():
     assert {"A", "B", "C", "D", "E", "F", "G"} <= set(SWEEP)
 
 

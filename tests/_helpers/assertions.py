@@ -2,7 +2,7 @@
 
 ``assert_no_secrets`` is layered rather than a single substring test, because
 the interesting failure is not "the whole name appeared" -- it is the
-prototype's failure, where ``<PER_2>ehal Fahmy`` left the surname sitting in
+prototype's failure, where ``<PER_2>ania Fahmy`` left the surname sitting in
 plain text next to a placeholder. A naive check for ``"Rania Fahmy"`` passes
 that prompt happily.
 
@@ -67,7 +67,7 @@ def find_leaks(
             found.append(("squashed", value))
             continue
         # 4. any substantial word of the value. This is the check that catches
-        #    the real defect: with "<PER_2>ehal Fahmy" in the prompt, the token
+        #    the real defect: with "<PER_2>ania Fahmy" in the prompt, the token
         #    "Fahmy" is present in plain text.
         for token in _WORD_RE.findall(value):
             if token.casefold() in _GENERIC_TOKENS:
@@ -118,7 +118,7 @@ def assert_no_invented_words(sanitized: str, original: str) -> None:
     """Pseudonymization may only remove words, never invent them.
 
     This is the generic form of the prototype's fragment bug: replacing a
-    sub-word span leaves a remainder ("ehal", "rif", "honemi") that exists
+    sub-word span leaves a remainder ("ania", "ssam", "alaby") that exists
     nowhere in the source. It catches every such defect, including ones nobody
     has enumerated by hand.
     """

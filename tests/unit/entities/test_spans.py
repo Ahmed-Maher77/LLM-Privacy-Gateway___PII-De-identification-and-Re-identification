@@ -37,7 +37,7 @@ def ent(start, end, text=None, etype="PERSON", detector="ner", conf=0.9):
     "start,end,expected",
     [
         (0, 11, True),    # "Rania Fahmy"
-        (0, 1, False),    # "N"  -> the <PER_2>ehal Fahmy bug
+        (0, 1, False),    # "R"  -> the <PER_2>ania Fahmy bug
         (0, 3, False),    # "Ran"
         (16, 19, False),  # "Hos" -> the prototype's sub-word replacement bug
         (16, 22, True),   # "Hossam"

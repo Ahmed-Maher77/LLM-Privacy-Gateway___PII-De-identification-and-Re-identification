@@ -41,13 +41,13 @@ skipped.
 
 **People**
 
-- Speaker-label lines (`Ahmed Farid   0:31`) *are* PERSON. They are also the
+- Speaker-label lines (`09:00 - Ahmed Hassan:`) *are* PERSON. They are also the
   majority class, so metrics are reported both including and excluding them —
-  an F1 dominated by 190 identical header names is theatre.
-- A first name alone (`Hossam.`, `Ahmed`) *is* PERSON.
-- A name that cannot be attributed is still PERSON. When three participants
-  are called Ahmed, a bare "Ahmed" is labelled without deciding which one it is.
-- ASR-mangled name-like tokens (`Tarik`, `Nabeel`, `Big Jamboree`) →
+  an F1 dominated by repeated header names is theatre.
+- A first name alone (`Sarah.`, `Ahmed`) *is* PERSON.
+- A name that cannot be attributed is still PERSON. When several participants
+  share a first name, a bare "Ahmed" is labelled without deciding which one it is.
+- ASR-mangled name-like tokens (garbled transliterations of names) →
   `certainty: ambiguous`. Excluded from both numerator and denominator, counted
   separately. Guessing here would silently set the ceiling for every detector.
 - Possessives: the span excludes `'s`.
@@ -84,8 +84,8 @@ skipped.
 
 **Not sensitive**
 
-- Dates and times, including Teams timestamps and markdown speaker headers.
-  `DATE` is excluded from scoring on both sides.
+- Dates and times are not labelled. The gateway does pseudonymize calendar
+  dates, but `DATE` is excluded from scoring on both sides.
 - Money and quantities (`$80,000`, `420 employees`, `4.6`).
 - Job titles, unless they name a person.
 
@@ -124,6 +124,4 @@ Inventing a κ would be exactly the kind of fabricated number this project
 exists to avoid.
 
 Before these figures are used to choose a production configuration, the set
-should be reviewed by a human familiar with the source meetings — particularly
-the `ambiguous` spans, where a native speaker of the transcripts' language mix
-would resolve several cases this labeller could not.
+should be reviewed by a human annotator.

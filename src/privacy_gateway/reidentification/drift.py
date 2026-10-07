@@ -1,7 +1,7 @@
 r"""Placeholder drift detection.
 
-Models reformat placeholders. In this repository's own committed output the
-model turned ``<PERSON_002>`` into ``**PER 2**`` -- markdown bold, with a
+Models reformat placeholders. In the prototype's run on a since-removed meeting
+transcript the model turned ``<PERSON_002>`` into ``**PER 2**`` -- markdown bold, with a
 narrow no-break space in place of the underscore -- 66 times, leaving zero
 intact placeholders and a restoration pass that silently did nothing.
 

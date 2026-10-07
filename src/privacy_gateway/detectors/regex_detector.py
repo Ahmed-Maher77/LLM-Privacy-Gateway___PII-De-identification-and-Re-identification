@@ -37,7 +37,7 @@ class RegexDetector:
                 else matcher(text)  # type: ignore[operator]
             )
             for m in matches:
-                # A pattern anchored to a label ("Routing number: 122000049")
+                # A pattern anchored to a label ("password: hunter2")
                 # matches the label too, but only the value itself is the
                 # entity; a named "value" group narrows the span to just that.
                 if "value" in m.re.groupindex:

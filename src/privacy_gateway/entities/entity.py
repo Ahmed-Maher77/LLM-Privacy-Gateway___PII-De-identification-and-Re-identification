@@ -7,7 +7,7 @@ Two properties of this module carry most of the safety weight:
    Face's ``word``, Qwen's echoed string) is recorded only as a diagnostic.
    The prototype trusted ``entity["word"]`` and used it as a ``str.replace``
    key, which is how a sub-word fragment ``"N"`` came to be replaced
-   document-wide, producing ``<PER_2>ehal Fahmy``.
+   document-wide, producing ``<PER_2>ania Fahmy``.
 
 2. ``__repr__`` never contains the matched text. The realistic leak vector is
    not a deliberate ``print(entity.text)`` -- it is ``logger.debug(f"got
