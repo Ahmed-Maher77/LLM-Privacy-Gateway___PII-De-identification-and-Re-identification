@@ -6,7 +6,7 @@
 text
  |
  +-- detectWithWinkNLP()   (src/pii/wink-detector.ts)    statistical: built-in NER + (optional) POS PROPN
- |      |- Step 2: built-in wink entities -> mapWinkEntityToPIIType() (EMAIL, URL, absolute DATE, TIME)
+ |      |- Step 2: built-in wink entities -> mapWinkEntityToPIIType() (EMAIL, URL, absolute DATE, TIME, MENTION)
  |      '- Step 3: (if personStrategy === 'propn') PROPN heuristic
  |
  +-- detectPersons()       (src/pii/person-detector.ts)  anchored linguistic patterns + shape validation
@@ -17,6 +17,9 @@ text
  +-- detectWithRegex()     (src/pii/regex-detector.ts)   deterministic rules: EMAIL, PHONE, URL, IP,
  |                                                       SSN (shape-first), CREDIT_CARD (shape+prefix),
  |                                                       ADDRESS (street/city/state/zip)
+ |
+ +-- findExactMatches()    (src/pii/exact-match.ts)      knownLocations / knownOrganizations
+ |                                                       (when location / organization enabled)
  |
  v
 applyStructuralGuards()    (src/pii/structure.ts)        suppresses heuristic types (PERSON, LOC, ORG)
@@ -66,7 +69,7 @@ The system supports three configurable person detection strategies:
 2. **`propn`:**
    Legacy WinkNLP POS tagger heuristic collecting consecutive `PROPN` tokens.
    Achieves higher recall on open prose but suffers from catastrophic false positives
-   (~28% precision, tagging "Agent", "System", "Monday", "Customer Support" as people).
+   (33.3% PERSON precision on the evaluation set, tagging "Agent", "System", "Monday", "Customer Support" as people).
    Retained strictly for benchmark comparison in evaluation harnesses.
 3. **`off`:**
    Disables person detection entirely while keeping other sensitive identifiers active.
@@ -74,7 +77,7 @@ The system supports three configurable person detection strategies:
 ### Caller Injection (`knownNames`, `knownLocations`, `knownOrganizations`)
 For unanchored entities (KI-005), caller applications can pass lists of known entities.
 These are detected via word-boundary exact matching with high confidence (`0.99`),
-allowing pipelines with contextual metadata to recover 100% precision and recall.
+allowing pipelines with contextual metadata to recover unanchored names (85.7% PERSON precision / recall on the evaluation set).
 
 ## Module Map — Which file do I change?
 
@@ -84,6 +87,7 @@ allowing pipelines with contextual metadata to recover 100% precision and recall
 | Change anchored person detection or name validation | [src/pii/person-detector.ts](../src/pii/person-detector.ts) | Add/modify linguistic anchors in `ANCHORS` or name shape rules in `isPlausibleName()`. |
 | Protect document formatting or speaker prefixes | [src/pii/structure.ts](../src/pii/structure.ts) | Adjust `getProtectedRanges()` regexes. Never apply to deterministic types. |
 | Map a new wink entity type to a PII type | [src/pii/wink-detector.ts](../src/pii/wink-detector.ts) | `mapWinkEntityToPIIType()`. Only the types in the capability matrix can ever arrive here. |
+| Change caller-supplied exact matching (`knownNames` / `knownLocations` / `knownOrganizations`) | [src/pii/exact-match.ts](../src/pii/exact-match.ts) | `findExactMatches()`: whole-word, confidence 0.99. |
 | Add a new PII category | [src/pii/types.ts](../src/pii/types.ts) -> [src/pii/config.ts](../src/pii/config.ts) -> a detector | Three edits: union member, `PIIConfig` field + `isTypeEnabled` case, and an emitter. Skipping the third creates a dead toggle. |
 | Change default on/off per category | [src/pii/config.ts](../src/pii/config.ts) | `DEFAULT_PII_CONFIG`. |
 | Change overlap / precedence between engines | [src/pii/normalizer.ts](../src/pii/normalizer.ts) | Documented rules 1-4 in the file header. |
@@ -98,7 +102,7 @@ allowing pipelines with contextual metadata to recover 100% precision and recall
    detector must satisfy it.
 2. **Non-overlapping output.** `normalizeMatches()` guarantees no two returned spans
    overlap, so `maskPII` can replace right-to-left without index drift.
-3. **No overlapping mask corruption.** `maskPII` sorts descending by `start`. Never
+3. **No overlapping mask corruption.** `maskPIIWithMapping` substitutes in descending `start` order. Never
    change it to ascending.
 4. **Detection is pure.** No I/O, no network, no LLM. All processing is local
    (crucial to the zero-leakage privacy guarantee of this POC).

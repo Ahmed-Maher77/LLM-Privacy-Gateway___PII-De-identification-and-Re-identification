@@ -27,11 +27,12 @@ WinkNLP was evaluated for several potential advantages:
 
 ## 3. Installation
 
-Ensure Node.js (version 18+ or 20+) is installed.
+Ensure Node.js 22.12+ is installed (required by Vitest 5).
 
 ```bash
 # Clone the repository and enter the directory
-cd implementation_3
+git clone <repository-url>
+cd <repository-folder>
 
 # Install dependencies
 npm install
@@ -51,7 +52,7 @@ Runs 57 unit and regression tests across 9 test suites (Vitest).
 ```bash
 npm run demo
 ```
-Runs sample texts through detection, offset verification, and masking. You can also pass custom input directly:
+Runs `samples/large_sample.txt` through detection (dates enabled), numbered masking and round-trip unmask verification, writing `sanitized_output/`. You can also pass custom input directly (this also overwrites `sanitized_output/`):
 ```bash
 npm run demo -- "Contact Ahmed at ahmed@example.com or call +20 100 123 4567."
 ```
@@ -116,7 +117,7 @@ Compiles TypeScript to `dist/` with ES2022 / NodeNext module declarations.
     "start": 102,
     "end": 121,
     "method": "regex",
-    "confidence": 0.95
+    "confidence": 0.98
   }
 ]
 ```
@@ -191,7 +192,8 @@ flowchart TD
 - `src/pii/config.ts`: Configuration resolution and category toggle mapping.
 - `src/pii/wink-detector.ts`: Isolated WinkNLP wrapper with token span to character offset conversion.
 - `src/pii/person-detector.ts`: Anchored conversational name detector and token shape filter.
-- `src/pii/regex-detector.ts`: High-precision deterministic rules for emails, phones, URLs, IPs, cards, and SSNs.
+- `src/pii/regex-detector.ts`: High-precision deterministic rules for emails, phones, URLs, IPs, cards, SSNs, and addresses.
+- `src/pii/exact-match.ts`: Whole-word exact matching for caller-supplied `knownNames`, `knownLocations`, `knownOrganizations` (plus shared `escapeRegex`).
 - `src/pii/structure.ts`: Structural guards protecting transcript tags and speaker prefixes.
 - `src/pii/normalizer.ts`: Deterministic deduplication, enclosing span resolution, and strict substring verification.
 - `src/pii/detector.ts`: Central hybrid orchestrator.
@@ -224,7 +226,7 @@ flowchart TD
 
 | PII Type | WinkNLP Native | Regex / Rules | Empirical Finding |
 | :--- | :--- | :--- | :--- |
-| **Person** | ❌ (No NER) | ✅ Anchored Rules | WinkNLP lite model lacks PERSON NER. Anchored linguistic patterns (`person-detector.ts`) + `knownNames` provide high precision with 0 false positives. |
+| **Person** | ❌ (No NER) | ✅ Anchored Rules | WinkNLP lite model lacks PERSON NER. Anchored linguistic patterns (`person-detector.ts`) give 0 false positives; adding `knownNames` lifts recall to 85.7% at 1 false positive. |
 | **Email** | ✅ Yes | ✅ Yes | Both detect emails reliably. Regex adds boundary safety. |
 | **Phone** | ❌ No | ✅ Yes | WinkNLP does not recognize phone numbers; tokenizes into digits and punctuation. Regex is mandatory. |
 | **URL** | ✅ Yes | ✅ Yes | WinkNLP detects URLs but occasionally captures trailing punctuation. Regex provides clean punctuation trimming. |
@@ -245,7 +247,7 @@ Evaluated on the synthetic benchmark dataset (`src/evaluate.ts`) containing 20 r
 ### Overall Engine Comparison:
 | Engine | Precision | Recall | F1 Score | TP | FP | FN | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1. WinkNLP (Built-in Only)** | **90.0%** | **31.0%** | **46.2%** | 9 | 1 | 20 | Detects emails and URLs only |
+| **1. WinkNLP (Built-in Only)** | **90.0%** | **31.0%** | **46.2%** | 9 | 1 | 20 | Detects emails and URLs only (1 false-positive DATE) |
 | **2. Deterministic Regex Alone** | **100.0%** | **65.5%** | **79.2%** | 19 | 0 | 10 | Structured PII (email, phone, URL, IP, card, SSN) |
 | **3. Combined Hybrid (Anchored Default)** | **100.0%** | **75.9%** | **86.3%** | 22 | 0 | 7 | **0 False Positives** globally across benchmark |
 | **4. Combined Hybrid (PROPN Heuristic)** | **67.6%** | **86.2%** | **75.8%** | 25 | 12 | 4 | Higher open recall but 12 false positives |
@@ -292,7 +294,7 @@ The combined hybrid engine processes 10,000 documents in **~1.05 seconds** with 
 ## 11. Answers to Important POC Questions (Q1 - Q12)
 
 ### Q1: Can WinkNLP detect names reliably?
-**No.** WinkNLP's standard language model (`wink-eng-lite-web-model`) has **no built-in PERSON NER entity**. Using POS tagging (consecutive `PROPN` tokens) as a name heuristic achieves 85.7% recall but suffers from poor precision (40.0%), misclassifying non-name proper nouns (e.g. capitalized sentence starters, technology terms, days of the week).
+**No.** WinkNLP's standard language model (`wink-eng-lite-web-model`) has **no built-in PERSON NER entity**. Using POS tagging (consecutive `PROPN` tokens) as a name heuristic achieves 85.7% recall but suffers from poor precision (33.3%), misclassifying non-name proper nouns (e.g. capitalized sentence starters, technology terms, days of the week).
 
 ### Q2: Can WinkNLP detect locations and organizations?
 **No.** The lite model does not include `LOCATION` or `ORGANIZATION` entity extractors.
@@ -312,7 +314,7 @@ WinkNLP tokenizes Arabic words as foreign tokens (`X`), which does not break the
 Cleanly. WinkNLP tokenizes the full document in a single pass and returns discrete, non-overlapping entity spans across all sentences.
 
 ### Q7: How does it behave when entities are surrounded by punctuation?
-- Emails surrounded by angle brackets (e.g. `<user@domain.com>`) are extracted without the brackets.
+- Emails surrounded by angle brackets (e.g. `<user@example.com>`) are extracted without the brackets.
 - URLs surrounded by parentheses or square brackets sometimes capture the trailing bracket in WinkNLP. Our regex detector and normalizer trim trailing punctuation.
 
 ### Q8: What PII categories require deterministic regex/rules?
@@ -340,7 +342,7 @@ When attempting to detect person names via POS `PROPN`, capitalized sentence sta
 
 ## 12. Limitations
 
-1. **Lack of General NER in Lite Model**: `wink-eng-lite-web-model` only targets web-centric entities (`EMAIL`, `URL`, `DATE`, `TIME`, `CARDINAL`, `ORDINAL`, `MONEY`, `PERCENT`, `EMOJI`, `HASHTAG`). It lacks true transformer/statistical NER for `PERSON`, `LOCATION`, `ORGANIZATION`.
+1. **Lack of General NER in Lite Model**: `wink-eng-lite-web-model` only targets web-centric entities (`CARDINAL`, `DATE`, `DURATION`, `EMAIL`, `EMOJI`, `EMOTICON`, `HASHTAG`, `MENTION`, `MONEY`, `ORDINAL`, `PERCENT`, `TIME`, `URL`). It lacks true transformer/statistical NER for `PERSON`, `LOCATION`, `ORGANIZATION`.
 2. **English-Centric POS Model**: POS tagging is trained on English (Penn Treebank / WSJ). Multilingual name detection fails.
 3. **No Contextual Disambiguation**: WinkNLP cannot determine whether a 9-digit number is an SSN, a phone number, or a tracking ID without deterministic regex rules.
 

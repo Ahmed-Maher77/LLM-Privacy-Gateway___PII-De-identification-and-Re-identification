@@ -20,6 +20,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-001"></a>
+
 ## KI-001 [RESOLVED]
 
 ### 23 of 29 `[PERSON]` tags were false positives
@@ -35,6 +37,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 `samples/large_sample.txt` now detects 6 PERSON entities with **0 false positives** (100% precision, down from 23 false positives).
 
 ---
+
+<a id="ki-002"></a>
 
 ## KI-002 [RESOLVED]
 
@@ -52,6 +56,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-003"></a>
+
 ## KI-003 [RESOLVED]
 
 ### Credit card `4111 2222 3333 4321` was not masked (real PII leak)
@@ -68,6 +74,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-004"></a>
+
 ## KI-004 [RESOLVED]
 
 ### `address`, `location`, `organization` were dead config toggles
@@ -82,6 +90,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-005"></a>
+
 ## KI-005 [OPEN — PACKAGE LIMITATION]
 
 ### No person / organization / location NER in WinkNLP
@@ -94,6 +104,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 - If open-prose recall is required, the solution is to supply `knownNames` from application context, or pair WinkNLP with a dedicated local ONNX NER model (e.g. `Xenova/bert-base-NER`).
 
 ---
+
+<a id="ki-006"></a>
 
 ## KI-006 [RESOLVED]
 
@@ -109,6 +121,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-007"></a>
+
 ## KI-007 [RESOLVED]
 
 ### `today` masked as `[DATE]`
@@ -123,6 +137,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 
 ---
 
+<a id="ki-008"></a>
+
 ## KI-008 [RESOLVED]
 
 ### Stale compiled `.js` files beside `.ts` sources
@@ -133,6 +149,8 @@ All real PII leaks (SSN, credit card, full address) are resolved, and document s
 3. Added `src/**/*.js` to `.gitignore`.
 
 ---
+
+<a id="ki-009"></a>
 
 ## KI-009 [DOCUMENTED LIMITATION]
 

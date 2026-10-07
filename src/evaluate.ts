@@ -412,10 +412,10 @@ export function runFullEvaluation(): void {
   console.log('   - Intentionally trades recall on open-prose unanchored names (KI-005).');
   console.log('2. PROPN STRATEGY (LEGACY HEURISTIC):');
   console.log('   - Catches unanchored proper nouns, but at catastrophic precision cost:');
-  console.log('     28.6% PERSON precision with 15 false positives on non-names (e.g. Monday, Support).');
+  console.log('     33.3% PERSON precision with 12 false positives on non-names (e.g. Monday, Support).');
   console.log('3. CALLER KNOWN-NAMES RECOVERY:');
-  console.log('   - Supplying knownNames cleanly recovers 100% of English unanchored names');
-  console.log('     (Barack Obama, Ahmed, Tim Cook) maintaining 100% PERSON precision.');
+  console.log('   - Supplying knownNames recovers all English unanchored names');
+  console.log('     (Barack Obama, Ahmed, Tim Cook) at 85.7% PERSON precision (1 FP).');
   console.log('4. MULTILINGUAL LIMITATION:');
   console.log('   - Arabic script name (أحمد) is not detected as NAME regex is ASCII-only.');
   console.log('======================================================================\n');

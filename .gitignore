@@ -33,16 +33,8 @@ pnpm-debug.log*
 Thumbs.db
 ehthumbs.db
 
-# Agent and tool scratch directories
-.agents/
-.gemini/
-
 # Compiled JS alongside TS source (build output is in dist/)
 src/**/*.js
 src/**/*.d.ts
 src/**/*.js.map
 src/**/*.d.ts.map
-
-# Internal task / prompt specification (not for public repo)
-PROJECT_PLAN.md
-
