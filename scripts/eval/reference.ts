@@ -5,9 +5,9 @@
 
 import { ENTITY_TYPES, type EntityType } from "../../src/pii/types";
 import type { Detected } from "./score";
+import { escapeRegex } from "../../src/pii/patterns";
 
 const PLACEHOLDER_RE = new RegExp(`<(${ENTITY_TYPES.join("|")})_\\d+>`, "g");
-const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // ======== Align one sanitized line with its original line =========
 function alignLine(original: string, sanitized: string, offset: number): Detected[] | undefined {
@@ -15,7 +15,7 @@ function alignLine(original: string, sanitized: string, offset: number): Detecte
     if (types.length === 0) return original === sanitized ? [] : undefined;
 
     const literals = sanitized.split(PLACEHOLDER_RE).filter((_, i) => i % 2 === 0);
-    const pattern = new RegExp(`^${literals.map(escape).join("([^\\r\\n]+?)")}$`, "d");
+    const pattern = new RegExp(`^${literals.map(escapeRegex).join("([^\\r\\n]+?)")}$`, "d");
     const m = pattern.exec(original);
     const indices = m?.indices;
     if (!indices) return undefined;

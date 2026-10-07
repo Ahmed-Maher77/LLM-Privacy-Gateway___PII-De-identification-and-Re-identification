@@ -10,6 +10,7 @@
 
 import fs from "node:fs";
 import { ENTITY_TYPES, type EntityType } from "../../src/pii/types";
+import { escapeRegex, wholeWords } from "../../src/pii/patterns";
 
 type Entry = string | { value: string; in?: string; hard?: boolean };
 
@@ -26,8 +27,7 @@ export interface Labels {
     ignored: [number, number][];
 }
 
-const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const wholeWord = (v: string) => new RegExp(`(?<![\\p{L}\\p{N}_])${escape(v)}(?![\\p{L}\\p{N}_])`, "gu");
+const wholeWord = (v: string) => wholeWords([escapeRegex(v)], "gu");
 
 // ======== Find every [start, end] of one entry in the text =========
 function find(text: string, entry: Entry, where: string): [number, number][] {
@@ -38,7 +38,7 @@ function find(text: string, entry: Entry, where: string): [number, number][] {
     } else {
         const at = context.indexOf(value);
         if (at < 0) throw new Error(`${where}: "${value}" is not inside "${context}"`);
-        found = [...text.matchAll(new RegExp(escape(context), "gu"))].map((m) => [m.index + at, m.index + at + value.length]);
+        found = [...text.matchAll(new RegExp(escapeRegex(context), "gu"))].map((m) => [m.index + at, m.index + at + value.length]);
     }
     if (found.length === 0) throw new Error(`${where}: "${context ?? value}" is not in the text`);
     return found;

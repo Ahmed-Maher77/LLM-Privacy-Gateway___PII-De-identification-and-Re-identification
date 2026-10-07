@@ -18,6 +18,7 @@ import { TITLES } from "./layers/dictionary_helpers";
 import { detectWink, isEnglishWord } from "./layers/wink";
 import { Placeholders } from "./policy";
 import type { DetectionMetrics, PIISpan, RedactResult } from "./types";
+import { escapeRegex, wholeWords } from "./patterns";
 
 /** ~2 MB: guards against accidental whole-dataset inputs. */
 const MAX_CHARS = 2_000_000;
@@ -105,13 +106,8 @@ function everyOccurrence(text: string, spans: PIISpan[]): PIISpan[] {
         }
     }
     if (typeOf.size === 0) return [];
-    const alternatives = [...typeOf.keys()]
-        .sort((a, b) => b.length - a.length)
-        .map((v) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-    const pattern = new RegExp(
-        `(?<![\\p{L}\\p{N}_])(?:${alternatives.join("|")})(?![\\p{L}\\p{N}_])`,
-        "gu",
-    );
+    const alternatives = [...typeOf.keys()].sort((a, b) => b.length - a.length).map(escapeRegex);
+    const pattern = wholeWords(alternatives, "gu");
     return [...text.matchAll(pattern)].map((m) => ({
         start: m.index,
         end: m.index + m[0].length,

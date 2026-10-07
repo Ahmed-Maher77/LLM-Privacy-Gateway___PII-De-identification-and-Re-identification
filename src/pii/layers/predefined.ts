@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { ENTITY_TYPES, PredefinedList, type EntityType, type PIISpan } from "../types";
+import { escapeRegex, wholeWords } from "../patterns";
 
 const LIST_FILE = path.resolve(__dirname, "../../../config/predefined-list.json");
 
@@ -13,9 +14,7 @@ const LEGAL_SUFFIX_RE = /[\s,]+(?:inc|incorporated|llc|llp|ltd|limited|plc|corp|
 let cached: { type: EntityType; pattern: RegExp }[] | undefined;
 
 
-const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");     // Escape special characters + Flexible spacing
-const wholeWords = (alternatives: string[], flags: string) =>
-  new RegExp(`(?<![\\p{L}\\p{N}_])(?:${alternatives.join("|")})(?![\\p{L}\\p{N}_])`, flags);
+const escape = (v: string) => escapeRegex(v).replace(/\s+/g, "\\s+");     // Escape special characters + Flexible spacing
 
 
 
