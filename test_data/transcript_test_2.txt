@@ -11,7 +11,7 @@ Hannah Schmidt: Thanks, Omar. Before we touch on the incident, I need to record 
 
 Elena Rostova: Got it. What are her contact details for the emergency registry?
 
-Hannah Schmidt: Her direct mobile is +44 20 7946 0912, and her backup line in Germany is +49 30 1234567. Her official email is sophia.rodriguez@aegis-health.eu, but her emergency backup email is s.rodriguez85@protonmail.com. Her physical office is listed at 10 Downing Street, Westminster, London SW1A 2AA, UK.
+Hannah Schmidt: Her direct mobile is +44 20 7946 0912, and her backup line in Germany is +49 30 1234567. Her official email is sophia.rodriguez@aegis-health.eu, but her emergency backup email is s.rodriguez85@example.com. Her physical office is listed at 10 Downing Street, Westminster, London SW1A 2AA, UK.
 
 Omar Farooq: Great. Now regarding the identity verification check, did we store her passport and European Tax ID safely?
 
