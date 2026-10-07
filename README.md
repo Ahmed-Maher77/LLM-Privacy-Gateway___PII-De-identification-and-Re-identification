@@ -602,7 +602,7 @@ more than any history fix.
 - `tools/benchmark.py` — cold start, latency, throughput, memory
 - `tools/import_corpus.py` — stage real documents for labelling
 - `test_data/sme_meeting_transcript.txt` — synthetic sample input for `main.py`
-- `tests/` — 493 fast tests (617 total tests across unit, security, holdout, and regression suites)
+- `tests/` — 494 fast tests (618 total tests across unit, security, holdout, and regression suites)
 
 ## License
 
