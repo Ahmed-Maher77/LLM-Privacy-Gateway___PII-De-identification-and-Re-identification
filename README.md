@@ -606,4 +606,4 @@ more than any history fix.
 
 ## License
 
-No license has been specified yet.
+MIT — see [LICENSE](LICENSE).
