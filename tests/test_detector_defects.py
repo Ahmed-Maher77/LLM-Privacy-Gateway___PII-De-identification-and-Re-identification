@@ -509,6 +509,15 @@ class TestRemediatedDefects:
             spans = [s for s in detect_patterns(f"The meeting is {word}.") if s.label == "SWIFT_BIC"]
             assert not spans, f"False positive SWIFT_BIC on {word}"
 
+    def test_swift_keyword_in_an_earlier_sentence_does_not_anchor_a_surname(self):
+        from pii.patterns import detect_patterns
+
+        text = "The SWIFT BIC is BHRTINBB.\n\n[11:13:00] ANJALI DESHMUKH:"
+        values = {text[s.start : s.end] for s in detect_patterns(text) if s.label == "SWIFT_BIC"}
+        assert values == {"BHRTINBB"}
+        # A label on the line above is still the same sentence.
+        assert any(s.label == "SWIFT_BIC" for s in detect_patterns("SWIFT code:\nDEUTDEFF"))
+
     # T8: Structural speaker labels
     def test_structural_speaker_labels(self):
         from pii.policy import is_structural_speaker
@@ -546,13 +555,17 @@ class TestRemediatedDefects:
         zones = find_gutter_zones(text)
         assert len(zones) >= 4
 
-        # Verify residual check accepts gutter numbers without flagging as orphan numbers
-        findings = scan_residual(
-            "1   {{NAME_1}} stated that\n2   {{NAME_1}} lives at {{ADDRESS_1}}",
-            key_zones=zones,
+        # A gutter number beside a placeholder is not an orphan, but a street
+        # number left next to {{ADDRESS_1}} is: the positive control keeps this
+        # assertion able to fail.
+        sanitized = (
+            "1   {{NAME_1}} stated that\n"
+            "2   {{NAME_1}} lives at 12 {{ADDRESS_1}}\n"
+            "3   {{ADDRESS_1}} is the home address.\n"
         )
-        orphan_leaks = [f for f in findings if f.rule == "orphan_number_beside_placeholder" and f.severity == "high"]
-        assert not orphan_leaks
+        findings = scan_residual(sanitized, key_zones=find_gutter_zones(sanitized))
+        orphans = [f.text for f in findings if f.rule == "orphan_number_beside_placeholder"]
+        assert orphans == ["12"]
 
     # T10: ID field values vs subjects
     def test_id_field_values_ignores_prose_subjects(self):

@@ -400,11 +400,16 @@ SWIFT_BIC_LABELLED_PATTERN = re.compile(
 # Standalone BIC with a real country code and optional branch code.
 SWIFT_BIC_PATTERN = re.compile(r"(?<![\w-])" + _BIC_BODY + r"(?![\w-])")
 
+_SENTENCE_END_RE = re.compile(r"[.!?]\s")
+
 
 def _score_swift_bic(match: re.Match[str], text: str) -> float | None:
     """Require at least one digit or an adjacent banking keyword."""
     value = match.group()
     lead = text[max(0, match.start() - 40) : match.start()]
+    # Only a keyword in the same sentence anchors: "The SWIFT BIC is BHRTINBB."
+    # must not turn the next speaker's surname into a BIC.
+    lead = _SENTENCE_END_RE.split(lead)[-1]
     anchored = re.search(r"(?i)\b(?:swift|bic|bank|wire|transfer|iban|routing)\b", lead) is not None
     if anchored:
         return 0.95
