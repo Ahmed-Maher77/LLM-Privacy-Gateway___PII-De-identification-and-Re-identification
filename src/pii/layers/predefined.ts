@@ -22,7 +22,7 @@ const escape = (v: string) => escapeRegex(v).replace(/\s+/g, "\\s+");     // Esc
 function loadPatterns(): { type: EntityType; pattern: RegExp }[] {
   if (cached) return cached;
 
-  const list: PredefinedList = fs.existsSync(LIST_FILE) ? JSON.parse(fs.readFileSync(LIST_FILE, "utf-8")) : {};
+  const list: PredefinedList = fs.existsSync(LIST_FILE) ? JSON.parse(fs.readFileSync(LIST_FILE, "utf-8").replace(/^﻿/, "")) : {};    // a BOM (e.g. from Windows editors) is not JSON
   cached = [];
 
   for (const [type, values] of Object.entries(list)) {
