@@ -5,7 +5,7 @@
 
 import "dotenv/config"; // first: the NER settings are read from the environment on import
 import fs from "node:fs";
-import { writeSanitizedReport } from "./pii/generate_reports/writeSanitizedReport";
+import { writeSanitizedReport } from "./pii/generate_reports/reportFile";
 import { writeJsonReport } from "./pii/generate_reports/writeJsonReport";
 import { redact, InputTooLargeError } from "./pii/redact";
 import { ModelLoadError } from "./pii/layers/ner";

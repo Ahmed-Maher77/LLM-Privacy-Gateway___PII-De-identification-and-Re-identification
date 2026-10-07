@@ -9,3 +9,8 @@ export function writeReportFile(inputPath: string, suffix: string, content: stri
     fs.writeFileSync(reportPath, content, "utf-8");
     return reportPath;
 }
+
+// ======== Write the sanitized text to a file ==========
+export function writeSanitizedReport(inputPath: string, redactedText: string): string {
+    return writeReportFile(inputPath, `sanitized${path.extname(inputPath)}`, redactedText);
+}
