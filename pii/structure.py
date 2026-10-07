@@ -138,11 +138,13 @@ def find_key_zones(text: str, regions: Sequence[Region]) -> list[tuple[int, int]
     return zones
 
 
+_GUTTER_NUMBER_RE = re.compile(r"^[ \t]*(\d{1,4})(?=[ \t]{2,})", re.MULTILINE)
+
+
 def find_gutter_zones(text: str) -> list[tuple[int, int]]:
     """Identify left-gutter line numbers in deposition/arbitration transcripts."""
     zones: list[tuple[int, int]] = []
-    pattern = re.compile(r"^[ \t]*(\d{1,4})(?=[ \t]{2,})", re.MULTILINE)
-    matches = list(pattern.finditer(text))
+    matches = list(_GUTTER_NUMBER_RE.finditer(text))
     if len(matches) < 3:
         return []
 

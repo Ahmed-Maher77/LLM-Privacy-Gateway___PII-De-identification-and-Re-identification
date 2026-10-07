@@ -566,6 +566,7 @@ def _score_slash_id(match: re.Match[str], text: str) -> float | None:
         return None
     return 0.85
 
+
 # Standards, algorithms and protocols that look exactly like an internal ID.
 ID_PREFIX_STOPLIST = frozenset(
     """

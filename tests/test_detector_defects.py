@@ -551,7 +551,7 @@ class TestRemediatedDefects:
             "1   {{NAME_1}} stated that\n2   {{NAME_1}} lives at {{ADDRESS_1}}",
             key_zones=zones,
         )
-        orphan_leaks = [f for f in findings if f.rule == "orphan_number" and f.severity == "high"]
+        orphan_leaks = [f for f in findings if f.rule == "orphan_number_beside_placeholder" and f.severity == "high"]
         assert not orphan_leaks
 
     # T10: ID field values vs subjects

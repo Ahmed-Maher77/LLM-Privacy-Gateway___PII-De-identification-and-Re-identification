@@ -20,7 +20,7 @@ from __future__ import annotations
 import re
 
 from .context import DocumentContext
-from .policy import is_name_initial
+from .policy import ACRONYM_MAX_LENGTH, is_name_initial
 from .spans import Span
 
 # Types whose text must read as a name. Structured identifiers are exempt:
@@ -38,11 +38,8 @@ QUOTES = frozenset("\"'‘’“”")
 # inside the span produced "{{ORG_13}} registered agent" from "Blue Harbor's".
 CLITICS = ("'s", "’s", "'S", "’S", "'", "’")
 
-# Longest all-caps token still readable as an acronym rather than a name.
-ACRONYM_MAX_LENGTH = 6
-
 # Two or more spaces/tabs: a column boundary in a fixed-width document.
-_COLUMN_GAP_RE = re.compile(r"[ 	]{2,}")
+_COLUMN_GAP_RE = re.compile(r"[ \t]{2,}")
 
 # A narrower set than entities.HONORIFICS: only titles that never head a
 # document section in their own right. Widening a PERSON span over "Judge"

@@ -27,6 +27,8 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field, replace
 
 from . import patterns
+from .policy import is_structural_speaker
+from .spanfix import _is_name_like
 
 HIGH = "high"
 MEDIUM = "medium"
@@ -114,10 +116,8 @@ def _validate_speaker_label(match: re.Match[str]) -> bool:
     name = match.group("name")
     if "{{" in name:
         return False
-    from .policy import is_structural_speaker
     if is_structural_speaker(name):
         return False
-    from .spanfix import _is_name_like
     return _is_name_like(name, match.start("name"), match.end("name"), context=None)
 
 

@@ -89,10 +89,7 @@ PROTECTED_TERMS = frozenset(
 
 def is_protected_term(text: str) -> bool:
     """Return whether a span is a known structural/document marker."""
-    normalized = " ".join(_normalize(text).split())
-    return normalized in {
-        " ".join(_normalize(term).split()) for term in PROTECTED_TERMS
-    }
+    return " ".join(_normalize(text).split()) in _PROTECTED_KEYS
 
 
 # Structural speaker labels that mark multi-speaker turns or transcript artifacts,
@@ -203,6 +200,9 @@ def _normalize(value: str) -> str:
     # the same name on one line.
     collapsed = re.sub(r"\s+", " ", re.sub(r"[^\w\s]", "", stripped))
     return collapsed.casefold().strip()
+
+
+_PROTECTED_KEYS = frozenset(" ".join(_normalize(term).split()) for term in PROTECTED_TERMS)
 
 
 def is_name_initial(char: str) -> bool:

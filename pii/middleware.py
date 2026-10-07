@@ -18,8 +18,10 @@ from .entities import EntityIndex, has_honorific_prefix, names_from_emails, stri
 from .errors import LeakDetected, LeakWarning, PlaceholderInjection, ReviewRequired
 from .patterns import EMAIL_PATTERN, PatternRule, detect_patterns
 from .policy import (
+    CORPORATE_SUFFIXES,
     DEFAULT_ALLOWLIST,
     DEFAULT_PROFILE,
+    PROTECTED_TERMS,
     _normalize,
     allowlist_tokens,
     describe_policy,
@@ -33,6 +35,9 @@ from .spacy_detector import SpacyDetector
 from .spanfix import normalize_spans
 from .spans import SOURCE_PRIORITY, Span, SpanSet, apply_spans
 from .structure import StructureMap, analyze_structure, protect_spans
+from .titles import detect_titles
+from .vault import ESCAPE_LABEL, PseudonymVault, find_template_literals
+from .vault import restore as restore_text
 
 
 def package_version(name: str | None) -> str | None:
@@ -57,9 +62,7 @@ def _detector_package(detector: object) -> str | None:
     if isinstance(detector, SpacyDetector):
         return "spacy"
     return None
-from .titles import detect_titles
-from .vault import ESCAPE_LABEL, PseudonymVault, find_template_literals
-from .vault import restore as restore_text
+
 
 MIN_AUDIT_LENGTH = 3
 MIN_SWEEP_LENGTH = 3
@@ -86,8 +89,6 @@ def dedupe_placeholders(text: str) -> str:
 
 def validate_output(original: str, redacted: str) -> bool:
     """Validate structural preservation and reject obvious residual secrets."""
-    from .policy import PROTECTED_TERMS
-
     for term in PROTECTED_TERMS:
         expected = original.casefold().count(term.casefold())
         actual = redacted.casefold().count(term.casefold())
@@ -270,12 +271,10 @@ class PIIMiddleware:
         self.pattern_rules: tuple[PatternRule, ...] = build_rules(config)
         self.min_pattern_score = config.min_score
 
-        # Custom labels must be added explicitly. Without this a rule loaded
-        # from TOML would be detected and then silently discarded by the
-        # profile filter -- the easiest way to ship this feature broken.
         # Custom labels from TOML are redacted by construction, otherwise a
-        # rule would be detected and then silently discarded, but ``entities``
-        # can still turn one off explicitly, the same as any other type.
+        # rule would be detected and then silently discarded by the profile
+        # filter, but ``entities`` can still turn one off explicitly, the same
+        # as any other type.
         # Validation of both the profile and every ``entities`` key happens
         # here, in the constructor, so a bad key fails at startup rather than
         # at the first call to analyze().
@@ -325,7 +324,7 @@ class PIIMiddleware:
                 "model_id": getattr(detector, "model_name", None),
                 "package": _detector_package(detector),
                 "package_version": package_version(_detector_package(detector)),
-                "torch_threads": getattr(self, "_torch_threads", None),
+                "torch_threads": self._torch_threads,
             }
             for detector in self.detectors
         ]
@@ -827,7 +826,6 @@ def _demote_org_like_persons(spans: list[Span], roster: list[str]) -> list[Span]
 
     Fixes D-12 ("TechNova Support" -> PERSON, "Tal Exampleco" -> PERSON).
     """
-    from .policy import CORPORATE_SUFFIXES
 
     corporate_endings = frozenset(
         {

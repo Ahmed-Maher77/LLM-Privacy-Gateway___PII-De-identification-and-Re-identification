@@ -44,10 +44,6 @@ ADDRESS_LABEL_RE = re.compile(
     r"endere|endereco|postal|residence)"
 )
 
-# Nouns that make a nationality, ethnicity or religion describe a PERSON
-# rather than a market, a product or a region. "a Cypriot national" is special
-# -category data; "the European market" is not, and neither is the banking
-# product "Finacle" that a model mislabelled NORP three times.
 # Nouns a nationality can modify **without** the phrase being about people.
 #
 # This list decides when to *release* protected data, so it is deliberately
@@ -60,7 +56,7 @@ NON_PERSON_NOUN_RE = re.compile(
     r"(?i)^[\s\-,;:]*(?:\w+[\s\-]+){0,1}(?:market|markets|version|versions|edition|"
     r"region|regions|standard|standards|cuisine|union|language|languages|"
     r"continent|economy|economies|subsidiary|headquarters|office|offices|"
-    r"operation|operations|division|division|branch|branches|timezone|"
+    r"operation|operations|division|branch|branches|timezone|"
     r"currency|currencies|law|laws|regulation|regulations|"
     r"localization|localisation|contracts?|partners?|startups?|compan(?:y|ies)|"
     r"teams?|expansions?|distributors?|nuance|regulators?)\b"
@@ -71,7 +67,6 @@ _WORD_RE = re.compile(r"[^\W\d_][\w'’-]*")
 # Adjacency that marks a token as part of an identifier, not prose.
 _IDENTIFIER_CHARS = frozenset("@._-/+:\\")
 
-# Parts of speech that cannot carry a proper name on their own.
 # Mean value length above which a "Label:" is prose (a speaker turn),
 # not a form field.
 MAX_FIELD_VALUE_CHARS = 48
@@ -320,7 +315,7 @@ class DocumentContext:
         person at every turn of the transcript, which is the highest-value PII
         position in the document.
 
-        Three independent acceptance paths classify a Label: as a field label:
+        Two independent acceptance paths classify a Label: as a field label:
         1. It sits inside a header block (>= 3 consecutive lines with distinct Label:).
         2. Its value does not match spoken prose patterns and its mean value length <= 48 chars.
         """
@@ -328,13 +323,13 @@ class DocumentContext:
         raw_remainders: dict[str, list[str]] = {}
         matches = list(FIELD_LABEL_RE.finditer(self.text))
         for match in matches:
-            line_end = self.text.find(chr(10), match.end())
+            line_end = self.text.find("\n", match.end())
             line_end = len(self.text) if line_end == -1 else line_end
             val = self.text[match.end() : line_end].strip()
             if not val:
                 next_line_start = line_end + 1
                 if next_line_start < len(self.text):
-                    next_line_end = self.text.find(chr(10), next_line_start)
+                    next_line_end = self.text.find("\n", next_line_start)
                     next_line_end = len(self.text) if next_line_end == -1 else next_line_end
                     val = self.text[next_line_start : next_line_end].strip()
             key = match.group("label").casefold()
@@ -387,7 +382,7 @@ class DocumentContext:
         for match in FIELD_LABEL_RE.finditer(self.text):
             if not ADDRESS_LABEL_RE.search(match.group("label")):
                 continue
-            line_end = self.text.find(chr(10), match.end())
+            line_end = self.text.find("\n", match.end())
             line_end = len(self.text) if line_end == -1 else line_end
             value = self.text[match.end() : line_end]
             stripped = value.strip()
