@@ -175,7 +175,7 @@ first call and is reused, so later calls in the same process are much faster.
 On the 10 hand-labelled synthetic transcripts in `test_data/` (labels in
 `test_data/labels/`), with the shipped list (only `"Acme Corp"`), against the
 earlier 4-layer version of this pipeline (pre-defined list, name registries,
-regex, NER, wink-nlp; published alongside it as `implementation_4`) scored on names and
+regex, NER, wink-nlp; published alongside it as `04-ts-multilayer-lists-regex-ner-winknlp`) scored on names and
 companies only:
 
 |                                                  | This pipeline     | Previous pipeline |
