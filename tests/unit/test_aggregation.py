@@ -68,7 +68,7 @@ def test_a_text_mismatch_is_rejected():
 
 
 def test_a_subword_fragment_from_an_expanding_detector_is_widened():
-    # "Neh" from the NER layer becomes "Rania", not a fragment and not a drop.
+    # "Ran" from the NER layer becomes "Rania", not a fragment and not a drop.
     result = AGG.aggregate([ent(0, 3, detector="ner")], TEXT)
     assert [e.text for e in result.entities] == ["Rania"]
 
@@ -272,7 +272,7 @@ def test_post_conditions_detect_a_broken_resolver(monkeypatch):
 def test_word_boundary_can_be_disabled_by_configuration():
     agg = EntityAggregator(AggregationConfig(require_word_boundary=False, min_person_chars=1))
     result = agg.aggregate([ent(0, 3, detector="domain", priority=80)], TEXT)
-    assert [e.text for e in result.entities] == ["Neh"]
+    assert [e.text for e in result.entities] == ["Ran"]
 
 
 # -- property ----------------------------------------------------------------

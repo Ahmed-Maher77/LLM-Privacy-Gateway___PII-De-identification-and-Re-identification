@@ -5,8 +5,8 @@ turn, every later mention of that name is a high-confidence PERSON -- no model
 inference required. This is what stops a noisy-ASR transcript from depending on
 a statistical detector to recognise its own participants.
 
-**Ambiguity is never resolved.** ``pod_meeting.txt`` has three Ahmeds (Farid,
-Hamed and Maher), so a bare "Ahmed" cannot be attributed. It gets its own
+**Ambiguity is never resolved.** When three participants are called Ahmed, a
+bare "Ahmed" cannot be attributed. It gets its own
 placeholder that restores to exactly ``"Ahmed"``. Guessing "the most recent
 speaker" would be wrong about two thirds of the time, and being wrong means the
 *final output* attributes a sentence to someone who did not say it -- a worse

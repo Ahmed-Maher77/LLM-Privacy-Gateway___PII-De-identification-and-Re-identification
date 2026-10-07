@@ -45,8 +45,8 @@ skipped.
   majority class, so metrics are reported both including and excluding them —
   an F1 dominated by 190 identical header names is theatre.
 - A first name alone (`Hossam.`, `Ahmed`) *is* PERSON.
-- A name that cannot be attributed is still PERSON. `pod_meeting.txt` has three
-  Ahmeds, so a bare "Ahmed" is labelled without deciding which one it is.
+- A name that cannot be attributed is still PERSON. When three participants
+  are called Ahmed, a bare "Ahmed" is labelled without deciding which one it is.
 - ASR-mangled name-like tokens (`Tarik`, `Nabeel`, `Big Jamboree`) →
   `certainty: ambiguous`. Excluded from both numerator and denominator, counted
   separately. Guessing here would silently set the ceiling for every detector.

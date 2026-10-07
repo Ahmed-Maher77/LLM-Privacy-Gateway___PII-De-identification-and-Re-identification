@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import itertools
 
-import pytest
-
 from privacy_gateway.preprocessing.registry import ParticipantRegistry
 from privacy_gateway.preprocessing.transcript import TranscriptParser
 
@@ -349,42 +347,16 @@ def test_aliases_are_off_unless_configured():
 
 # -- real transcripts --------------------------------------------------------
 
-@pytest.mark.parametrize(
-    "filename,expected",
-    [
-        (
-            "pod_meeting.txt",
-            {"Ahmed Farid", "Ahmed Maher", "Ahmed Hamed", "Lamia Aly",
-             "Rania Fahmy", "Hossam Badri"},
-        ),
-        (
-            "sme_meeting_transcript.txt",
-            {"Ahmed Hassan", "Daniel Clark", "Emily Wilson", "Michael Brown",
-             "Omar Khaled", "Sarah Mitchell"},
-        ),
-    ],
-)
-def test_real_transcript_rosters(normalized_transcript, filename, expected):
-    nt = normalized_transcript(filename)
-    assert set(P.parse(nt.text).speaker_names) == expected
-
-
-def test_pod_meeting_ambiguous_surface_is_only_ahmed(normalized_transcript):
-    nt = normalized_transcript("pod_meeting.txt")
-    reg = ParticipantRegistry.from_transcript(P.parse(nt.text))
-    assert {m.surface for m in reg.mentions(nt.text) if m.ambiguous} == {"Ahmed"}
+def test_real_transcript_roster(normalized_transcript):
+    nt = normalized_transcript("sme_meeting_transcript.txt")
+    assert set(P.parse(nt.text).speaker_names) == {
+        "Ahmed Hassan", "Daniel Clark", "Emily Wilson", "Michael Brown",
+        "Omar Khaled", "Sarah Mitchell",
+    }
 
 
 def test_real_transcript_mention_spans_are_exact(normalized_transcript):
-    nt = normalized_transcript("pod_meeting.txt")
+    nt = normalized_transcript("sme_meeting_transcript.txt")
     reg = ParticipantRegistry.from_transcript(P.parse(nt.text))
     for m in reg.mentions(nt.text):
         assert nt.text[m.start : m.end] == m.surface
-
-
-def test_aly_token_never_matches_inside_alia_in_the_real_transcript(normalized_transcript):
-    nt = normalized_transcript("pod_meeting.txt")
-    reg = ParticipantRegistry.from_transcript(P.parse(nt.text))
-    for m in reg.mentions(nt.text):
-        assert nt.text[m.start : m.end] != "Ali"
-        assert not (m.surface == "Aly" and nt.text[m.end : m.end + 1].isalpha())

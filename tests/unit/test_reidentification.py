@@ -1,9 +1,8 @@
 """Restoration, drift detection and output scanning.
 
-Several fixtures here are the literal bytes from ``reports/pod_meeting_run.json``
-and ``reports/latest_run.json``: the narrow no-break space the model used
-instead of an underscore, the range enumeration, and the three placeholders it
-invented.
+Several fixtures here are the literal bytes a real model returned to the
+prototype: the narrow no-break space it used instead of an underscore, the
+range enumeration, and the three placeholders it invented.
 """
 
 from __future__ import annotations
@@ -110,7 +109,7 @@ def test_repeated_placeholders_all_restore(reid):
 # -- hallucinated placeholders ----------------------------------------------
 
 def test_a_hallucinated_placeholder_is_redacted_and_reported(reid):
-    # reports/latest_run.json contains <PER_10>, <PER_11> and <PER_12>, none of
+    # prototype_v0/sme_meeting.v0_run.json contains <PER_10>, <PER_11> and <PER_12>, none of
     # which appear in its own sanitized input.
     result = reid.restore("Also present: <PERSON_010> and <PERSON_011>.")
     assert UNRESOLVED_MARKER in result.text
@@ -217,7 +216,7 @@ def test_a_raw_value_in_the_output_is_a_critical_finding(store):
 
 
 def test_a_partial_name_is_a_warning(store):
-    # reports/latest_run.json leaked bare "Sarah", "Michael" and "James" even
+    # prototype_v0/sme_meeting.v0_run.json leaked bare "Sarah", "Michael" and "James" even
     # though the full names had been replaced.
     findings = OutputScanner(store).scan("Ask Fahmy about it.")
     assert [f.match_kind for f in findings] == ["name_token"]

@@ -78,7 +78,7 @@ ignore = [
     # RUF001-003 flag "ambiguous" Unicode characters. This project exists to
     # handle exactly those characters: the narrow no-break space, the
     # non-breaking hyphen and the smart quotes are the literal bytes a model
-    # emitted in reports/pod_meeting_run.json, and the fold tables must contain
+    # emitted in the prototype's output, and the fold tables must contain
     # them verbatim. Escaping them would make the tables unreadable and the
     # tests would no longer pin the real characters.
     "RUF001",

@@ -2,9 +2,9 @@ r"""Placeholder format and parsing.
 
 The shipped format is ``<PERSON_001>``.
 
-It is worth being honest about its weakness, because the evidence is in this
-repository: angle brackets read as HTML and ``_`` is markdown emphasis, and in
-``reports/pod_meeting_run.json`` the model rewrote every placeholder as
+It is worth being honest about its weakness: angle brackets read as HTML and
+``_`` is markdown emphasis, and in the prototype's run on a real meeting
+transcript the model rewrote every placeholder as
 ``**PER 2**`` -- 66 narrow no-break spaces, zero intact placeholders, and a
 restoration pass that silently did nothing at all.
 

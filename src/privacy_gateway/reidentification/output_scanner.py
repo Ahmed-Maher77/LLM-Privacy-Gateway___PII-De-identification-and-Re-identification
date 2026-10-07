@@ -15,9 +15,9 @@ attached.
 
 For person names, individual tokens of four or more characters are also
 searched. That is what catches the partial-name leaks visible in the
-prototype's ``reports/latest_run.json``, where bare ``Sarah``, ``Michael`` and
-``James`` survived into the final answer even though the full names had been
-replaced.
+prototype's SME run (``tests/regression/fixtures/prototype_v0/sme_meeting.v0_run.json``),
+where bare ``Sarah``, ``Michael`` and ``James`` survived into the final answer
+even though the full names had been replaced.
 """
 
 from __future__ import annotations

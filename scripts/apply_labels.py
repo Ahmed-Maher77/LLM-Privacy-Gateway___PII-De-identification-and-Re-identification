@@ -4,7 +4,7 @@ The label table below was produced by reading each excerpt (see
 ``evaluation/gold/LABELING.md`` for who did the reading and the caveat that
 attaches to it). Each row names a surface form; every word-bounded occurrence of
 that form in that excerpt is labelled, longest form first so that
-``Ahmed Farid`` wins over a bare ``Ahmed`` at the same position.
+``Ahmed Hassan`` wins over a bare ``Ahmed`` at the same position.
 
 Rerunning this script regenerates the labelled JSONL deterministically, so the
 labels live in reviewable source rather than in an opaque data file.
@@ -107,116 +107,12 @@ LABELS: dict[str, list[tuple[str, str, str]]] = {
         ("sarah.mitchell@brightpath-example.com", "EMAIL", C),
         ("michael.brown@brightpath-example.com", "EMAIL", C),
     ],
-    # ---------------- pod: noisy ASR ---------------------------------------
-    "pod-001": [
-        ("Ahmed Farid", "PERSON", C),
-        ("Rania Fahmy", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        # Rendered with a stray article by the transcriber, but they are names.
-        ("Shalaby", "PERSON", P),
-        ("Abdulrahman", "PERSON", P),
-        ("Badri", "PERSON", P),
-    ],
-    "pod-002": [
-        ("Ahmed Hamed", "PERSON", C),
-        ("Ahmed Maher", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Hossam Badri", "PERSON", C),
-        ("Michael Ibrahim", "PERSON", C),
-        ("Michael", "PERSON", P),
-        ("Hamed", "PERSON", P),
-        # A name or the Arabic word; unresolvable from this context.
-        ("Rama", "PERSON", A),
-        # "Cortana" is a product, not a person. The prototype labelled it PER
-        # and corrupted it into <PER_11>rtana.
-    ],
-    "pod-003": [
-        ("Ahmed Farid", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Lamia Aly", "PERSON", C),
-        ("Hossam Badri", "PERSON", C),
-        ("Hossam", "PERSON", C),
-        ("Ahmed", "PERSON", C),
-        ("Ish", "PERSON", A),
-    ],
-    "pod-004": [
-        ("Hossam Badri", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Rania Fahmy", "PERSON", C),
-        ("Ahmed", "PERSON", C),
-        ("Mike", "PERSON", P),
-        ("Lamya", "PERSON", P),
-        ("Nish", "PERSON", A),
-        ("Kol", "PERSON", A),
-    ],
-    "pod-005": [
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Ahmed Maher", "PERSON", C),
-        ("Badri Mohamed", "PERSON", P),
-        ("Lamya", "PERSON", P),
-        ("Noha", "PERSON", P),
-        ("Mark", "PERSON", A),
-    ],
-    "pod-006": [
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Yani", "PERSON", A),
-    ],
-    "pod-007": [
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Tom Galal", "PERSON", C),
-        ("Nabeeh", "PERSON", P),
-        ("Mike", "PERSON", P),
-    ],
-    "pod-008": [
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Hossam Badri", "PERSON", C),
-        ("Adel", "PERSON", P),
-        ("Aly", "PERSON", P),
-        ("New Zealand", "LOCATION", C),
-        ("Vadushal Ali", "PERSON", A),
-        ("Kirsaryani", "PERSON", A),
-        ("Mish", "PERSON", A),
-        # "GitHub" is a public product and is not labelled.
-    ],
-    "pod-009": [
-        ("Ahmed Farid", "PERSON", C),
-        ("Lamia Aly", "PERSON", C),
-        ("Hossam Badri", "PERSON", C),
-        ("Mosad", "PERSON", A),
-    ],
-    "pod-010": [
-        ("Hossam Badri", "PERSON", C),
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Noha", "PERSON", P),
-    ],
-    "pod-011": [
-        ("Ahmed Farid", "PERSON", C),
-        ("Lamia Aly", "PERSON", C),
-        ("Hossam Badri", "PERSON", C),
-    ],
-    "pod-012": [
-        ("Lamia Aly", "PERSON", C),
-        ("Ahmed Farid", "PERSON", C),
-        ("Ahmed Hamed", "PERSON", C),
-        ("Ahmed", "PERSON", C),
-        ("Fathy", "PERSON", P),
-        ("Ravi", "PERSON", P),
-        ("America", "LOCATION", C),
-    ],
 }
 
 
 def label_document(doc: GoldDocument) -> GoldDocument:
     rows = LABELS.get(doc.doc_id, [])
-    # Longest surface first, so "Ahmed Farid" claims the span before "Ahmed".
+    # Longest surface first, so "Ahmed Hassan" claims the span before "Ahmed".
     rows = sorted(rows, key=lambda r: -len(r[0]))
     taken: list[tuple[int, int]] = []
     spans: list[GoldSpan] = []
@@ -260,7 +156,7 @@ def label_document(doc: GoldDocument) -> GoldDocument:
 
 def main() -> int:
     total = 0
-    for stem in ("pod_meeting", "sme_meeting_transcript"):
+    for stem in ("sme_meeting_transcript",):
         source = GOLD / f"{stem}.unlabelled.jsonl"
         gold = GoldSet.load(source)
         labelled = GoldSet(tuple(label_document(d) for d in gold))

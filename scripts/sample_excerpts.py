@@ -54,7 +54,6 @@ def build_excerpts(text: str, bounds: list[tuple[int, int]]) -> list[tuple[int, 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=int, default=20260927)
-    parser.add_argument("--pod", type=int, default=12)
     parser.add_argument("--sme", type=int, default=10)
     parser.add_argument("--out", type=Path, default=REPO / "evaluation" / "gold")
     args = parser.parse_args()
@@ -63,7 +62,6 @@ def main() -> int:
     normalizer = Normalizer()
 
     for name, count, stratify in (
-        ("pod_meeting.txt", args.pod, False),
         ("sme_meeting_transcript.txt", args.sme, True),
     ):
         source = REPO / "test_data" / name

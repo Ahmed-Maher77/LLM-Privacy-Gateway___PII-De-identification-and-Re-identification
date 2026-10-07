@@ -38,8 +38,8 @@ def ent(start, end, text=None, etype="PERSON", detector="ner", conf=0.9):
     [
         (0, 11, True),    # "Rania Fahmy"
         (0, 1, False),    # "N"  -> the <PER_2>ehal Fahmy bug
-        (0, 3, False),    # "Neh"
-        (16, 19, False),  # "She" -> the <PER_13>rif Badri bug
+        (0, 3, False),    # "Ran"
+        (16, 19, False),  # "Hos" -> the prototype's sub-word replacement bug
         (16, 22, True),   # "Hossam"
         (39, 41, False),  # "Al"  -> the <PER_23>y bug
         (39, 42, True),   # "Aly"
@@ -75,7 +75,7 @@ def test_out_of_range_span_is_not_aligned():
     "start,end,want",
     [
         (0, 1, "Rania"),       # "N"   fragment
-        (16, 19, "Hossam"),    # "She" fragment
+        (16, 19, "Hossam"),    # "Hos" fragment
         (39, 41, "Aly"),       # "Al"  fragment
         (0, 11, "Rania Fahmy"),  # already aligned, unchanged
     ],
@@ -179,14 +179,14 @@ def test_span_with_no_alphanumeric_is_rejected():
 # -- realign -----------------------------------------------------------------
 
 def test_realign_expands_a_fragment_for_an_expanding_detector():
-    out = realign(ent(16, 19), TEXT, expand=True)   # "She"
+    out = realign(ent(16, 19), TEXT, expand=True)   # "Hos"
     assert out is not None and out.text == "Hossam"
     assert out.metadata["realigned_from"] == (16, 19)
 
 
 def test_realign_does_not_expand_when_expansion_is_disabled():
     out = realign(ent(16, 19), TEXT, expand=False)
-    assert out is not None and out.text == "She"
+    assert out is not None and out.text == "Hos"
     # It stays misaligned, so validate_span will drop it.
     assert validate_span(out, TEXT) is SpanVerdict.NOT_WORD_ALIGNED
 

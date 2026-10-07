@@ -14,7 +14,10 @@ plainly.
   transcripts' language mix would resolve several cases this labeller could not.
 - **No inter-annotator agreement was measured, so none is reported.** A κ
   computed from one labeller would be fabricated.
-- **22 excerpts, 168 scored spans.** Enough to separate detector configurations
+- **The shipped gold set is 10 excerpts, 58 scored spans.** The published
+  numbers were measured on 22 excerpts / 168 spans; the other 12 came from a real
+  meeting transcript that has been removed from the repository. 22 excerpts were
+  enough to separate detector configurations
   from one another, not enough for a per-type F1 on most types: eight of the ten
   types have fewer than ten supporting spans and are reported as raw counts.
 - **PERSON is 86% of the set**, because speaker-label lines are the majority
@@ -138,8 +141,8 @@ gap.
   `ahmed farid` comes back as `Ahmed Farid`. Pseudonymization itself is lossless
   — proven by exact inversion on both transcripts — and every divergent spelling
   is recorded and reported as `case_variants`.
-- **Ambiguous names are protected but never attributed.** `pod_meeting.txt` has
-  three Ahmeds, so a bare "Ahmed" gets its own placeholder rather than being
+- **Ambiguous names are protected but never attributed.** When three
+  participants are called Ahmed, a bare "Ahmed" gets its own placeholder rather than being
   resolved to one of them. The model therefore sees them as different people and
   may under-merge coreference in a summary. This is deliberate: guessing would
   make the gateway fabricate attributed statements in a meeting record.
@@ -152,8 +155,8 @@ gap.
 - **The pre-send leak gate is not a detector.** It catches a value that was
   detected and then failed to be replaced. It cannot catch a value that was
   never detected, because such a value is not in the mapping to be scanned for.
-- **Over-redaction on noisy ASR is expected.** `pod_meeting.txt` is a stream of
-  first names and transliterations; with every layer enabled, much of it becomes
+- **Over-redaction on noisy ASR is expected.** A noisy ASR meeting transcript is a
+  stream of first names and transliterations; with every layer enabled, much of it becomes
   placeholders and summary quality drops. That is correct privacy behaviour but
   it is a real utility cost.
 - **Streaming is off by default** and degrades three protections when enabled:

@@ -316,14 +316,14 @@ downstream model call, not for detection or for any test.
 
 ```bash
 # Detect and pseudonymize. No model call, no network.
-uv run privacy-gateway sanitize test_data/pod_meeting.txt --report reports/pod.json
+uv run privacy-gateway sanitize test_data/sme_meeting_transcript.txt --report reports/sme-sanitize.json
 
 # Full pipeline, including the model.
 uv run privacy-gateway run test_data/sme_meeting_transcript.txt \
     --report reports/sme.json --print-answer
 
 # Deterministic layers only: ~75 ms instead of ~9 s.
-uv run privacy-gateway sanitize test_data/pod_meeting.txt --detectors regex,registry,domain
+uv run privacy-gateway sanitize test_data/sme_meeting_transcript.txt --detectors regex,registry,domain
 ```
 
 > **The fast configuration is not a safe default for arbitrary documents.**
@@ -417,7 +417,10 @@ repaired *is* a boundary defect: under partial credit, `<PER_2>ehal Fahmy`
 scores as a near-hit and the prototype would report ~80% recall while corrupting
 the document.
 
-Measured on 22 excerpts / 168 scored spans, commit `823d901`:
+Measured on 22 excerpts / 168 scored spans, commit `823d901`. Twelve of those
+excerpts came from a real meeting transcript that has since been removed from
+the repository, so the shipped gold set is now the 10 SME excerpts (58 scored
+spans) and these numbers cannot be reproduced from it:
 
 | Cfg | Detectors | Leak docs | Char recall | Strict P | Strict R | Strict F1 | No-speaker F1 |
 |---|---|---|---|---|---|---|---|
@@ -456,7 +459,7 @@ responsible for, and a benchmark that cannot run without a hosted service is a
 benchmark that mostly does not run.
 
 Measured on this machine — 16 logical cores, CPU only, no CUDA — n=30 after 2
-warmups, on `pod_meeting.txt` (13,236 chars, 328 entities):
+warmups, on a 13,236-character noisy ASR meeting transcript (328 entities):
 
 | Configuration | Median | p95 | stdev | ms / 1000 chars | Model footprint |
 |---|---|---|---|---|---|

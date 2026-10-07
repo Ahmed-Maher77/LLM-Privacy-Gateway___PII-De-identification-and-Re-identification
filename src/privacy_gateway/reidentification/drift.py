@@ -8,7 +8,8 @@ intact placeholders and a restoration pass that silently did nothing.
 **Nothing in this module ever changes the output text.** It reports.
 
 The tempting next step -- "just match tolerantly and substitute anyway" -- is
-rejected, and the evidence is in ``reports/pod_meeting_run.json``:
+rejected, because of what the prototype's model returned on a real meeting
+transcript:
 
     **PER 3‑8, 20‑22, 24‑25**
 
@@ -153,9 +154,8 @@ class DriftScanner:
             )
         return tuple(out)
 
-    #: Shortest truncation still treated as a recognisable prefix. The model
-    #: that produced reports/pod_meeting_run.json wrote "PER" where the
-    #: placeholder said "PERSON".
+    #: Shortest truncation still treated as a recognisable prefix. The
+    #: prototype's model wrote "PER" where the placeholder said "PERSON".
     _MIN_PREFIX_CHARS = 3
 
     def _prefixes(self) -> frozenset[str]:

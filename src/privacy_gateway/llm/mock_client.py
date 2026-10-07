@@ -32,7 +32,7 @@ Mode = Literal[
 
 _PLACEHOLDER_RE = re.compile(r"<(?P<prefix>[A-Z][A-Z0-9]{1,31})_(?P<index>\d{1,6})>")
 
-#: The exact characters the real model emitted in reports/pod_meeting_run.json.
+#: The exact characters a real model emitted in the prototype's output.
 NARROW_NBSP = " "
 
 
@@ -109,7 +109,7 @@ class MockLLMClient(RecordingMixin):
             rows = "\n".join(f"| {p} | attended |" for p in unique)
             return f"Summary of the discussion.\n\n| Participant | Note |\n|---|---|\n{rows}\n"
         if self.mode == "mangle_markdown":
-            # Reproduces reports/pod_meeting_run.json exactly.
+            # Reproduces the prototype model's markdown mangling exactly.
             def mangle(m: re.Match[str]) -> str:
                 prefix = m.group("prefix")[:3]
                 index = int(m.group("index"))
