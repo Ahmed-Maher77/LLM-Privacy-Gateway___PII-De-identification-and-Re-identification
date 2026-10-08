@@ -7,7 +7,7 @@ lists and a small local NER model run through Transformers.js, find values;
 their results are spread to every occurrence, merged, and replaced with
 numbered placeholders such as `<PERSON_1>`. Redaction is one-way.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 ## At a glance
 
@@ -290,7 +290,7 @@ On the 10 hand-labelled synthetic transcripts in `test_data/` (labels in
 `test_data/labels/`), with the shipped list (only `"Acme Corp"`), compared
 with the earlier 4-layer version of this pipeline (pre-defined list, name
 registries, regex, NER, wink-nlp; published as
-[`04-ts-multilayer-lists-regex-ner-winknlp`](../04-ts-multilayer-lists-regex-ner-winknlp)),
+[`04-ts-multilayer-lists-regex-ner-winknlp`](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification/tree/04-ts-multilayer-lists-regex-ner-winknlp)),
 scored on names and companies only:
 
 | | This pipeline | Previous pipeline |
