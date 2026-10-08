@@ -1,0 +1,42 @@
+Support case bundle (synthetic benchmark document; every value below is invented)
+
+=== Call transcript ===
+[09:02:11] Agent: Thanks for calling Brightwater Analytics support, this is Priya Venkataraman. How can I help?
+[09:02:19] Caller: Hi Priya, my name is Tobias Whitcombe. I was double charged on my last invoice.
+[09:02:31] Agent: Sorry about that, Mr. Whitcombe. Can you confirm the email on the account?
+[09:02:40] Caller: It's tobias.whitcombe@example.com, and my backup is t.whitcombe@example.org.
+[09:02:52] Agent: And a phone number in case we get disconnected?
+[09:02:58] Caller: Sure, (555) 014-2387, or my mobile +1 202 555 0164.
+[09:03:10] Agent: For verification, your date of birth?
+[09:03:14] Caller: March 3, 1984.
+[09:03:20] Agent: Thank you. Which card was charged twice?
+[09:03:27] Caller: The Visa ending 1111, full number 4111 1111 1111 1111.
+[09:03:41] Agent: I see two charges of $129.00 on Monday. I'll open a refund request.
+[09:03:55] Caller: My colleague Marguerite Okonkwo-Hale handles our billing, please copy her.
+[09:04:06] Agent: Of course. I'll loop in Ms. Okonkwo-Hale on Microsoft Teams as well.
+[09:04:15] Caller: one more thing, my manager dariusz kowalczyk asked for the refund in writing.
+
+=== Email ===
+From: Marguerite Okonkwo-Hale <m.okonkwo-hale@example.net>
+To: billing@brightwater-analytics.example
+Subject: Refund for account BWA-55120
+
+Hello team,
+Please send the refund to IBAN GB82 WEST 1234 5698 7654 32.
+Our office address is 742 Maple Avenue, Springfield, IL 62704.
+My direct line is 555-0199 and my SSN on the tax form is 219-09-9999.
+Regards,
+Marguerite
+
+=== Ticket form ===
+Customer name:   Tobias Whitcombe
+Customer ID:     CUST-778201
+Passport no.:    X1234567
+Date of birth:   03/03/1984
+Login IP:        192.0.2.44
+Profile URL:     https://example.com/users/twhitcombe
+Notes:           Customer prefers contact on Thursday. Uses Kubernetes and PostgreSQL at work.
+
+=== Application log ===
+2026-09-14T09:05:02Z INFO refund.created user="tobias.whitcombe@example.com" amount=129.00 card_last4=1111
+2026-09-14T09:05:03Z WARN auth.retry ip=198.51.100.23 user_id=CUST-778201

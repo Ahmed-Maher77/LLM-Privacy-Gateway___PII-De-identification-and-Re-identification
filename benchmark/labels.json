@@ -1,0 +1,71 @@
+{
+  "description": "Values in sample.txt that should not survive redaction, grouped by category. Each entry is a distinct mention, so one unmasked occurrence is counted once. A value counts as leaked when it appears verbatim in an implementation's output. 'keep' lists ordinary terms that should survive; a missing one counts as over-redaction.",
+  "pii": {
+    "PERSON": [
+      "Priya Venkataraman",
+      "Hi Priya",
+      "Tobias Whitcombe",
+      "Mr. Whitcombe",
+      "Marguerite Okonkwo-Hale",
+      "Ms. Okonkwo-Hale",
+      "Regards,\nMarguerite",
+      "dariusz kowalczyk"
+    ],
+    "EMAIL": [
+      "tobias.whitcombe@example.com",
+      "t.whitcombe@example.org",
+      "m.okonkwo-hale@example.net",
+      "billing@brightwater-analytics.example"
+    ],
+    "PHONE": [
+      "(555) 014-2387",
+      "+1 202 555 0164",
+      "555-0199"
+    ],
+    "DATE_OF_BIRTH": [
+      "March 3, 1984",
+      "03/03/1984"
+    ],
+    "CREDIT_CARD": [
+      "4111 1111 1111 1111"
+    ],
+    "IBAN": [
+      "GB82 WEST 1234 5698 7654 32"
+    ],
+    "SSN": [
+      "219-09-9999"
+    ],
+    "ADDRESS": [
+      "742 Maple Avenue, Springfield, IL 62704"
+    ],
+    "ORGANIZATION": [
+      "Brightwater Analytics"
+    ],
+    "CUSTOMER_ID": [
+      "CUST-778201",
+      "BWA-55120"
+    ],
+    "PASSPORT": [
+      "X1234567"
+    ],
+    "IP_ADDRESS": [
+      "192.0.2.44",
+      "198.51.100.23"
+    ],
+    "URL": [
+      "https://example.com/users/twhitcombe"
+    ]
+  },
+  "keep": [
+    "Microsoft Teams",
+    "Kubernetes",
+    "PostgreSQL",
+    "Visa",
+    "Monday",
+    "Thursday",
+    "invoice",
+    "refund",
+    "$129.00",
+    "Support case bundle"
+  ]
+}
