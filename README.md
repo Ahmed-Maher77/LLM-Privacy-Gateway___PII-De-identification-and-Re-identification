@@ -318,8 +318,10 @@ leaks, plus `summary.md`. The method is described in
 ## Working with the submodules
 
 Each implementation is a git submodule whose history lives on a branch of this
-same repository, named like its folder, so every submodule URL is the relative
-`./`.
+same repository, named like its folder. Every submodule URL is the relative
+`../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git`,
+which resolves to this repository (or to your fork of it), and GitHub links each
+folder to the pinned commit.
 
 ```sh
 cd 02-ts-lists-transformersjs-ner
@@ -337,10 +339,7 @@ To pull the latest commit of every branch: `git submodule update --remote`.
 
 All test data and the benchmark document are synthetic: names, emails, phone
 numbers, card numbers, IBANs and addresses are invented or standard
-documentation examples. Run artefacts (`reports/`, `artifacts/`,
-`benchmark/results/`) are git-ignored because they can contain sensitive values;
-in particular, the JSON reports of 02 and 04 list every detected original value.
-Do not commit real transcripts.
+documentation examples
 
 ## License
 

@@ -1,24 +1,24 @@
 [submodule "01-python-gliner-spacy-gateway"]
 	path = 01-python-gliner-spacy-gateway
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 01-python-gliner-spacy-gateway
 [submodule "02-ts-lists-transformersjs-ner"]
 	path = 02-ts-lists-transformersjs-ner
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 02-ts-lists-transformersjs-ner
 [submodule "03-ts-winknlp-regex-rules-poc"]
 	path = 03-ts-winknlp-regex-rules-poc
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 03-ts-winknlp-regex-rules-poc
 [submodule "04-ts-multilayer-lists-regex-ner-winknlp"]
 	path = 04-ts-multilayer-lists-regex-ner-winknlp
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 04-ts-multilayer-lists-regex-ner-winknlp
 [submodule "05-python-presidio-bert-qwen-gateway"]
 	path = 05-python-presidio-bert-qwen-gateway
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 05-python-presidio-bert-qwen-gateway
 [submodule "06-ts-winknlp-lite"]
 	path = 06-ts-winknlp-lite
-	url = ./
+	url = ../LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
 	branch = 06-ts-winknlp-lite
