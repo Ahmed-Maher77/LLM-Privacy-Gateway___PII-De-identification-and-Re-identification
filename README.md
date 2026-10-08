@@ -2,7 +2,7 @@
 
 A small Node.js and TypeScript library and script that finds and masks personally identifiable information (PII) in plain text. It uses [`wink-nlp`](https://winkjs.org/wink-nlp/) with the [`wink-eng-lite-web-model`](https://www.npmjs.com/package/wink-eng-lite-web-model). It exposes two functions. `detectPII` returns typed spans with exact character offsets, and `maskPII` replaces those spans with one-way `[TYPE]` placeholders. The included runner writes a sanitized copy of the input and a JSON detection report. Everything runs offline, and the model ships inside the npm package.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 ## At a glance
 
