@@ -53,8 +53,8 @@ the files are kept in the repo so the pipeline never needs the network.
 
 A list hit must also pass a rule:
 
-- **Full name:** 2–4 capitalised words starting with a given name, each next
-  word a given name, a surname or not an English word, with at least one word
+- **Full name:** 2–6 words (particles included) starting with a capitalised given name, each next
+  capitalised word a given name, a surname or not an English word, with at least one word
   that isn't English: "Mohamed Ahmed Hassan", "Kofi Mensah". Particles are
   allowed ("Abdel Rahman El-Hamed", "van Dijk"), and fused ones are stripped
   for the lookup ("Elsharif", "Al-Rashid"). Not a place ("New York"), not

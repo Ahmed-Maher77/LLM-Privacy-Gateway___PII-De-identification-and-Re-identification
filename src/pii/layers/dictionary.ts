@@ -53,7 +53,7 @@ function findNames(text: string, ws: Word[], l: Lists): PIISpan[] {
     const lower = first.toLowerCase();
     if (!isNameShaped(first) || !isGiven(first, l) || TITLES.has(lower) || PLACE_WORDS.has(lower) || NEVER_NAMES.has(lower)) continue;
 
-    // Full name: capitalised given name + 1–3 more name words (particles allowed in between)
+    // Full name: capitalised given name + up to 5 more words (particles allowed in between)
     if (isCapitalised(first) && !isAllCaps(first)) {
       let last = i;
       for (let j = i + 1; j < ws.length && j - i < 6; j++) {
