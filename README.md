@@ -2,7 +2,7 @@
 
 A TypeScript proof of concept that tests whether **WinkNLP** can serve as the PII (personally identifiable information) detection engine for privacy middleware. WinkNLP's built-in entities are combined with deterministic regex rules and anchored person-name rules. A span normalizer merges the results, and a masking layer replaces them with generic (`[EMAIL]`) or numbered, reversible (`[EMAIL_1]`) placeholders. Everything runs locally in Node.js with a ~4.6 MB runtime footprint. This is an evaluation POC, not a production service.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 ## At a glance
 
@@ -42,7 +42,7 @@ Part of the [PII de-identification implementations](../README.md) collection.
 
 ### Installation
 
-This project is a submodule of the umbrella repository. Clone it with its submodules (see the [umbrella README](../README.md)), then install:
+This project is a submodule of the umbrella repository. Clone it with its submodules (see the [umbrella README](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme)), then install:
 
 ```bash
 git clone --recurse-submodules https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification.git
