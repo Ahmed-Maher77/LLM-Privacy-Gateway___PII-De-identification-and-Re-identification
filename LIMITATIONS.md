@@ -48,10 +48,11 @@ masked.
   "grace" is not spread to its other lowercase uses, so "i hope" and "grace
   period" stay visible. The other side of that: a lowercase name the model
   finds only once stays visible where it misses it.
-- **"Common word" is the model's vocabulary**, a 30k-token list that
-  contains many first names ("sarah", "tom", "marcus"). In lowercase text,
-  such a name is spread only if found whole, and a listed name's lowercase
-  part is not matched alone. Capitalised text is not affected.
+- **"Common word" is the model's vocabulary**, about 24,700 whole-word
+  tokens (of its 30,522 WordPiece tokens) that include many first names
+  ("sarah", "tom", "marcus"). In lowercase text, such a name is spread only
+  if found whole, and a listed name's lowercase part is not matched alone.
+  Capitalised text is not affected.
 - **Title, role and relation words are dropped from a model name** ("Mr",
   "Agent", "customer", "wife"), and so are words before one inside a span:
   "thank you mister el sayed" is masked as "el sayed". A name that really

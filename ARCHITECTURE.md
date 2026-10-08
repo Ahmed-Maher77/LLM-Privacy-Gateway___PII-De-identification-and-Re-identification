@@ -108,8 +108,9 @@ whitespace-normalised.
 
 With the name registries and wink-nlp gone, the pipeline's only English
 lexicon is the NER model's own vocabulary: 30,522 WordPiece tokens in
-`tokenizer.json`, read synchronously (no model load). A **common word** is a
-whole token in it ("hope", "will", "agent", but also "sarah", "tom"; not
+`tokenizer.json`, read synchronously (no model load), of which the 24,694
+that are not `##` continuation pieces are kept. A **common word** is one of
+those whole tokens ("hope", "will", "agent", but also "sarah", "tom"; not
 "kofi", "mensah", "okafor"). It is used in exactly two places, both for
 **lowercase** words only: a lowercase part of a listed name, and a lowercase
 value spread by every-occurrence. Capitalised words are never tested, so
@@ -176,8 +177,8 @@ before returning, every span is checked to equal `text.slice(start, end)`.
 ### 3. Windows: no truncation
 
 - Pieces are packed into windows of at most `NER_WINDOW_TOKENS` sub-tokens
-  (default 384, at most 510, plus `[CLS]` / `[SEP]`), overlapping by
-  `NER_OVERLAP_TOKENS` (default 32).
+  (default 384; larger values are capped at 510, plus `[CLS]` / `[SEP]`),
+  overlapping by `NER_OVERLAP_TOKENS` (default 32).
 - A piece seen in two windows keeps the label from the one where it is
   further from a **cut** edge (the text's own start and end are not cuts).
 - One window per model call, no padding: batching was slower on the CPU.
