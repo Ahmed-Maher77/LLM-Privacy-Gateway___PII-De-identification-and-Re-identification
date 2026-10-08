@@ -7,7 +7,7 @@ local NER model run through Transformers.js, and wink-nlp) each find values;
 their results are merged and every value is replaced with a numbered
 placeholder such as `<PERSON_1>`. Redaction is one-way.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 ## At a glance
 
