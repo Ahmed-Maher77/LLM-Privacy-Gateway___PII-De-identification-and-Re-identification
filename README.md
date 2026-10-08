@@ -9,7 +9,7 @@ policy layer and rewritten by offset. **Only the placeholder text reaches the
 model.** The mapping stays in the trusted process, and restoration is exact-match
 only, with drift detection for placeholders the model has mangled.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 > Read [`LIMITATIONS.md`](LIMITATIONS.md) before quoting any number from this
 > project. The evaluation labels were produced by an AI assistant, not a human
