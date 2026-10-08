@@ -33,6 +33,8 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+# Held-out scoring runs only when asked for (`-m holdout`): it is reported, never gating.
+addopts = "-m 'not holdout'"
 markers = [
     "slow: exercises the real NER models",
     "holdout: the held-out corpus; scored, never tuned against",
