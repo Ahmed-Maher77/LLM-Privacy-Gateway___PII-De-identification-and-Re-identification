@@ -8,7 +8,7 @@ every match is replaced by a stable placeholder such as `{{PERSON_1}}`, and two
 independent verification passes must agree before anything leaves the machine.
 If verification fails, the text is not transmitted.
 
-Part of the [PII de-identification implementations](../README.md) collection.
+Part of the [PII de-identification implementations](https://github.com/Ahmed-Maher77/LLM-Privacy-Gateway___PII-De-identification-and-Re-identification#readme) collection.
 
 ## At a glance
 
